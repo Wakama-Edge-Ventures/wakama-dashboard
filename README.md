@@ -1,2 +1,1 @@
-# wakama-dashboard
-Next.js dashboard (devnet live feed, CIDs)
+Next.js dashboard. 'Now Playing' with live devnet feed and IPFS CIDs (J2).
