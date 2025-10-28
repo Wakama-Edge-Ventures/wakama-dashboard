@@ -1,1 +1,2 @@
-Next.js dashboard. 'Now Playing' with live devnet feed and IPFS CIDs (J2).
+# wakama-dashboard
+Next.js dashboard — page Now Playing (mock).
