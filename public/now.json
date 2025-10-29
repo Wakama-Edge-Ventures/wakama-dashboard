@@ -1,9 +1,170 @@
 {
   "totals": {
-    "files": 0,
-    "cids": 0,
-    "onchainTx": 0,
-    "lastTs": "—"
+    "files": 16,
+    "cids": 5,
+    "onchainTx": 16,
+    "lastTs": "2025-10-29T21:41:55.912Z"
   },
-  "items": []
+  "items": [
+    {
+      "cid": "QmXQJVvFbn96HzUopyJZ29knigL167Wo21y9QPesXFwzUa",
+      "tx": "5rQM7yirCpXp77asLAw9ibxzgEgf1zoDoY6mpmXGicwXQVaDdukevikUjuQb9TViBk7ydA4MgTdcGbEnAAzCEyYE",
+      "file": "wakama-batch-2025-10-29T21-41-11-099Z.json",
+      "sha256": "35423c98eaf895a39cb882faa60db62d0e4965228a99c84c0dd964e85e844b3f",
+      "ts": "2025-10-29T21:41:55.912Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmZwKkB3gqhqARTt9D532x1Kf2S6vuwqShCTesNBPGYXDk",
+      "tx": "2euyFE1u9VB5hf3NNdrmSrae1VrznYQRGrE5QVJfcHoaP7R2PRRWBrPhvfe1BcBZWpPqeTBoXnU3DmWsgEA5YZ1Q",
+      "file": "wakama-batch-2025-10-29T21-39-33-782Z.json",
+      "sha256": "9e7cad9200aef9e771178b62b6552817994cded9ad0769fcf296eb96e39b0ee1",
+      "ts": "2025-10-29T21:40:04.554Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmQtuXECVHQBXQDopENQCSXwZiBP6jbrG1hc2MQSW8KPDn",
+      "tx": "4CSG7pDJUfoDHehiuUKYdYCcxsFziRMqWqkY9KvA9kYu3gqjG6GnFYvxxnMyNwi2NyZmSWFZdBtuwCotVQBKeBWd",
+      "file": "wakama-batch-2025-10-29T21-29-45-917Z.json",
+      "sha256": "5aa273229a5634070edacbf37fa863be8cc17d1bbf943e8dd7fdeaf729c5632e",
+      "ts": "2025-10-29T21:30:35.348Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmcC75wgFJXDKSFEtVc98LLrjSW55SDw3rgs8Tb3z8Viwx",
+      "tx": "5JKLxsGYxcAndYjYKYMC4MRYwujiwdkkdezmQZ9HoCNAMvtphkFDc1scs6B5qJNGbze76AwXJWnawuHQsuSrAdg7",
+      "file": "wakama-batch-2025-10-29T21-10-44-949Z.json",
+      "sha256": "d823de847a6905e3ae43c770fa67b67b25776e949889bdd5de94ca97aec08a6f",
+      "ts": "2025-10-29T21:11:44.091Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "2Pif7eDGnygjPEdWbi5k9sUqdUed5rZBNY6QvQyv3NzQg3EyxVATncth4xYbruBZexKZj5FSx9waQ7ZBhUw5M9zZ",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-13-21Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "nY3eSt5WGKBDHogBMwmvf5jjjT4jgCAurvKZJYwtFMaewJzQWiWcDZrXwMzJ8x7eXYf4duzbNLqH8pZVr6HxRb2",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-13-05Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "5HXQHUa3NCtjegqqa7SLbZSBn83366nZZ1yDsweT2QUhuWGxikLUS4mgbeMopFm1eQ2S2Pqt7jBe9LmDRwzobeC2",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-12-50Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "4ALxoqgqUbCbtyJTJaGZP8gAWrnHZC8xN9mtS3xmDht1wCeLFbM1aCcJzqWdPKW4xYoQwQex6zaMbUaTQoKn1gLt",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-12-26Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "5ACAJ1r4xgbFV5WLhQLr6ZE4C3YfkZihUHpyp4Dr2tt18MKrYWbVF7LwtwUb2kjwx98ywoY5bZ6bxwarVJqWbWjJ",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-12-07Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "4ybmMKFUFK1oz5yqwEQXgKtrkabbK5HPVW3RKFRHgnmTxDV36Q562mFWitdycaRJnRZtGPmPYgjJxycSSNyyvudD",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-11-54Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "5VCzfDkfrpuHwrjMiHLWm6cdB9Sxruha4PPDFJ14szv3CVmEpanQ7PcknYcBtzXwAXBdZuMknQioPmxQ2L8cMNvd",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-11-37Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "5MXEzFBSuQqDWcjFqfEsVswEyzBG5RfNT2zFBjGQY74yRTVwtU8maKCQHjttaUL3D5W5t5XMPHxFza8QRfCF1ALy",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-11-26Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "Sh8BcCw2BFrgwMKU1zALCrCAsYYaivNhyUHTb9ncZqc1tm7aoxjhwFMwoNptJfNU4HyL8cRwDuutmpyWd2P9vHm",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-11-14Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "vHntYGsDq3LZnFQJq3grouUiQ6e2oD2CzuPviwcCmkopjD8Vfogh1sYrYqohGX8rQQoEh4iWjR5nB5ubkrtZbHD",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T18-10-57Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "66K1AYArMhxdj44Htcfv1Lb6p7wfMRzcpz3xo8SBLyqV3EYwpvuKqvfc2N67VRFnM6wdrPvsobkzynCR9yd7n15r",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T17-10-45Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "3U2zZ7hD19KqNv7EnWGFaMow19tFEZpXWMJMuo1ic5LjyG59YaF6ygPzyCwdY43sWKMBqszfxHsbxwRmy6Mwi5bv",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-29T17-06-02Z",
+      "status": "submitted",
+      "slot": null,
+      "source": ""
+    }
+  ]
 }
