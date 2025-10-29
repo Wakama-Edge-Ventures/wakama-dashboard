@@ -1,0 +1,6 @@
+{
+  "totals": { "files": 10, "cids": 10, "onchainTx": 10, "lastTs": "2025-10-28T12:09:56Z" },
+  "items": [
+    {"file":"2025-10-28T12-09-01_752b9958.json","cid":"bafkrei...","tx":"6JQATD...","ts":"2025-10-28T12:09:56Z"}
+  ]
+}
