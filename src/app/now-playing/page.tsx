@@ -1,6 +1,11 @@
 import RefreshButton from '@/components/RefreshButton';
 
+import { promises as fs } from 'fs';
+import path from 'path';
+
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 
 // -------- Types --------
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
@@ -10,11 +15,13 @@ type NowItem = {
   file?: string;
   sha256?: string;
   ts?: string;
-  status?: string;           // NEW
-  slot?: number | null;      // NEW
-  source?: string;           // NEW
+  status?: string;
+  slot?: number | null;
+  source?: string;
 };
 type Now = { totals: Totals; items: NowItem[] };
+
+const EMPTY: Now = { totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' }, items: [] };
 
 // -------- Helpers (SSR-safe) --------
 const GW_RAW =
@@ -48,9 +55,52 @@ function linkIpfs(cid: string) {
 }
 
 function linkTx(tx: string) {
-  // always devnet for now
   return `${EXPLORER}/${tx}?cluster=${CLUSTER}`;
 }
+
+// -------- Fallback: read snapshot from disk --------
+async function readNowFromDisk(): Promise<Now> {
+  try {
+    const p = path.join(process.cwd(), 'public', 'now.json');
+    const raw = await fs.readFile(p, 'utf-8');
+    const parsed: Now = JSON.parse(raw);
+    parsed.items = [...(parsed.items || [])].sort((a, b) =>
+      String(b.ts || '').localeCompare(String(a.ts || ''))
+    );
+    return parsed;
+  } catch {
+    return EMPTY;
+  }
+}
+
+// -------- Data fetch (Server) --------
+async function fetchNow(): Promise<Now> {
+  try {
+    // Appel en chemin relatif → pas besoin d’host/proto
+    const res = await fetch('/api/now', { cache: 'no-store' });
+
+    if (!res.ok) {
+      // Fallback disque si l’API échoue
+      return await readNowFromDisk();
+    }
+
+    const parsed: Now = await res.json();
+    parsed.items = [...(parsed.items || [])].sort((a, b) =>
+      String(b.ts || '').localeCompare(String(a.ts || ''))
+    );
+
+    // Fallback disque si l’API renvoie vide
+    if (!parsed.items || parsed.items.length === 0) {
+      return await readNowFromDisk();
+    }
+
+    return parsed;
+  } catch {
+    // Fallback disque si fetch plante
+    return await readNowFromDisk();
+  }
+}
+
 
 // --- Badge (UI) ---
 function Badge({
@@ -76,31 +126,6 @@ function Badge({
       {children}
     </span>
   );
-}
-
-// -------- Data fetch (Server) --------
-async function fetchNow(): Promise<Now> {
-  // Utilise la base fournie par .env.local ou localhost:3000 par défaut
-  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(/\/+$/, '');
-  const url = `${base}/api/now`;
-
-  try {
-    const res = await fetch(url, {
-      cache: 'no-store',
-      next: { revalidate: 10 },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const parsed: Now = await res.json();
-    // newest first
-    parsed.items = [...(parsed.items || [])].sort((a, b) => {
-      const ta = (a.ts ?? '').toString();
-      const tb = (b.ts ?? '').toString();
-      return tb.localeCompare(ta);
-    });
-    return parsed;
-  } catch {
-    return { totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' }, items: [] };
-  }
 }
 
 // -------- UI bits --------
@@ -132,9 +157,7 @@ export default async function Page() {
     <main className="relative mx-auto min-h-screen max-w-5xl overflow-hidden px-6 py-8 text-white">
       {/* --- Background gradient Solana --- */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        {/* base */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0A0B1A] via-[#1b0937] to-[#0a2a1f]" />
-        {/* solana streaks */}
         <div className="absolute -top-24 -left-40 h-80 w-[38rem] rotate-12 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-25" />
         <div className="absolute bottom-[-8rem] right-[-8rem] h-96 w-[42rem] -rotate-6 rounded-full bg-gradient-to-tr from-[#14F195] via-[#39D0D8] to-[#9945FF] blur-3xl opacity-20" />
       </div>
@@ -142,10 +165,7 @@ export default async function Page() {
       {/* Top bar */}
       <header className="mb-8 flex items-center justify-between">
         <nav className="flex items-center gap-6">
-          <a
-            href="/"
-            className="text-lg font-semibold hover:text-[#14F195] transition-colors"
-          >
+          <a href="/" className="text-lg font-semibold hover:text-[#14F195] transition-colors">
             · Wakama Oracle
           </a>
           <RefreshButton label="Refresh" auto={true} intervalMs={15000} />
@@ -197,102 +217,101 @@ export default async function Page() {
         ) : (
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
             <table className="min-w-full border-collapse text-sm">
-  <thead className="bg-white/10 text-left text-white/80">
-    <tr>
-      <th className="px-4 py-2.5">CID</th>
-      <th className="px-4 py-2.5">Tx</th>
-      <th className="px-4 py-2.5">File</th>
-      <th className="px-4 py-2.5">SHA-256</th>
-      <th className="px-4 py-2.5">Timestamp</th>
-      <th className="px-4 py-2.5">Status</th>
-      <th className="px-4 py-2.5">Source</th>
-    </tr>
-  </thead>
-  <tbody className="divide-y divide-white/10">
-    {now.items.slice(0, 50).map((it, i) => (
-      <tr key={`${it.cid}-${it.tx ?? ''}-${i}`} className="hover:bg-[#14F195]/10 transition-colors">
-        <td className="px-4 py-2.5 font-mono">
-          <a
-            href={linkIpfs(it.cid)}
-            target="_blank"
-            rel="noreferrer"
-            className="underline decoration-dotted underline-offset-4 hover:text-[#14F195] transition-colors"
-            title={it.cid}
-          >
-            {shorten(it.cid, 12, 10)}
-          </a>
-        </td>
-
-        <td className="px-4 py-2.5 font-mono">
-          {it.tx ? (
-            <a
-              href={linkTx(it.tx)}
-              target="_blank"
-              rel="noreferrer"
-              className="underline decoration-dotted underline-offset-4 hover:text-[#14F195] transition-colors"
-              title={it.tx}
-            >
-              {shorten(it.tx, 10, 10)}
-            </a>
-          ) : (
-            <span className="text-white/50">—</span>
-          )}
-        </td>
-
-        <td className="px-4 py-2.5">
-          {it.file ? (
-            <span title={it.file} className="font-medium text-white">
-              {shorten(it.file, 20, 16)}
-            </span>
-          ) : (
-            <span className="text-white/50">—</span>
-          )}
-        </td>
-
-        <td className="px-4 py-2.5 font-mono">
-          {it.sha256 ? <span title={it.sha256}>{shorten(it.sha256, 12, 12)}</span> : <span className="text-white/50">—</span>}
-        </td>
-
-        <td className="px-4 py-2.5">
-          {it.ts ? <span className="text-white">{it.ts}</span> : <span className="text-white/50">—</span>}
-        </td>
-
-        <td className="px-4 py-2.5">
-          {(() => {
-            const s = (it.status || '').toLowerCase();
-            const tone: 'ok' | 'warn' | 'neutral' = s.includes('confirmed') ? 'ok' : s === 'n/a' ? 'neutral' : 'warn';
-            return (
-              <div className="flex items-center gap-2">
-                <Badge tone={tone}>{it.status || '—'}</Badge>
-                {typeof it.slot === 'number' ? (
-                  <span className="text-[11px] text-white/60">slot {it.slot}</span>
-                ) : null}
-              </div>
-            );
-          })()}
-        </td>
-
-        <td className="px-4 py-2.5">
-          {it.source ? <Badge tone="neutral" title="Receipt source">{it.source}</Badge> : <span className="text-white/50">—</span>}
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
+              <thead className="bg-white/10 text-left text-white/80">
+                <tr>
+                  <th className="px-4 py-2.5">CID</th>
+                  <th className="px-4 py-2.5">Tx</th>
+                  <th className="px-4 py-2.5">File</th>
+                  <th className="px-4 py-2.5">SHA-256</th>
+                  <th className="px-4 py-2.5">Timestamp</th>
+                  <th className="px-4 py-2.5">Status</th>
+                  <th className="px-4 py-2.5">Source</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {now.items.slice(0, 50).map((it, i) => (
+                  <tr key={`${it.cid}-${it.tx ?? ''}-${i}`} className="hover:bg-[#14F195]/10 transition-colors">
+                    <td className="px-4 py-2.5 font-mono">
+                      <a
+                        href={linkIpfs(it.cid)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline decoration-dotted underline-offset-4 hover:text-[#14F195] transition-colors"
+                        title={it.cid}
+                      >
+                        {shorten(it.cid, 12, 10)}
+                      </a>
+                    </td>
+                    <td className="px-4 py-2.5 font-mono">
+                      {it.tx ? (
+                        <a
+                          href={linkTx(it.tx)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="underline decoration-dotted underline-offset-4 hover:text-[#14F195] transition-colors"
+                          title={it.tx}
+                        >
+                          {shorten(it.tx, 10, 10)}
+                        </a>
+                      ) : (
+                        <span className="text-white/50">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      {it.file ? (
+                        <span title={it.file} className="font-medium text-white">
+                          {shorten(it.file, 20, 16)}
+                        </span>
+                      ) : (
+                        <span className="text-white/50">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5 font-mono">
+                      {it.sha256 ? (
+                        <span title={it.sha256}>{shorten(it.sha256, 12, 12)}</span>
+                      ) : (
+                        <span className="text-white/50">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      {it.ts ? <span className="text-white">{it.ts}</span> : <span className="text-white/50">—</span>}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      {(() => {
+                        const s = (it.status || '').toLowerCase();
+                        const tone: 'ok' | 'warn' | 'neutral' =
+                          s.includes('confirmed') ? 'ok' : s === 'n/a' ? 'neutral' : 'warn';
+                        return (
+                          <div className="flex items-center gap-2">
+                            <Badge tone={tone}>{it.status || '—'}</Badge>
+                            {typeof it.slot === 'number' ? (
+                              <span className="text-[11px] text-white/60">slot {it.slot}</span>
+                            ) : null}
+                          </div>
+                        );
+                      })()}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      {it.source ? (
+                        <Badge tone="neutral" title="Receipt source">
+                          {it.source}
+                        </Badge>
+                      ) : (
+                        <span className="text-white/50">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>
 
       {/* Footer */}
       <footer className="mt-10 flex items-center justify-between border-t border-white/10 pt-6 text-[11px] text-white/70">
-        <span>
-          © {new Date().getUTCFullYear()} Wakama.farm supported by Solana Foundation
-        </span>
-        <a
-          href="/"
-          className="rounded-lg border border-white/15 px-2 py-1 hover:bg-[#14F195]/15 transition-colors"
-        >
+        <span>© {new Date().getUTCFullYear()} Wakama.farm supported by Solana Foundation</span>
+        <a href="/" className="rounded-lg border border-white/15 px-2 py-1 hover:bg-[#14F195]/15 transition-colors">
           Home
         </a>
       </footer>
