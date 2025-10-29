@@ -76,30 +76,25 @@ async function readNowFromDisk(): Promise<Now> {
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
   try {
-    // Appel en chemin relatif → pas besoin d’host/proto
-    const res = await fetch('/api/now', { cache: 'no-store' });
-
-    if (!res.ok) {
-      // Fallback disque si l’API échoue
-      return await readNowFromDisk();
-    }
-
+    // Lire le snapshot directement depuis /public (prod & local)
+    const res = await fetch('/now.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const parsed: Now = await res.json();
+
     parsed.items = [...(parsed.items || [])].sort((a, b) =>
       String(b.ts || '').localeCompare(String(a.ts || ''))
     );
 
-    // Fallback disque si l’API renvoie vide
     if (!parsed.items || parsed.items.length === 0) {
+      // fallback disque (utile en dev si pas de serveur HTTP)
       return await readNowFromDisk();
     }
-
     return parsed;
   } catch {
-    // Fallback disque si fetch plante
     return await readNowFromDisk();
   }
 }
+
 
 
 // --- Badge (UI) ---
