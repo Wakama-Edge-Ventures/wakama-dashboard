@@ -75,18 +75,20 @@ async function readNowFromDisk(): Promise<Now> {
 
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
-  try {
-    // Lire le snapshot directement depuis /public (prod & local)
-    const res = await fetch('/now.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const parsed: Now = await res.json();
+  const base =
+    (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(/\/+$/, '');
+  const url = `${base}/now.json`;
 
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const parsed: Now = await res.json();
     parsed.items = [...(parsed.items || [])].sort((a, b) =>
       String(b.ts || '').localeCompare(String(a.ts || ''))
     );
 
     if (!parsed.items || parsed.items.length === 0) {
-      // fallback disque (utile en dev si pas de serveur HTTP)
       return await readNowFromDisk();
     }
     return parsed;
@@ -94,6 +96,7 @@ async function fetchNow(): Promise<Now> {
     return await readNowFromDisk();
   }
 }
+
 
 
 
