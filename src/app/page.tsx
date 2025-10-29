@@ -59,7 +59,8 @@ export default function Home() {
             Documentation
           </a>
         </div>
-      </main>
+        <a href="/now-playing" className="fixed right-6 bottom-6 rounded-xl border px-4 py-2 bg-white/80 backdrop-blur hover:bg-white">Now&nbsp;Playing →</a>
+</main>
     </div>
   );
 }
