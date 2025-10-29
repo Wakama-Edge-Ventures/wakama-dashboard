@@ -1,24 +1,9 @@
 {
   "totals": {
-    "files": 2,
-    "cids": 2,
-    "onchainTx": 2,
-    "lastTs": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json"
+    "files": 0,
+    "cids": 0,
+    "onchainTx": 0,
+    "lastTs": "—"
   },
-  "items": [
-    {
-      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
-      "tx": "66K1AYArMhxdj44Htcfv1Lb6p7wfMRzcpz3xo8SBLyqV3EYwpvuKqvfc2N67VRFnM6wdrPvsobkzynCR9yd7n15r",
-      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
-      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
-      "ts": "2025-10-28 12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda"
-    },
-    {
-      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
-      "tx": "3U2zZ7hD19KqNv7EnWGFaMow19tFEZpXWMJMuo1ic5LjyG59YaF6ygPzyCwdY43sWKMBqszfxHsbxwRmy6Mwi5bv",
-      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
-      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
-      "ts": "2025-10-28 12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda"
-    }
-  ]
+  "items": []
 }
