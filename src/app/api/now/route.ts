@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function GET() {
   const p = path.join(process.cwd(), 'public', 'now.json');
