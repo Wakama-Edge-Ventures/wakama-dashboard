@@ -1,11 +1,21 @@
 {
   "totals": {
-    "files": 16,
-    "cids": 5,
-    "onchainTx": 16,
-    "lastTs": "2025-10-29T21:41:55.912Z"
+    "files": 17,
+    "cids": 6,
+    "onchainTx": 17,
+    "lastTs": "2025-10-29T22:23:13.975Z"
   },
   "items": [
+    {
+      "cid": "QmS9KVJs42KvM5AiPS52tr81dVcp4QvbFFZiDCXXnh66vK",
+      "tx": "42u8iUmoAW768eFwbtvWQqzXiTjvGWqe1tq2WiR6eJ59a1cYyJxEq3nv8Gi6CynUzKCqfYBFSb7nGtFxSVVYwdCa",
+      "file": "wakama-batch-2025-10-29T22-22-45-035Z.json",
+      "sha256": "df742451d26a1b82f0e5d86a8c5cbe99fc14edc7a872fec800e6be02be2e4af4",
+      "ts": "2025-10-29T22:23:13.975Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "simulated"
+    },
     {
       "cid": "QmXQJVvFbn96HzUopyJZ29knigL167Wo21y9QPesXFwzUa",
       "tx": "5rQM7yirCpXp77asLAw9ibxzgEgf1zoDoY6mpmXGicwXQVaDdukevikUjuQb9TViBk7ydA4MgTdcGbEnAAzCEyYE",
