@@ -1,11 +1,151 @@
 {
   "totals": {
-    "files": 18,
-    "cids": 7,
-    "onchainTx": 18,
-    "lastTs": "2025-10-29T22:27:28.270Z"
+    "files": 32,
+    "cids": 11,
+    "onchainTx": 24,
+    "lastTs": "2025-10-30T19:28:07.413Z"
   },
   "items": [
+    {
+      "cid": "QmQi2gvtDDATogyS6hB1gzRdyaTsfEyA3oJdPT7ySc7Mg3",
+      "tx": "3PTvAiyTGKrFwaPNcH4Tf4bhCK9Nb9t6Vw5JmKrWBymDtLKq7asVf1rUNDT54Ap44oDidUG39PLTVdURouBBN4sU",
+      "file": "coop-delivery-etra-bouake.json",
+      "sha256": "2b302fd529d68002f3ff6233e074876044c43e1aebcdac3ab5fbb91eeeaf8483",
+      "ts": "2025-10-30T19:28:07.413Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "ingest"
+    },
+    {
+      "cid": "QmNUsgk543ckLNQtizQot6Nj3Y5mWqmJLkQrdVWpEUZ2sN",
+      "tx": "3Vt6qEj9aR9GzHpEVWsWivurKjsAjj9xX8ZrHSTxodnuzuTTXN27z9caNP9nTAz8haWNXmftWF3M5H7qZNZ3j7w2",
+      "file": "sensor_batch-etra-bouake.json",
+      "sha256": "990f8c346c5b5d879faf866c9e0b10e13c3de85439d3b47f36e32ecdeecef95c",
+      "ts": "2025-10-30T19:27:41.185Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "ingest"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "coop-delivery-etra-bouake.json",
+      "sha256": "2b302fd529d68002f3ff6233e074876044c43e1aebcdac3ab5fbb91eeeaf8483",
+      "ts": "2025-10-30T19:18:10.130Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "coop-simulated"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "sensor_batch-etra-bouake.json",
+      "sha256": "990f8c346c5b5d879faf866c9e0b10e13c3de85439d3b47f36e32ecdeecef95c",
+      "ts": "2025-10-30T19:18:03.746Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "field-simulated"
+    },
+    {
+      "cid": "QmQi2gvtDDATogyS6hB1gzRdyaTsfEyA3oJdPT7ySc7Mg3",
+      "tx": "2LYcMZYARofCyaZxWoHNPraPU9qzdSuZWcWfccVZFbf3aNdifxDAnP3MwHYmb83fWV4HbS28nd4aJXyGhbthMbKk",
+      "file": "coop-delivery-etra-bouake.json",
+      "sha256": "2b302fd529d68002f3ff6233e074876044c43e1aebcdac3ab5fbb91eeeaf8483",
+      "ts": "2025-10-30T19:09:12.242Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "ingest"
+    },
+    {
+      "cid": "QmNUsgk543ckLNQtizQot6Nj3Y5mWqmJLkQrdVWpEUZ2sN",
+      "tx": "3TtLEidHHGvDi4ixdvfn5asT3pBvDX2qKY84FDGfFpsWHGmQADRPRBr57TVhVsfWUYht1yqM9CQjeuxFVfVujHJP",
+      "file": "sensor_batch-etra-bouake.json",
+      "sha256": "990f8c346c5b5d879faf866c9e0b10e13c3de85439d3b47f36e32ecdeecef95c",
+      "ts": "2025-10-30T19:02:29.650Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "ingest"
+    },
+    {
+      "cid": "QmS1s2oLFWuFisL6PGHBvCcW92njEohefNBfBgf52pnnne",
+      "tx": "4N5CqAM4iujMmPmXxJQNd5S18PbqAGWtxcbQNs2zrmxtUejfA1UyQYpMgRycHFh4v3HFupUBy5SuPx24qG4Wc4y7",
+      "file": "wakama-batch-2025-10-30T18-31-32-879Z.json",
+      "sha256": "352b59d1abd575a95f2f3e4739a4f633e0a80122374bcc9f39120a4279a635c7",
+      "ts": "2025-10-30T18:31:41.808Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "coop-delivery-etra-bouake.json",
+      "sha256": "2b302fd529d68002f3ff6233e074876044c43e1aebcdac3ab5fbb91eeeaf8483",
+      "ts": "2025-10-30T12:36:58.907Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "sensor_batch-etra-bouake.json",
+      "sha256": "990f8c346c5b5d879faf866c9e0b10e13c3de85439d3b47f36e32ecdeecef95c",
+      "ts": "2025-10-30T12:36:51.633Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "coop-delivery-batch.json",
+      "sha256": "57470b51a4a0678f05fc5f74590a41936426bf8853f3ef60d8810a385ad5f74d",
+      "ts": "2025-10-30T12:08:05.599Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "sensor-batch.json",
+      "sha256": "17974dc3c7219004f7178181ec58a39ce9bc2f536dec7ce4a19db360f14b617d",
+      "ts": "2025-10-30T12:00:40.528Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "sensor-batch.json",
+      "sha256": "cdf5c82cd500275f04c6b51e90529017f9ea5f59c959814e3c1e0425d1b26667",
+      "ts": "2025-10-30T12:00:00.139Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "simulated"
+    },
+    {
+      "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
+      "tx": "Na3SwuwmPDVJS3ws5x1qD8rWEynpLGBBHWS53QUgzyua7XErXzb5qtK97Eat1pUZh7S3JYmMczheFsveaa82nyJ",
+      "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
+      "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
+      "ts": "2025-10-30T11:21:08.111Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "ingest"
+    },
+    {
+      "cid": "QmPLACEHOLDER",
+      "tx": "",
+      "file": "sensor-batch.json",
+      "sha256": "42c7f35ef6c34dee6e2b4c7e0b271fee6fd5a1d9accc38061e24ba3f59c59a59",
+      "ts": "2025-10-30T11:15:01.518Z",
+      "status": "n/a",
+      "slot": null,
+      "source": "simulated"
+    },
     {
       "cid": "QmXJ96ELnmvueG7SvkizR8ymfAf8zg6aCZm9AXkrJUkgG8",
       "tx": "3eNEgaPszzU2tsHfK5ntezye4KhHRYAjbRxLLNAFAinS747RFN9XQ5XSMFoDy96Ap5BeuEaAct4iq6ouBc4CYavy",
