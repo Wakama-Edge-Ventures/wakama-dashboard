@@ -1,66 +1,136 @@
-import Image from "next/image";
+// src/app/now-playing/page.tsx
+import { promises as fs } from 'fs';
+import path from 'path';
+import NowPlayingClient from '@/components/NowPlayingClient';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+// -------- Types --------
+type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
+export type NowItem = {
+  cid: string;
+  tx?: string;
+  file?: string;
+  sha256?: string;
+  ts?: string;
+  status?: string;
+  slot?: number | null;
+  source?: string;
+};
+export type Now = { totals: Totals; items: NowItem[] };
+
+const EMPTY: Now = {
+  totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' },
+  items: [],
+};
+
+// -------- Helpers (SSR-safe) --------
+const GW_RAW =
+  process.env.NEXT_PUBLIC_IPFS_GATEWAY?.replace(/\/+$/, '') ||
+  'https://gateway.pinata.cloud/ipfs';
+
+function safeHost(u: string) {
+  try {
+    return new URL(u).host;
+  } catch {
+    return '';
+  }
+}
+
+const GW_HOST = safeHost(GW_RAW);
+const GW = GW_HOST ? GW_RAW : 'https://gateway.pinata.cloud/ipfs';
+
+// hard lock to devnet for milestone phase
+const EXPLORER = 'https://explorer.solana.com/tx';
+const CLUSTER = 'devnet';
+
+// -------- Fallback: read snapshot from disk --------
+async function readNowFromDisk(): Promise<Now> {
+  try {
+    const p = path.join(process.cwd(), 'public', 'now.json');
+    const raw = await fs.readFile(p, 'utf-8');
+    const parsed: Now = JSON.parse(raw);
+    parsed.items = [...(parsed.items || [])].sort((a, b) =>
+      String(b.ts || '').localeCompare(String(a.ts || '')),
+    );
+    return parsed;
+  } catch {
+    return EMPTY;
+  }
+}
+
+// -------- Data fetch (Server) --------
+async function fetchNow(): Promise<Now> {
+  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(
+    /\/+$/,
+    '',
+  );
+  // on lit le snapshot généré par le publisher
+  const url = `${base}/now.json`;
+
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const parsed: Now = await res.json();
+    parsed.items = [...(parsed.items || [])].sort((a, b) =>
+      String(b.ts || '').localeCompare(String(a.ts || '')),
+    );
+
+    if (!parsed.items || parsed.items.length === 0) {
+      return await readNowFromDisk();
+    }
+    return parsed;
+  } catch {
+    return await readNowFromDisk();
+  }
+}
+
+export default async function Page() {
+  const now = await fetchNow();
+  const year = new Date().getUTCFullYear();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+    <main className="relative mx-auto min-h-screen max-w-6xl overflow-hidden px-6 py-8 text-white">
+      {/* --- Background gradient Solana --- */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[#0A0B1A]" />
+        <div className="absolute -top-24 -left-40 h-80 w-[38rem] rotate-12 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-20" />
+        <div className="absolute bottom-[-8rem] right-[-8rem] h-96 w-[42rem] -rotate-6 rounded-full bg-gradient-to-tr from-[#14F195] via-[#39D0D8] to-[#9945FF] blur-3xl opacity-15" />
+      </div>
+
+      {/* Top bar */}
+      <header className="mb-6 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-6">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/"
+            className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+            · Wakama Oracle
           </a>
         </div>
-        <a href="/now-playing" className="fixed right-6 bottom-6 rounded-xl border px-4 py-2 bg-white/80 backdrop-blur hover:bg-white">Now&nbsp;Playing →</a>
-</main>
-    </div>
+        <div className="flex items-center gap-3 text-xs text-white/50">
+          <span>
+            GW:&nbsp;
+            <code className="rounded bg-white/10 px-1 py-0.5 text-[10px]">
+              {GW_HOST || 'gateway.pinata.cloud'}
+            </code>
+          </span>
+          <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-[10px] text-emerald-200">
+            Devnet locked
+          </span>
+        </div>
+      </header>
+
+      {/* Client-side interactive dashboard */}
+      <NowPlayingClient
+        data={now}
+        explorerBase={EXPLORER}
+        cluster={CLUSTER}
+        ipfsGateway={GW}
+        year={year}
+      />
+    </main>
   );
 }
