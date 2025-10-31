@@ -18,3 +18,4 @@ runs/
 receipts/
 deliverables/
 screenshots/
+!public/now.json
