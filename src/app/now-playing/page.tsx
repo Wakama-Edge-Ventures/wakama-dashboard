@@ -2,6 +2,8 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import NowPlayingClient from '@/components/NowPlayingClient';
+import Link from 'next/link';
+
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -105,12 +107,11 @@ export default async function Page() {
       {/* Top bar */}
       <header className="mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <a
-            href="/"
+          <Link href="/"
             className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors"
           >
             · Wakama Oracle
-          </a>
+          </Link>
         </div>
         <div className="flex items-center gap-3 text-xs text-white/50">
           <span>

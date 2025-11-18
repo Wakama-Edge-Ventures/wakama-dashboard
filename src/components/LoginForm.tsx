@@ -28,7 +28,7 @@ export default function LoginForm() {
 
       // si ok: redirection vers now-playing
       router.push('/now-playing');
-    } catch (err) {
+    } catch {
       setError('Login error, please try again.');
     } finally {
       setSubmitting(false);

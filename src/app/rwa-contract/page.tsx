@@ -1,4 +1,6 @@
 import React from "react";
+import Link from 'next/link';
+
 
 export const dynamic = "force-dynamic";
 
@@ -35,12 +37,11 @@ export default async function Page() {
       {/* Top bar */}
       <header className="mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <a
-            href="/"
+          <Link href="/"
             className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors"
           >
             · Wakama Oracle
-          </a>
+          </Link>
           <span className="text-xs text-white/40">RWA Sample Contract</span>
         </div>
         <div className="flex items-center gap-2 text-xs text-white/50">

@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, type ReactNode } from 'react';
 import SearchBar from './SearchBar';
 import TxHistory from './TxHistory';
 import RefreshButton from '@/components/RefreshButton';
+import Link from 'next/link';
 
 // ---- Types locaux (côté client) ----
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
@@ -27,6 +28,8 @@ type NowItem = {
   source?: string;
   team?: string;
   points?: number;
+  // Champ optionnel utilisé pour classifier certains enregistrements RWA
+  rwa_kind?: string;
 };
 
 type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
@@ -60,6 +63,9 @@ const TEAM_LABELS: Record<string, string> = {
 };
 
 function getTeamMeta(teamKey: string) {
+  if (!teamKey) {
+    return { label: '—', url: '' };
+  }
   return {
     label: TEAM_LABELS[teamKey] || teamKey,
     url: TEAM_LINKS[teamKey] || '',
@@ -93,8 +99,8 @@ function GithubIcon() {
  * Classification des enregistrements.
  */
 function getRecordType(it: NowItem): string {
-  if ((it as any).rwa_kind) {
-    const rk = String((it as any).rwa_kind).toLowerCase();
+  if (it.rwa_kind) {
+    const rk = it.rwa_kind.toLowerCase();
     if (rk === 'sensor_batch') return 'Sensor batch (field)';
     if (rk === 'coop_delivery') return 'Coop delivery';
     return `RWA: ${rk}`;
@@ -112,7 +118,7 @@ function Badge({
   tone = 'neutral',
   title,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   tone?: 'ok' | 'warn' | 'neutral';
   title?: string;
 }) {
@@ -347,87 +353,87 @@ export default function NowPlayingClient({
 
       {/* chart + small info */}
       <div className="mb-6 grid gap-4 md:grid-cols-[2fr,1fr]">
-  <div className="rounded-xl bg-[#0F1116] border border-white/5 p-4">
-    <div className="mb-3 flex items-center justify-between">
-      <h2 className="text-sm font-medium text-white">
-        Transaction Stats History
-      </h2>
-      <span className="text-[10px] text-white/40">last 20 batches</span>
-    </div>
-    <TxHistory items={data.items} />
-  </div>
-
-  <div className="space-y-4">
-    {/* Sources card existante */}
-    <div className="rounded-xl bg-[#0F1116] border border-white/5 p-4">
-      <h2 className="text-sm font-medium text-white mb-3">Sources</h2>
-      <div className="space-y-2 text-sm">
-        {/* ... TON CODE EXISTANT “Sources” ICI SANS LE CHANGER ... */}
-      </div>
-    </div>
-
-    {/* Nouvelle carte RWA Sample Contract */}
-    <div className="rounded-xl bg-[#0F1116] border border-emerald-400/40 p-4 shadow-md shadow-emerald-500/15">
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-white">
-          RWA Sample Contract
-        </h2>
-        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-200">
-          Devnet
-        </span>
-      </div>
-      <p className="text-[11px] text-white/60 mb-2">
-        Demo RWA asset state machine wired to Wakama Oracle (points, batches,
-        lifecycle status, invested USDC).
-      </p>
-      <div className="mb-2 space-y-1 text-[11px] text-white/70">
-        <div>
-          Program ID:&nbsp;
-          <code className="rounded bg-black/40 px-1 py-0.5 text-[10px]">
-            93eL55wjf62Pw8UPsKS8V7b9efk28UyG8C74Vif2gMNR
-          </code>
+        <div className="rounded-xl bg-[#0F1116] border border-white/5 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-medium text-white">
+              Transaction Stats History
+            </h2>
+            <span className="text-[10px] text-white/40">last 20 batches</span>
+          </div>
+          <TxHistory items={data.items} />
         </div>
-        <div>
-          Upgrade authority:&nbsp;
-          <code className="rounded bg-black/40 px-1 py-0.5 text-[10px]">
-            GYdgCBzz9Phzvdh8dTz9VRB8qyjVbA6GscYPKTrGBczR
-          </code>
+
+        <div className="space-y-4">
+          {/* Sources card existante */}
+          <div className="rounded-xl bg-[#0F1116] border border-white/5 p-4">
+            <h2 className="text-sm font-medium text-white mb-3">Sources</h2>
+            <div className="space-y-2 text-sm">
+              {/* ... contenu existant de la carte "Sources" ... */}
+            </div>
+          </div>
+
+          {/* Nouvelle carte RWA Sample Contract */}
+          <div className="rounded-xl bg-[#0F1116] border border-emerald-400/40 p-4 shadow-md shadow-emerald-500/15">
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="text-sm font-medium text-white">
+                RWA Sample Contract
+              </h2>
+              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-200">
+                Devnet
+              </span>
+            </div>
+            <p className="text-[11px] text-white/60 mb-2">
+              Demo RWA asset state machine wired to Wakama Oracle (points,
+              batches, lifecycle status, invested USDC).
+            </p>
+            <div className="mb-2 space-y-1 text-[11px] text-white/70">
+              <div>
+                Program ID:&nbsp;
+                <code className="rounded bg-black/40 px-1 py-0.5 text-[10px]">
+                  93eL55wjf62Pw8UPsKS8V7b9efk28UyG8C74Vif2gMNR
+                </code>
+              </div>
+              <div>
+                Upgrade authority:&nbsp;
+                <code className="rounded bg-black/40 px-1 py-0.5 text-[10px]">
+                  GYdgCBzz9Phzvdh8dTz9VRB8qyjVbA6GscYPKTrGBczR
+                </code>
+              </div>
+            </div>
+            <div className="mb-2 text-[11px] text-white/60">
+              Available instructions:&nbsp;
+              <span className="font-mono">
+                initialize_asset,&nbsp;push_oracle_update,&nbsp;set_status,
+                &nbsp;record_investment
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2 text-[11px]">
+              <a
+                href="https://explorer.solana.com/address/93eL55wjf62Pw8UPsKS8V7b9efk28UyG8C74Vif2gMNR?cluster=devnet"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center rounded-lg border border-white/15 px-2 py-1 hover:bg-white/10"
+              >
+                View on Solana Explorer
+              </a>
+              <a
+                href="https://github.com/Wakama-Edge-Ventures/wakama-oracle-anchor"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center rounded-lg border border-white/15 px-2 py-1 hover:bg-white/10"
+              >
+                GitHub source
+              </a>
+              <Link
+                href="/rwa-contract"
+                className="inline-flex items-center rounded-lg bg-[#14F195]/15 border border-[#14F195]/40 px-2 py-1 hover:bg-[#14F195]/25"
+              >
+                Code source (dashboard)
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="mb-2 text-[11px] text-white/60">
-        Available instructions:&nbsp;
-        <span className="font-mono">
-          initialize_asset,&nbsp;push_oracle_update,&nbsp;set_status,&nbsp;record_investment
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-2 text-[11px]">
-        <a
-          href="https://explorer.solana.com/address/93eL55wjf62Pw8UPsKS8V7b9efk28UyG8C74Vif2gMNR?cluster=devnet"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center rounded-lg border border-white/15 px-2 py-1 hover:bg-white/10"
-        >
-          View on Solana Explorer
-        </a>
-        <a
-          href="https://github.com/Wakama-Edge-Ventures/wakama-oracle-anchor"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center rounded-lg border border-white/15 px-2 py-1 hover:bg-white/10"
-        >
-          GitHub source
-        </a>
-        <a
-          href="/rwa-contract"
-          className="inline-flex items-center rounded-lg bg-[#14F195]/15 border border-[#14F195]/40 px-2 py-1 hover:bg-[#14F195]/25"
-        >
-          Code source (dashboard)
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
 
       {/* Table */}
       <section className="mb-10">
@@ -473,7 +479,10 @@ export default function NowPlayingClient({
             <tbody className="divide-y divide-white/10">
               {visible.map((it, i) => {
                 const recordType = getRecordType(it);
-                const toneForRecord =
+                const toneForRecord:
+                  | 'ok'
+                  | 'warn'
+                  | 'neutral' =
                   recordType === 'On-chain (publisher)'
                     ? 'ok'
                     : recordType === 'Coop delivery'
@@ -654,20 +663,18 @@ export default function NowPlayingClient({
             Solana Foundation
           </a>
         </span>
-        <a
+        <Link
           href="/"
           className="rounded-lg border border-white/15 px-2 py-1 hover:bg-[#14F195]/15 transition-colors"
         >
           Home
-        </a>
+        </Link>
       </footer>
 
       {/* back to top */}
       {showTop ? (
         <button
-          onClick={() =>
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="fixed bottom-6 right-6 rounded-full bg-[#14F195] text-black shadow-lg hover:scale-105 transition-transform px-4 py-2 text-sm"
         >
           ↑ Top
