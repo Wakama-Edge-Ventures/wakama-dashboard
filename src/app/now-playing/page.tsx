@@ -17,6 +17,8 @@ export type NowItem = {
   status?: string;
   slot?: number | null;
   source?: string;
+  team?: string;     // équipe qui a généré le batch
+  count?: number;    // nombre de points dans ce batch
 };
 export type Now = { totals: Totals; items: NowItem[] };
 
