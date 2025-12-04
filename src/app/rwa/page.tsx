@@ -64,7 +64,7 @@ export default async function RwaPage() {
 
   return (
     <main className="relative min-h-screen bg-[#020617] px-4 py-8 text-white">
-      {/* Fond style Solana, plus léger que la home */}
+      {/* Solana-style background, lighter than the landing page */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[#020617]" />
         <div className="absolute -top-40 -left-24 h-72 w-[32rem] rotate-12 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-25" />
@@ -82,8 +82,8 @@ export default async function RwaPage() {
               On-chain RWA overview powered by Wakama Oracle
             </h1>
             <p className="mt-1 max-w-2xl text-xs text-white/65 sm:text-sm">
-              Vue synthétique des actifs RWA, équipes et derniers batches IoT
-              publiés sur Solana Devnet, avec liens directs IPFS et Explorer.
+              Synthetic view of RWA assets, teams and latest IoT batches
+              published on Solana Devnet, with direct IPFS and Explorer links.
             </p>
           </div>
 
@@ -103,32 +103,32 @@ export default async function RwaPage() {
           </div>
         </header>
 
-        {/* Résumé haut niveau */}
+        {/* High-level summary */}
         <section className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm">
             <div className="text-xs text-white/60">RWA assets</div>
             <div className="mt-1 text-2xl font-semibold">{rwas.length}</div>
             <div className="mt-2 text-[11px] text-white/55">
-              Actifs suivis dans Firestore + Solana Devnet.
+              Assets tracked in Firestore and on Solana Devnet.
             </div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm">
             <div className="text-xs text-white/60">Teams</div>
             <div className="mt-1 text-2xl font-semibold">{teams.length}</div>
             <div className="mt-2 text-[11px] text-white/55">
-              Core + partenaires (universités, coops, etc.).
+              Core team + external partners (universities, co-ops, etc.).
             </div>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm">
-            <div className="text-xs text-white/60">Batches enregistrés</div>
+            <div className="text-xs text-white/60">Recorded batches</div>
             <div className="mt-1 text-2xl font-semibold">{batches.length}</div>
             <div className="mt-2 text-[11px] text-white/55">
-              Nombre de lots IoT actuellement indexés.
+              Number of IoT lots currently indexed.
             </div>
           </div>
         </section>
 
-        {/* Tableau RWA */}
+        {/* RWA table */}
         <section className="rounded-2xl border border-white/10 bg-black/40 p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-sm font-semibold text-white/90">
