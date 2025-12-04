@@ -199,7 +199,7 @@ export default async function RwaPage() {
                               href={`https://explorer.solana.com/tx/${last.txSignature}?cluster=devnet`}
                               target="_blank"
                               rel="noreferrer"
-                              className="rounded-full border border-white/20 px-2 py-0.5 hover:border-[#39D0D8]/70 hover:text-[#39D0D8]"`
+                              className="rounded-full border border-white/20 px-2 py-0.5 hover:border-[#39D0D8]/70 hover:text-[#39D0D8]"
                             >
                               Solana tx
                             </a>
