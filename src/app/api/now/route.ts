@@ -34,16 +34,33 @@ type NowItem = {
   slot?: number | null;
   source?: string;
   team?: string;
-  recordType?: string; 
-  count?: number;      
-  points?: number;     
+  recordType?: string;
+  count?: number;
+  points?: number;
 };
 
-type Now = { totals: Totals; items: NowItem[] };
+type PointsSummary = {
+  totalPoints: number;
+  externalPoints: number;
+  externalPct: number;
+  byTeam: Record<string, number>;
+  bySource: Record<string, number>;
+};
+
+// We keep Now backward compatible for M1 pages.
+// pointsSummary is optional so older UI won't break if it ignores it.
+type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
 
 const EMPTY: Now = {
   totals: { files: 0, cids: 0, onchainTx: 0, lastTs: "—" },
   items: [],
+  pointsSummary: {
+    totalPoints: 0,
+    externalPoints: 0,
+    externalPct: 0,
+    byTeam: {},
+    bySource: {},
+  },
 };
 
 // -------- Legacy (Milestone 1) --------
@@ -60,23 +77,38 @@ async function loadLegacyNow(): Promise<Now> {
     // We DO NOT modify the old data content.
     // We only add a default recordType label if missing
     // to avoid null groupings in the UI.
-    const normalizedLegacyItems: NowItem[] = legacyItems.map((it: any) => ({
-      ...it,
-      recordType: it?.recordType ?? "on-chain (publisher)",
-      points:
+    const normalizedLegacyItems: NowItem[] = legacyItems.map((it: any) => {
+      const pointsRaw =
         typeof it?.points === "number"
           ? it.points
           : typeof it?.pointsCount === "number"
           ? it.pointsCount
-          : 0,
-    }));
+          : typeof it?.count === "number"
+          ? it.count
+          : 0;
+
+      const pointsCount = Number.isFinite(pointsRaw) ? pointsRaw : 0;
+
+      return {
+        ...it,
+        recordType: it?.recordType ?? "on-chain (publisher)",
+        count:
+          typeof it?.count === "number"
+            ? it.count
+            : pointsCount,
+        points: pointsCount,
+      };
+    });
 
     return {
       totals: parsed?.totals ?? EMPTY.totals,
       items: normalizedLegacyItems,
     };
   } catch {
-    return EMPTY;
+    return {
+      totals: EMPTY.totals,
+      items: [],
+    };
   }
 }
 
@@ -113,8 +145,6 @@ async function loadTeamsMap() {
 
 async function readLatestBatchesFromCollection(collectionName: string) {
   // We try ordering by "timestamp".
-  // If your doc uses another field (createdAt, ts, etc.),
-  // you can extend this later.
   const qy = query(
     collection(db, collectionName),
     orderBy("timestamp", "desc"),
@@ -155,45 +185,43 @@ async function loadFirestoreNow(): Promise<Now> {
     return { totals: EMPTY.totals, items: [] };
   }
 
- const items: NowItem[] = batches.map((b) => {
-  const seconds = b?.timestamp?.seconds;
+  const items: NowItem[] = batches.map((b) => {
+    const seconds = b?.timestamp?.seconds;
 
-  const cid = b?.cid ?? "";
-  const tx = b?.txSignature ?? undefined;
+    const cid = b?.cid ?? "";
+    const tx = b?.txSignature ?? undefined;
 
-  const teamLabel = teamNameById.get(b.teamId) ?? b.teamId ?? "unknown";
+    const teamLabel = teamNameById.get(b.teamId) ?? b.teamId ?? "unknown";
 
-  const pointsRaw =
-    typeof b?.points === "number"
-      ? b.points
-      : typeof b?.pointsCount === "number"
-      ? b.pointsCount
-      : typeof b?.count === "number"
-      ? b.count
-      : 0;
+    const pointsRaw =
+      typeof b?.points === "number"
+        ? b.points
+        : typeof b?.pointsCount === "number"
+        ? b.pointsCount
+        : typeof b?.count === "number"
+        ? b.count
+        : 0;
 
-  const pointsCount = Number.isFinite(pointsRaw) ? pointsRaw : 0;
+    const pointsCount = Number.isFinite(pointsRaw) ? pointsRaw : 0;
 
-  return {
-    cid,
-    tx,
-    file: b.id ? `batch:${b.id}` : undefined,
-    sha256: b.sha256 ?? undefined,
-    ts: seconds ? toIsoFromSeconds(seconds) : undefined,
-    status: b.status ?? "indexed",
-    slot: null,
-    source: b.sourceType ?? b.source ?? "iot",
-    team: teamLabel,
-    recordType:
-      usedCollection === "batches"
-        ? "on-chain (firestore)"
-        : `on-chain (firestore:${usedCollection})`,
-    count: pointsCount,
-    points: pointsCount,
-  };
-});
-
-
+    return {
+      cid,
+      tx,
+      file: b.id ? `batch:${b.id}` : undefined,
+      sha256: b.sha256 ?? undefined,
+      ts: seconds ? toIsoFromSeconds(seconds) : undefined,
+      status: b.status ?? "indexed",
+      slot: null,
+      source: b.sourceType ?? b.source ?? "iot",
+      team: teamLabel,
+      recordType:
+        usedCollection === "batches"
+          ? "on-chain (firestore)"
+          : `on-chain (firestore:${usedCollection})`,
+      count: pointsCount,
+      points: pointsCount,
+    };
+  });
 
   const lastSeconds = batches[0]?.timestamp?.seconds;
   const lastTs = lastSeconds ? toIsoFromSeconds(lastSeconds) : "—";
@@ -206,6 +234,56 @@ async function loadFirestoreNow(): Promise<Now> {
   };
 
   return { totals, items };
+}
+
+// -------- Points summary (M2 proof) --------
+
+function safePoints(n: any) {
+  return typeof n === "number" && Number.isFinite(n) ? n : 0;
+}
+
+// Adjust this list freely if your team labels evolve.
+// We reference human-facing labels seen in the merged items.
+const INTERNAL_TEAM_LABELS = new Set<string>([
+  "Wakama Core",
+  "Wakama_team",
+  "Wakama team",
+]);
+
+function computePointsSummary(items: NowItem[]): PointsSummary {
+  const byTeam: Record<string, number> = {};
+  const bySource: Record<string, number> = {};
+
+  let totalPoints = 0;
+
+  for (const it of items) {
+    const p = safePoints(it.points ?? it.count);
+    totalPoints += p;
+
+    const team = (it.team || "unknown").trim() || "unknown";
+    const src = (it.source || "unknown").trim() || "unknown";
+
+    byTeam[team] = (byTeam[team] || 0) + p;
+    bySource[src] = (bySource[src] || 0) + p;
+  }
+
+  let externalPoints = 0;
+  for (const [team, pts] of Object.entries(byTeam)) {
+    if (!INTERNAL_TEAM_LABELS.has(team)) {
+      externalPoints += pts;
+    }
+  }
+
+  const externalPct =
+    totalPoints > 0 ? (externalPoints / totalPoints) * 100 : 0;
+
+  return {
+    totalPoints,
+    externalPoints,
+    externalPct,
+    byTeam,
+    bySource,
+  };
 }
 
 // -------- API --------
@@ -221,9 +299,14 @@ export async function GET() {
       fsNow = null;
     }
 
+    // If Firestore is unavailable or empty, keep M1 behavior intact
     if (!fsNow || fsNow.items.length === 0) {
-      // Keep Milestone 1 behavior intact
-      return NextResponse.json(legacy);
+      const pointsSummary = computePointsSummary(legacy.items || []);
+      return NextResponse.json({
+        totals: legacy.totals ?? EMPTY.totals,
+        items: legacy.items ?? [],
+        pointsSummary,
+      });
     }
 
     // Merge items:
@@ -243,10 +326,14 @@ export async function GET() {
           : legacy.totals?.lastTs ?? "—",
     };
 
-    return NextResponse.json({ totals, items });
+    const pointsSummary = computePointsSummary(items);
+
+    return NextResponse.json({ totals, items, pointsSummary });
   } catch {
-    return NextResponse.json(EMPTY);
+    return NextResponse.json({
+      totals: EMPTY.totals,
+      items: [],
+      pointsSummary: EMPTY.pointsSummary,
+    });
   }
 }
-
-
