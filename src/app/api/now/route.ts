@@ -34,7 +34,8 @@ type NowItem = {
   slot?: number | null;
   source?: string;
   team?: string;
-  recordType?: string; // optional to avoid breaking M1 items
+  recordType?: string;
+  points?: number;
 };
 
 type Now = { totals: Totals; items: NowItem[] };
@@ -44,16 +45,34 @@ const EMPTY: Now = {
   items: [],
 };
 
+// -------- Legacy (Milestone 1) --------
+
 async function loadLegacyNow(): Promise<Now> {
   try {
     const filePath = path.join(process.cwd(), "public", "now.json");
     const raw = await fs.readFile(filePath, "utf-8");
     const parsed = JSON.parse(raw) as Now;
 
-    // Defensive: ensure shape
+    const legacyItems = Array.isArray(parsed?.items) ? parsed.items : [];
+
+    // IMPORTANT:
+    // We DO NOT modify the old data content.
+    // We only add a default recordType label if missing
+    // to avoid null groupings in the UI.
+    const normalizedLegacyItems: NowItem[] = legacyItems.map((it: any) => ({
+      ...it,
+      recordType: it?.recordType ?? "on-chain (publisher)",
+      points:
+        typeof it?.points === "number"
+          ? it.points
+          : typeof it?.pointsCount === "number"
+          ? it.pointsCount
+          : 0,
+    }));
+
     return {
       totals: parsed?.totals ?? EMPTY.totals,
-      items: Array.isArray(parsed?.items) ? parsed.items : [],
+      items: normalizedLegacyItems,
     };
   } catch {
     return EMPTY;
@@ -66,8 +85,18 @@ function toIsoFromSeconds(seconds?: number) {
   return d.toISOString();
 }
 
-async function loadFirestoreNow(): Promise<Now> {
-  // Read teams
+// -------- Firestore (Milestone 2+) --------
+
+// Try multiple possible collections to avoid a silent mismatch.
+// Keep "batches" first, then common alternates.
+const BATCH_COLLECTION_CANDIDATES = [
+  "batches",
+  "tx_iot2chain",
+  "iot_batches",
+  "oracle_batches",
+];
+
+async function loadTeamsMap() {
   const teamsSnap = await getDocs(collection(db, "teams"));
   const teams = teamsSnap.docs.map((d) => ({
     id: d.id,
@@ -78,47 +107,91 @@ async function loadFirestoreNow(): Promise<Now> {
   for (const t of teams) {
     if (t?.id) teamNameById.set(t.id, t.name || t.id);
   }
+  return teamNameById;
+}
 
-  // Read latest batches (you can adjust limit if needed)
-  const batchesQ = query(
-    collection(db, "batches"),
+async function readLatestBatchesFromCollection(collectionName: string) {
+  // We try ordering by "timestamp".
+  // If your doc uses another field (createdAt, ts, etc.),
+  // you can extend this later.
+  const qy = query(
+    collection(db, collectionName),
     orderBy("timestamp", "desc"),
     limit(200)
   );
-  const batchesSnap = await getDocs(batchesQ);
 
-  const batches = batchesSnap.docs.map((d) => ({
+  const snap = await getDocs(qy);
+
+  const docs = snap.docs.map((d) => ({
     id: d.id,
     ...(d.data() as any),
   }));
 
+  return docs;
+}
+
+async function loadFirestoreNow(): Promise<Now> {
+  const teamNameById = await loadTeamsMap();
+
+  // Find the first collection that returns data
+  let batches: any[] = [];
+  let usedCollection = "";
+
+  for (const name of BATCH_COLLECTION_CANDIDATES) {
+    try {
+      const docs = await readLatestBatchesFromCollection(name);
+      if (docs.length > 0) {
+        batches = docs;
+        usedCollection = name;
+        break;
+      }
+    } catch {
+      // ignore and try next
+    }
+  }
+
+  if (batches.length === 0) {
+    return { totals: EMPTY.totals, items: [] };
+  }
+
   const items: NowItem[] = batches.map((b) => {
     const seconds = b?.timestamp?.seconds;
-    const teamLabel = teamNameById.get(b.teamId) ?? b.teamId ?? "unknown";
+    const teamId = b.teamId ?? b.team ?? b.team_id;
+    const teamLabel = teamNameById.get(teamId) ?? teamId ?? "unknown";
+
+    const cid = b.cid ?? b.ipfsCid ?? b.ipfs_cid ?? "";
+    const tx = b.txSignature ?? b.tx ?? b.signature ?? undefined;
+
+    const points =
+      typeof b.pointsCount === "number"
+        ? b.pointsCount
+        : typeof b.points === "number"
+        ? b.points
+        : 0;
 
     return {
-      cid: b.cid ?? "",
-      tx: b.txSignature ?? undefined,
-      // We do not have a real "file" name from Firestore,
-      // so we provide a stable synthetic label.
+      cid,
+      tx,
       file: b.id ? `batch:${b.id}` : undefined,
-      sha256: b.sha256 ?? undefined, // will be undefined unless you add it later
+      sha256: b.sha256 ?? undefined,
       ts: seconds ? toIsoFromSeconds(seconds) : undefined,
       status: b.status ?? "indexed",
       slot: null,
-      source: b.sourceType ?? "iot",
+      source: b.sourceType ?? b.source ?? "iot",
       team: teamLabel,
-      recordType: "on-chain (firestore)",
+      recordType:
+        usedCollection === "batches"
+          ? "on-chain (firestore)"
+          : `on-chain (firestore:${usedCollection})`,
+      points,
     };
   });
 
   const lastSeconds = batches[0]?.timestamp?.seconds;
   const lastTs = lastSeconds ? toIsoFromSeconds(lastSeconds) : "—";
 
-  // These are additive counters for the Firestore layer.
-  // We DO NOT overwrite M1 totals; we will add these to legacy totals later.
   const totals: Totals = {
-    files: items.length,     // treat each batch as one indexed record
+    files: items.length,
     cids: items.filter((i) => !!i.cid).length,
     onchainTx: items.filter((i) => !!i.tx).length,
     lastTs,
@@ -127,12 +200,12 @@ async function loadFirestoreNow(): Promise<Now> {
   return { totals, items };
 }
 
+// -------- API --------
+
 export async function GET() {
   try {
     const legacy = await loadLegacyNow();
 
-    // If Firebase is not configured for some reason,
-    // this will throw and we will fall back to legacy.
     let fsNow: Now | null = null;
     try {
       fsNow = await loadFirestoreNow();
@@ -140,18 +213,17 @@ export async function GET() {
       fsNow = null;
     }
 
-    if (!fsNow) {
-      // Keep Milestone 1 behavior untouched
+    if (!fsNow || fsNow.items.length === 0) {
+      // Keep Milestone 1 behavior intact
       return NextResponse.json(legacy);
     }
 
     // Merge items:
-    // Firestore (M2) items on top, legacy (M1) items after.
+    // Firestore (M2+) items on top, legacy (M1) items after.
     const items = [...fsNow.items, ...legacy.items];
 
     // Totals:
-    // We keep M1 numbers as baseline and add M2 increments.
-    // This avoids "resetting" or "rewriting" the Milestone 1 proof.
+    // M1 totals remain baseline; we simply add FS increments.
     const totals: Totals = {
       files: (legacy.totals?.files ?? 0) + (fsNow.totals?.files ?? 0),
       cids: (legacy.totals?.cids ?? 0) + (fsNow.totals?.cids ?? 0),
@@ -165,7 +237,6 @@ export async function GET() {
 
     return NextResponse.json({ totals, items });
   } catch {
-    // Absolute fallback
     return NextResponse.json(EMPTY);
   }
 }
