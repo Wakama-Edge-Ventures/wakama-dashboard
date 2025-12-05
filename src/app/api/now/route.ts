@@ -155,40 +155,44 @@ async function loadFirestoreNow(): Promise<Now> {
     return { totals: EMPTY.totals, items: [] };
   }
 
-  const items: NowItem[] = batches.map((b) => {
-    const seconds = b?.timestamp?.seconds;
-    const teamId = b.teamId ?? b.team ?? b.team_id;
-    const teamLabel = teamNameById.get(teamId) ?? teamId ?? "unknown";
+ const items: NowItem[] = batches.map((b) => {
+  const seconds = b?.timestamp?.seconds;
 
-    const cid = b.cid ?? b.ipfsCid ?? b.ipfs_cid ?? "";
-    const tx = b.txSignature ?? b.tx ?? b.signature ?? undefined;
+  const cid = b?.cid ?? "";
+  const tx = b?.txSignature ?? undefined;
 
-    const pointsCount =
-  typeof points === "number"
-    ? points
-    : typeof b.pointsCount === "number"
-    ? b.pointsCount
-    : typeof b.points === "number"
-    ? b.points
-    : 0;
+  const teamLabel = teamNameById.get(b.teamId) ?? b.teamId ?? "unknown";
 
-return {
-  cid,
-  tx,
-  file: b.id ? `batch:${b.id}` : undefined,
-  sha256: b.sha256 ?? undefined,
-  ts: seconds ? toIsoFromSeconds(seconds) : undefined,
-  status: b.status ?? "indexed",
-  slot: null,
-  source: b.sourceType ?? b.source ?? "iot",
-  team: teamLabel,
-  recordType:
-    usedCollection === "batches"
-      ? "on-chain (firestore)"
-      : `on-chain (firestore:${usedCollection})`,
-  count: pointsCount,   // <-- pour NowPlaying UI
-  points: pointsCount,  // <-- compat existante
-};
+  const pointsRaw =
+    typeof b?.points === "number"
+      ? b.points
+      : typeof b?.pointsCount === "number"
+      ? b.pointsCount
+      : typeof b?.count === "number"
+      ? b.count
+      : 0;
+
+  const pointsCount = Number.isFinite(pointsRaw) ? pointsRaw : 0;
+
+  return {
+    cid,
+    tx,
+    file: b.id ? `batch:${b.id}` : undefined,
+    sha256: b.sha256 ?? undefined,
+    ts: seconds ? toIsoFromSeconds(seconds) : undefined,
+    status: b.status ?? "indexed",
+    slot: null,
+    source: b.sourceType ?? b.source ?? "iot",
+    team: teamLabel,
+    recordType:
+      usedCollection === "batches"
+        ? "on-chain (firestore)"
+        : `on-chain (firestore:${usedCollection})`,
+    count: pointsCount,
+    points: pointsCount,
+  };
+});
+
 
 
   const lastSeconds = batches[0]?.timestamp?.seconds;
@@ -244,4 +248,5 @@ export async function GET() {
     return NextResponse.json(EMPTY);
   }
 }
+
 
