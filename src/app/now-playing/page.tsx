@@ -19,9 +19,12 @@ export type NowItem = {
   status?: string;
   slot?: number | null;
   source?: string;
-  team?: string;     // équipe qui a généré le batch
-  count?: number;    // nombre de points dans ce batch
+  team?: string;
+  recordType?: string;
+  count?: number;
+  points?: number;
 };
+
 export type Now = { totals: Totals; items: NowItem[] };
 
 const EMPTY: Now = {
@@ -70,7 +73,7 @@ async function fetchNow(): Promise<Now> {
     /\/+$/,
     '',
   );
-  // on lit le snapshot généré par le publisher
+  // 
   const url = `${base}/api/now`;
 
   try {
