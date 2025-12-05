@@ -9,13 +9,7 @@ import path from "path";
 //   export const db = getFirestore(app)
 // in: src/lib/firebaseClient.ts
 import { db } from "@/lib/firebaseClient";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-} from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 
 type Totals = {
   files: number;
@@ -51,6 +45,30 @@ type PointsSummary = {
 // pointsSummary is optional so older UI won't break if it ignores it.
 type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
 
+type TeamDoc = {
+  name?: string;
+};
+
+type BatchDoc = {
+  timestamp?: { seconds?: number };
+  cid?: string;
+  txSignature?: string;
+  teamId?: string;
+  sha256?: string;
+  status?: string;
+  sourceType?: string;
+  source?: string;
+  points?: number;
+  pointsCount?: number;
+  count?: number;
+};
+
+type LegacyItem = NowItem & {
+  pointsCount?: number;
+};
+
+type WithId<T> = T & { id: string };
+
 const EMPTY: Now = {
   totals: { files: 0, cids: 0, onchainTx: 0, lastTs: "—" },
   items: [],
@@ -71,13 +89,15 @@ async function loadLegacyNow(): Promise<Now> {
     const raw = await fs.readFile(filePath, "utf-8");
     const parsed = JSON.parse(raw) as Now;
 
-    const legacyItems = Array.isArray(parsed?.items) ? parsed.items : [];
+    const legacyItems: LegacyItem[] = Array.isArray(parsed?.items)
+      ? (parsed.items as LegacyItem[])
+      : [];
 
     // IMPORTANT:
     // We DO NOT modify the old data content.
     // We only add a default recordType label if missing
     // to avoid null groupings in the UI.
-    const normalizedLegacyItems: NowItem[] = legacyItems.map((it: any) => {
+    const normalizedLegacyItems: NowItem[] = legacyItems.map((it) => {
       const pointsRaw =
         typeof it?.points === "number"
           ? it.points
@@ -92,10 +112,7 @@ async function loadLegacyNow(): Promise<Now> {
       return {
         ...it,
         recordType: it?.recordType ?? "on-chain (publisher)",
-        count:
-          typeof it?.count === "number"
-            ? it.count
-            : pointsCount,
+        count: typeof it?.count === "number" ? it.count : pointsCount,
         points: pointsCount,
       };
     });
@@ -108,6 +125,7 @@ async function loadLegacyNow(): Promise<Now> {
     return {
       totals: EMPTY.totals,
       items: [],
+      pointsSummary: EMPTY.pointsSummary,
     };
   }
 }
@@ -131,31 +149,34 @@ const BATCH_COLLECTION_CANDIDATES = [
 
 async function loadTeamsMap() {
   const teamsSnap = await getDocs(collection(db, "teams"));
-  const teams = teamsSnap.docs.map((d) => ({
+
+  const teams: Array<WithId<TeamDoc>> = teamsSnap.docs.map((d) => ({
     id: d.id,
-    ...(d.data() as any),
+    ...(d.data() as TeamDoc),
   }));
 
   const teamNameById = new Map<string, string>();
   for (const t of teams) {
     if (t?.id) teamNameById.set(t.id, t.name || t.id);
   }
+
   return teamNameById;
 }
 
-async function readLatestBatchesFromCollection(collectionName: string) {
-  // We try ordering by "timestamp".
+async function readLatestBatchesFromCollection(
+  collectionName: string,
+): Promise<Array<WithId<BatchDoc>>> {
   const qy = query(
     collection(db, collectionName),
     orderBy("timestamp", "desc"),
-    limit(200)
+    limit(200),
   );
 
   const snap = await getDocs(qy);
 
-  const docs = snap.docs.map((d) => ({
+  const docs: Array<WithId<BatchDoc>> = snap.docs.map((d) => ({
     id: d.id,
-    ...(d.data() as any),
+    ...(d.data() as BatchDoc),
   }));
 
   return docs;
@@ -165,7 +186,7 @@ async function loadFirestoreNow(): Promise<Now> {
   const teamNameById = await loadTeamsMap();
 
   // Find the first collection that returns data
-  let batches: any[] = [];
+  let batches: Array<WithId<BatchDoc>> = [];
   let usedCollection = "";
 
   for (const name of BATCH_COLLECTION_CANDIDATES) {
@@ -191,7 +212,7 @@ async function loadFirestoreNow(): Promise<Now> {
     const cid = b?.cid ?? "";
     const tx = b?.txSignature ?? undefined;
 
-    const teamLabel = teamNameById.get(b.teamId) ?? b.teamId ?? "unknown";
+    const teamLabel = teamNameById.get(b.teamId || "") ?? b.teamId ?? "unknown";
 
     const pointsRaw =
       typeof b?.points === "number"
@@ -238,7 +259,7 @@ async function loadFirestoreNow(): Promise<Now> {
 
 // -------- Points summary (M2 proof) --------
 
-function safePoints(n: any) {
+function safePoints(n: unknown) {
   return typeof n === "number" && Number.isFinite(n) ? n : 0;
 }
 
