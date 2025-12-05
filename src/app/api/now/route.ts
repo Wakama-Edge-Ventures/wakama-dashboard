@@ -34,8 +34,9 @@ type NowItem = {
   slot?: number | null;
   source?: string;
   team?: string;
-  recordType?: string;
-  points?: number;
+  recordType?: string; 
+  count?: number;      
+  points?: number;     
 };
 
 type Now = { totals: Totals; items: NowItem[] };
@@ -162,30 +163,33 @@ async function loadFirestoreNow(): Promise<Now> {
     const cid = b.cid ?? b.ipfsCid ?? b.ipfs_cid ?? "";
     const tx = b.txSignature ?? b.tx ?? b.signature ?? undefined;
 
-    const points =
-      typeof b.pointsCount === "number"
-        ? b.pointsCount
-        : typeof b.points === "number"
-        ? b.points
-        : 0;
+    const pointsCount =
+  typeof points === "number"
+    ? points
+    : typeof b.pointsCount === "number"
+    ? b.pointsCount
+    : typeof b.points === "number"
+    ? b.points
+    : 0;
 
-    return {
-      cid,
-      tx,
-      file: b.id ? `batch:${b.id}` : undefined,
-      sha256: b.sha256 ?? undefined,
-      ts: seconds ? toIsoFromSeconds(seconds) : undefined,
-      status: b.status ?? "indexed",
-      slot: null,
-      source: b.sourceType ?? b.source ?? "iot",
-      team: teamLabel,
-      recordType:
-        usedCollection === "batches"
-          ? "on-chain (firestore)"
-          : `on-chain (firestore:${usedCollection})`,
-      points,
-    };
-  });
+return {
+  cid,
+  tx,
+  file: b.id ? `batch:${b.id}` : undefined,
+  sha256: b.sha256 ?? undefined,
+  ts: seconds ? toIsoFromSeconds(seconds) : undefined,
+  status: b.status ?? "indexed",
+  slot: null,
+  source: b.sourceType ?? b.source ?? "iot",
+  team: teamLabel,
+  recordType:
+    usedCollection === "batches"
+      ? "on-chain (firestore)"
+      : `on-chain (firestore:${usedCollection})`,
+  count: pointsCount,   // <-- pour NowPlaying UI
+  points: pointsCount,  // <-- compat existante
+};
+
 
   const lastSeconds = batches[0]?.timestamp?.seconds;
   const lastTs = lastSeconds ? toIsoFromSeconds(lastSeconds) : "—";
@@ -240,3 +244,4 @@ export async function GET() {
     return NextResponse.json(EMPTY);
   }
 }
+
