@@ -496,7 +496,9 @@ export default function NowPlayingClient({
                 <th className="px-4 py-2.5">Status</th>
                 <th className="px-4 py-2.5">Source</th>
                 <th className="px-4 py-2.5">Team</th>
+                <th className="px-4 py-2.5">Points</th>
                 <th className="px-4 py-2.5">Record type</th>
+
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
@@ -628,6 +630,16 @@ export default function NowPlayingClient({
                         <span className="text-white/40">—</span>
                       )}
                     </td>
+<td className="px-4 py-2.5">
+  {typeof it.count === 'number' ? (
+    <span className="font-mono text-white/90">{formatNumber(it.count)}</span>
+  ) : typeof it.points === 'number' ? (
+    <span className="font-mono text-white/90">{formatNumber(it.points)}</span>
+  ) : (
+    <span className="text-white/40">—</span>
+  )}
+</td>
+                    
                     <td className="px-4 py-2.5">
                       <Badge tone={toneForRecord} title="Classified by dashboard">
                         {recordType}
@@ -706,4 +718,5 @@ export default function NowPlayingClient({
     </>
   );
 }
+
 
