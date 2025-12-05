@@ -83,7 +83,7 @@ async function fetchNow(): Promise<Now> {
     const parsed: Now = await res.json();
 
     // Compat M2: 
-    parsed.items = (parsed.items || []).map((it: any) => ({
+    parsed.items = (parsed.items || []).map((it: NowItem) => ({
       ...it,
       count: it.count ?? it.points ?? 0,
     }));
