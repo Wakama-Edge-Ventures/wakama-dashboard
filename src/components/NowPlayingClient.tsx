@@ -28,9 +28,11 @@ type NowItem = {
   source?: string;
   team?: string;
   points?: number;
-  // Champ optionnel utilisé pour classifier certains enregistrements RWA
+  count?: number;  
+  recordType?: string;
   rwa_kind?: string;
 };
+
 
 type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
 
@@ -73,7 +75,6 @@ function getTeamMeta(teamKey: string) {
 }
 
 /**
- * Petite icône GitHub inline (SVG).
  */
 function GithubIcon() {
   return (
@@ -99,6 +100,24 @@ function GithubIcon() {
  * Classification des enregistrements.
  */
 function getRecordType(it: NowItem): string {
+  // 1) Priorité à la valeur venant de l’API
+  const raw = it.recordType;
+  if (typeof raw === 'string' && raw.trim()) {
+    const v = raw.trim();
+    const lower = v.toLowerCase();
+
+    if (lower === 'on-chain (firestore)') return 'On-chain (firestore)';
+    if (lower === 'on-chain (publisher)') return 'On-chain (publisher)';
+
+    // ex: on-chain (firestore:batches_v2)
+    if (lower.startsWith('on-chain (firestore:')) {
+      return 'On-chain (firestore)';
+    }
+
+    return v;
+  }
+
+  // 2) Logique RWA existante
   if (it.rwa_kind) {
     const rk = it.rwa_kind.toLowerCase();
     if (rk === 'sensor_batch') return 'Sensor batch (field)';
@@ -109,9 +128,13 @@ function getRecordType(it: NowItem): string {
   if (it.cid === 'QmPLACEHOLDER') return 'RWA template';
   if ((it.source || '').toLowerCase() === 'simulated') return 'Simulated RWA';
   if ((it.source || '').toLowerCase() === 'ingest') return 'Ingest batch';
+
+  // 3) Heuristique legacy en dernier
   if (it.tx && it.tx.length > 0) return 'On-chain (publisher)';
+
   return 'Unknown';
 }
+
 
 function Badge({
   children,
@@ -683,3 +706,4 @@ export default function NowPlayingClient({
     </>
   );
 }
+
