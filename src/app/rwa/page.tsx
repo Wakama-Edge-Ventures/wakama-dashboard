@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 
+type TimestampLike = {
+  seconds?: number;
+  nanoseconds?: number;
+};
+
 type Batch = {
   id: string;
   cid: string;
@@ -11,10 +16,7 @@ type Batch = {
   deviceId: string;
   pointsCount: number;
   sourceType: string;
-  timestamp: {
-    seconds: number;
-    nanoseconds: number;
-  };
+  timestamp: TimestampLike;
 };
 
 type Rwa = {
@@ -25,10 +27,7 @@ type Rwa = {
   status: string;
   network: string;
   mintAddress: string;
-  createdAt: {
-    seconds: number;
-    nanoseconds: number;
-  };
+  createdAt: TimestampLike;
 };
 
 type Team = {
@@ -38,9 +37,15 @@ type Team = {
   external: boolean;
 };
 
-async function fetchRwaData() {
-  const base = process.env.NEXT_PUBLIC_BASE_URL || "";
-  const res = await fetch(`${base}/api/rwa-demo`, { cache: "no-store" });
+async function fetchRwaData(): Promise<{
+  batches: Batch[];
+  rwas: Rwa[];
+  teams: Team[];
+}> {
+  const base = (process.env.NEXT_PUBLIC_BASE_URL || "").replace(/\/+$/, "");
+  const url = base ? `${base}/api/rwa-demo` : "/api/rwa-demo";
+
+  const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
     throw new Error("Failed to load RWA data");
@@ -53,9 +58,10 @@ async function fetchRwaData() {
   };
 }
 
-function formatDate(ts?: { seconds: number; nanoseconds: number }) {
-  if (!ts) return "—";
-  const d = new Date(ts.seconds * 1000);
+function formatDate(ts?: TimestampLike) {
+  const sec = ts?.seconds;
+  if (!sec || !Number.isFinite(sec)) return "—";
+  const d = new Date(sec * 1000);
   return d.toISOString().split("T")[0];
 }
 
@@ -155,14 +161,16 @@ export default async function RwaPage() {
                   const team = teams.find((t) => t.id === rwa.teamId);
                   const related = batches.filter((b) => b.rwaId === rwa.id);
 
-                  const last = related
-                    .slice()
-                    .sort(
-                      (a, b) =>
-                        (a.timestamp?.seconds || 0) -
-                        (b.timestamp?.seconds || 0),
-                    )
-                    .at(-1);
+                  const last = related.reduce<Batch | undefined>((acc, cur) => {
+                    const a = acc?.timestamp?.seconds ?? 0;
+                    const c = cur?.timestamp?.seconds ?? 0;
+                    return c >= a ? cur : acc;
+                  }, undefined);
+
+                  const lastPoints =
+                    typeof last?.pointsCount === "number"
+                      ? last.pointsCount
+                      : 0;
 
                   return (
                     <tr
@@ -181,9 +189,7 @@ export default async function RwaPage() {
                       <td className="px-2 py-2">
                         {last ? formatDate(last.timestamp) : "—"}
                       </td>
-                      <td className="px-2 py-2">
-                        {last ? last.pointsCount : 0}
-                      </td>
+                      <td className="px-2 py-2">{last ? lastPoints : 0}</td>
                       <td className="px-2 py-2">
                         {last && (
                           <div className="flex flex-wrap gap-1 text-[11px]">
