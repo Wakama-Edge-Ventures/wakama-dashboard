@@ -28,11 +28,10 @@ type NowItem = {
   source?: string;
   team?: string;
   points?: number;
-  count?: number;  
+  count?: number;
   recordType?: string;
   rwa_kind?: string;
 };
-
 
 type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
 
@@ -45,44 +44,135 @@ function shorten(s = '', head = 10, tail = 8) {
 const formatNumber = (n: number) => n.toLocaleString('en-US');
 
 /**
- * Mapping équipes -> URL GitHub.
+ * Catalog + meta teams (M2)
  */
-const TEAM_LINKS: Record<string, string> = {
-  Wakama_team: 'https://github.com/Wakama-Edge-Ventures',
-  'team-techlab-cme': 'https://github.com/Techlab-cme-bingerville',
-  'team-makm2': 'https://github.com/makm2',
-  'team-scak-coop': 'https://github.com/SCAK-COOP-CA',
+type TeamType = 'core' | 'coop' | 'university' | 'partner' | 'internal' | 'other';
+
+type TeamCatalogItem = {
+  id: string;
+  name: string;
+  type: TeamType;
+  url?: string;
+  external: boolean;
 };
 
-/**
- * Labels lisibles pour chaque équipe.
- */
-const TEAM_LABELS: Record<string, string> = {
-  Wakama_team: 'Wakama team',
-  'team-techlab-cme': 'team-techlab-cme',
-  'team-makm2': 'team-makm2',
-  'team-scak-coop': 'team-scak-coop',
-};
+const TEAM_CATALOG: TeamCatalogItem[] = [
+  {
+    id: 'Wakama Core',
+    name: 'Wakama Core',
+    type: 'core',
+    url: 'https://github.com/Wakama-Edge-Ventures',
+    external: false,
+  },
+  {
+    id: 'Wakama_team',
+    name: 'Wakama Team',
+    type: 'core',
+    url: 'https://github.com/Wakama-Edge-Ventures',
+    external: false,
+  },
+  {
+    id: 'team-capn',
+    name: 'CAPN – Coopérative Agricole de Petit Nando',
+    type: 'coop',
+    url: 'https://github.com/capn-ci',
+    external: true,
+  },
+  {
+    id: 'team-ujlog',
+    name: 'Université Jean Lorougnon Guédé (UJLoG)',
+    type: 'university',
+    url: 'https://github.com/ujlog-ci',
+    external: true,
+  },
+  {
+    id: 'team-scak-coop',
+    name: 'SCAK Cooperative',
+    type: 'coop',
+    url: 'https://github.com/SCAK-COOP-CA',
+    external: true,
+  },
+  {
+    id: 'team-techlab-cme',
+    name: 'TechLab CME',
+    type: 'university',
+    url: 'https://github.com/Techlab-cme-bingerville',
+    external: true,
+  },
+  {
+    id: 'team-makm2',
+    name: 'MAKM2 Partner',
+    type: 'partner',
+    url: 'https://github.com/makm2',
+    external: true,
+  },
+];
+
+const TEAM_META_BY_KEY: Map<string, TeamCatalogItem> = (() => {
+  const m = new Map<string, TeamCatalogItem>();
+  for (const t of TEAM_CATALOG) {
+    if (t.id) m.set(t.id, t);
+    if (t.name) m.set(t.name, t);
+  }
+  return m;
+})();
 
 function getTeamMeta(teamKey: string) {
-  if (!teamKey) {
-    return { label: '—', url: '' };
+  const key = (teamKey || '').trim();
+  if (!key) return { label: '—', url: '', type: 'other' as TeamType, external: false };
+
+  const t = TEAM_META_BY_KEY.get(key);
+  if (t) {
+    return {
+      label: t.name || t.id,
+      url: t.url || '',
+      type: (t.type || 'other') as TeamType,
+      external: !!t.external,
+    };
   }
-  return {
-    label: TEAM_LABELS[teamKey] || teamKey,
-    url: TEAM_LINKS[teamKey] || '',
-  };
+
+  // fallback: si une team apparait sans seed
+  return { label: key, url: '', type: 'other' as TeamType, external: true };
+}
+
+function TeamTypeBadge({ type }: { type: TeamType | string }) {
+  const t = (type || 'other').toString().toLowerCase();
+
+  const label =
+    t === 'coop'
+      ? 'Coop'
+      : t === 'university'
+      ? 'University'
+      : t === 'partner'
+      ? 'Partner'
+      : t === 'core'
+      ? 'Core'
+      : t === 'internal'
+      ? 'Internal'
+      : 'Other';
+
+  const base =
+    'ml-1 inline-flex items-center rounded-full border px-1.5 py-0.5 text-[9px] uppercase tracking-wide';
+
+  const cls =
+    t === 'coop'
+      ? 'border-emerald-400/40 text-emerald-200 bg-emerald-500/10'
+      : t === 'university'
+      ? 'border-sky-400/40 text-sky-200 bg-sky-500/10'
+      : t === 'partner'
+      ? 'border-amber-400/40 text-amber-200 bg-amber-500/10'
+      : t === 'core' || t === 'internal'
+      ? 'border-purple-400/40 text-purple-200 bg-purple-500/10'
+      : 'border-white/20 text-white/60 bg-white/5';
+
+  return <span className={`${base} ${cls}`}>{label}</span>;
 }
 
 /**
  */
 function GithubIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 16 16"
-      className="h-3 w-3 opacity-70"
-    >
+    <svg aria-hidden="true" viewBox="0 0 16 16" className="h-3 w-3 opacity-70">
       <path
         fill="currentColor"
         d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
@@ -134,7 +224,6 @@ function getRecordType(it: NowItem): string {
 
   return 'Unknown';
 }
-
 
 function Badge({
   children,
@@ -218,6 +307,11 @@ export default function NowPlayingClient({
   const start = (pageClamped - 1) * perPage;
   const visible = filtered.slice(start, start + perPage);
 
+  // metas rapides pour la phrase "External points"
+  const metaCME = getTeamMeta('team-techlab-cme');
+  const metaMAKM2 = getTeamMeta('team-makm2');
+  const metaSCAK = getTeamMeta('team-scak-coop');
+
   return (
     <>
       {/* top bar like Solana explorer */}
@@ -294,30 +388,30 @@ export default function NowPlayingClient({
           <div className="text-[11px] text-white/40 mt-1">
             Data contributed by external teams:{' '}
             <a
-              href={TEAM_LINKS['team-techlab-cme'] || '#'}
+              href={metaCME.url || '#'}
               target="_blank"
               rel="noreferrer"
               className="underline decoration-dotted underline-offset-2 hover:text-[#14F195]"
             >
-              CME
+              {metaCME.label}
             </a>
             {', '}
             <a
-              href={TEAM_LINKS['team-makm2']}
+              href={metaMAKM2.url || '#'}
               target="_blank"
               rel="noreferrer"
               className="underline decoration-dotted underline-offset-2 hover:text-[#14F195]"
             >
-              makm2
+              {metaMAKM2.label}
             </a>
             {' and '}
             <a
-              href={TEAM_LINKS['team-scak-coop']}
+              href={metaSCAK.url || '#'}
               target="_blank"
               rel="noreferrer"
               className="underline decoration-dotted underline-offset-2 hover:text-[#14F195]"
             >
-              SCAK
+              {metaSCAK.label}
             </a>
             .
           </div>
@@ -337,11 +431,12 @@ export default function NowPlayingClient({
               <div className="text-white/40">No team data yet.</div>
             ) : (
               teamEntries.map(([teamKey, pts]) => {
-                const { label, url } = getTeamMeta(teamKey);
+                const { label, url, type } = getTeamMeta(teamKey);
                 const pct =
                   ps.totalPoints > 0
                     ? ((pts / ps.totalPoints) * 100).toFixed(1)
                     : '0.0';
+
                 return (
                   <div
                     key={teamKey}
@@ -360,8 +455,9 @@ export default function NowPlayingClient({
                       ) : (
                         <span>{label}</span>
                       )}
-                      {url && <GithubIcon />}
+                      <TeamTypeBadge type={type} />
                     </span>
+
                     <span className="text-white/80 font-mono text-[11px]">
                       {formatNumber(pts)} pts
                       <span className="text-white/40"> · {pct}%</span>
@@ -498,16 +594,12 @@ export default function NowPlayingClient({
                 <th className="px-4 py-2.5">Team</th>
                 <th className="px-4 py-2.5">Points</th>
                 <th className="px-4 py-2.5">Record type</th>
-
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
               {visible.map((it, i) => {
                 const recordType = getRecordType(it);
-                const toneForRecord:
-                  | 'ok'
-                  | 'warn'
-                  | 'neutral' =
+                const toneForRecord: 'ok' | 'warn' | 'neutral' =
                   recordType === 'On-chain (publisher)'
                     ? 'ok'
                     : recordType === 'Coop delivery'
@@ -553,10 +645,7 @@ export default function NowPlayingClient({
                     </td>
                     <td className="px-4 py-2.5">
                       {it.file ? (
-                        <span
-                          title={it.file}
-                          className="font-medium text-white"
-                        >
+                        <span title={it.file} className="font-medium text-white">
                           {shorten(it.file, 20, 16)}
                         </span>
                       ) : (
@@ -630,16 +719,19 @@ export default function NowPlayingClient({
                         <span className="text-white/40">—</span>
                       )}
                     </td>
-<td className="px-4 py-2.5">
-  {typeof it.count === 'number' ? (
-    <span className="font-mono text-white/90">{formatNumber(it.count)}</span>
-  ) : typeof it.points === 'number' ? (
-    <span className="font-mono text-white/90">{formatNumber(it.points)}</span>
-  ) : (
-    <span className="text-white/40">—</span>
-  )}
-</td>
-                    
+                    <td className="px-4 py-2.5">
+                      {typeof it.count === 'number' ? (
+                        <span className="font-mono text-white/90">
+                          {formatNumber(it.count)}
+                        </span>
+                      ) : typeof it.points === 'number' ? (
+                        <span className="font-mono text-white/90">
+                          {formatNumber(it.points)}
+                        </span>
+                      ) : (
+                        <span className="text-white/40">—</span>
+                      )}
+                    </td>
                     <td className="px-4 py-2.5">
                       <Badge tone={toneForRecord} title="Classified by dashboard">
                         {recordType}
@@ -718,5 +810,3 @@ export default function NowPlayingClient({
     </>
   );
 }
-
-
