@@ -106,7 +106,7 @@ export default async function Page() {
   const year = new Date().getUTCFullYear();
 
   return (
-    <main className="relative mx-auto min-h-screen max-w-6xl overflow-hidden px-6 py-8 text-white">
+    <main className="relative mx-auto min-h-screen max-w-[1400px] overflow-hidden px-6 py-8 text-white">
       {/* --- Background gradient Solana --- */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[#0A0B1A]" />
