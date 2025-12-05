@@ -19,3 +19,4 @@ receipts/
 deliverables/
 screenshots/
 !public/now.json
+serviceAccount.dev.json

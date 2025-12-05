@@ -311,7 +311,20 @@ function computePointsSummary(items: NowItem[]): PointsSummary {
 
 export async function GET() {
   try {
-    const legacy = await loadLegacyNow();
+    // ✅ Charge la map teams une seule fois
+    const teamNameById = await loadTeamsMap();
+
+    const legacyRaw = await loadLegacyNow();
+
+    // ✅ Normalise les labels legacy si on a un ID connu dans Firestore
+    const legacy: Now = {
+      totals: legacyRaw.totals,
+      items: (legacyRaw.items || []).map((it) => {
+        const key = (it.team || "").trim();
+        const mapped = key ? teamNameById.get(key) : undefined;
+        return mapped ? { ...it, team: mapped } : it;
+      }),
+    };
 
     let fsNow: Now | null = null;
     try {
@@ -320,7 +333,6 @@ export async function GET() {
       fsNow = null;
     }
 
-    // If Firestore is unavailable or empty, keep M1 behavior intact
     if (!fsNow || fsNow.items.length === 0) {
       const pointsSummary = computePointsSummary(legacy.items || []);
       return NextResponse.json({
@@ -330,12 +342,8 @@ export async function GET() {
       });
     }
 
-    // Merge items:
-    // Firestore (M2+) items on top, legacy (M1) items after.
-    const items = [...fsNow.items, ...legacy.items];
+    const items = [...fsNow.items, ...(legacy.items ?? [])];
 
-    // Totals:
-    // M1 totals remain baseline; we simply add FS increments.
     const totals: Totals = {
       files: (legacy.totals?.files ?? 0) + (fsNow.totals?.files ?? 0),
       cids: (legacy.totals?.cids ?? 0) + (fsNow.totals?.cids ?? 0),
@@ -358,3 +366,4 @@ export async function GET() {
     });
   }
 }
+

@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p $PORT",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed_teams": "node tools/seed-teams.cjs"
   },
   "dependencies": {
     "firebase": "^12.6.0",
+    "firebase-admin": "^13.6.0",
     "next": "16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0"
