@@ -71,14 +71,21 @@ async function fetchNow(): Promise<Now> {
     '',
   );
   // on lit le snapshot généré par le publisher
-  const url = `${base}/now.json`;
+  const url = `${base}/api/now`;
 
   try {
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const parsed: Now = await res.json();
-    parsed.items = [...(parsed.items || [])].sort((a, b) =>
+
+    // Compat M2: 
+    parsed.items = (parsed.items || []).map((it: any) => ({
+      ...it,
+      count: it.count ?? it.points ?? 0,
+    }));
+
+    parsed.items = [...parsed.items].sort((a, b) =>
       String(b.ts || '').localeCompare(String(a.ts || '')),
     );
 
