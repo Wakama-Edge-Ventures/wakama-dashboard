@@ -1,11 +1,23 @@
 {
   "totals": {
-    "files": 58,
-    "cids": 36,
-    "onchainTx": 50,
-    "lastTs": "2025-11-17T17:55:46.287Z"
+    "files": 59,
+    "cids": 37,
+    "onchainTx": 51,
+    "lastTs": "2025-12-06T10:33:38.414Z"
   },
   "items": [
+    {
+      "cid": "QmVnEybxgwzHeMPZw4gtHqkTJ48ZnnvAZo3RCMyy7NtbmL",
+      "tx": "ch8u2cAiYmwyw5zXWNQ7N27LdGYGzUAfdBfv1PPUySoWeXYTYKP8bTzS4YzC8z7w6oSrJwppDg5bt2TtG4MFTkE",
+      "file": "2025-12-06T10-24-22_65a0b774-3652-4c5d-a78a-b365952250bb.json",
+      "sha256": "03a62190868cc820f52aaf9274fc39d4f3a453a4d9a2abc5cfe65938d0634f49",
+      "ts": "2025-12-06T10:33:38.414Z",
+      "status": "unknown",
+      "slot": null,
+      "source": "ingest",
+      "team": "unknown",
+      "points": 50
+    },
     {
       "cid": "QmbHFCuWS1uHsw5MExMAJ8P7jtUqEmZeiAbvwZVsp1dd6H",
       "tx": "C7McWj86huV4S8t2U1d9zyyKPTxUde33ykKHU4gASLnurtp39D1Cw1qzRT8WtsznWegPVyqT2C43nigtTgbvoSQ",
@@ -704,18 +716,19 @@
     }
   ],
   "pointsSummary": {
-    "totalPoints": 154364,
+    "totalPoints": 154414,
     "externalPoints": 114000,
-    "externalPct": 73.85141613329533,
+    "externalPct": 73.82750268758014,
     "byTeam": {
       "Wakama_team": 40364,
       "team-techlab-cme": 12000,
       "team-makm2": 18000,
-      "team-scak-coop": 84000
+      "team-scak-coop": 84000,
+      "unknown": 50
     },
     "bySource": {
       "simulated": 40271,
-      "ingest": 0,
+      "ingest": 50,
       "field-simulated": 90,
       "coop-simulated": 3,
       "external": 114000,
