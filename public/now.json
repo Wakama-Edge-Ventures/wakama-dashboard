@@ -1,22 +1,120 @@
 {
   "totals": {
-    "files": 59,
-    "cids": 37,
-    "onchainTx": 51,
-    "lastTs": "2025-12-06T10:33:38.414Z"
+    "files": 68,
+    "cids": 42,
+    "onchainTx": 60,
+    "lastTs": "2025-12-06T19:32:53.165Z"
   },
   "items": [
     {
-      "cid": "QmVnEybxgwzHeMPZw4gtHqkTJ48ZnnvAZo3RCMyy7NtbmL",
-      "tx": "ch8u2cAiYmwyw5zXWNQ7N27LdGYGzUAfdBfv1PPUySoWeXYTYKP8bTzS4YzC8z7w6oSrJwppDg5bt2TtG4MFTkE",
-      "file": "2025-12-06T10-24-22_65a0b774-3652-4c5d-a78a-b365952250bb.json",
-      "sha256": "03a62190868cc820f52aaf9274fc39d4f3a453a4d9a2abc5cfe65938d0634f49",
-      "ts": "2025-12-06T10:33:38.414Z",
-      "status": "unknown",
+      "cid": "QmRsd1gQxR6EZwnvcBG7qhaKkQ5w345MfSyjtCPXwJMZKi",
+      "tx": "412n9mNqDHa61F55rHL7zGgnioEkf3w2UsgF85GuUFr26mDuRmDfTFnKn8JafmcHNdbKnnwZiRd4YrQWmf7X3Fjb",
+      "file": "2025-12-06T19-31-31-173Z_7642694b-d652-4524-ab57-7c24c2ad34bb.json",
+      "sha256": "05783663fec01fe8a37f64f7f40a882cfdbdfa1f5279c336bea702bcc5b69d55",
+      "ts": "2025-12-06T19:32:53.165Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmRFpbAz3Gve8rx8MF4PzzEUnLvRuCgK7XGZuwsp21XCuS",
+      "tx": "2FoVkBaexcDAZf3xUdYNMiVLmdLJEzWraVK55BPdGxYK4XfZ1qEQoWHu5vFRqstxchKPRxpB7RiPSSTjPSDJQkRX",
+      "file": "2025-12-06T19-17-36-795Z_59274439-a459-48eb-a4e0-db3a29f52636.json",
+      "sha256": "f0f929ae0259e4bad0e480921d3bb1e1a85d2b0e3d33aa832750de274c1804d6",
+      "ts": "2025-12-06T19:20:44.746Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "QmS6GpQZNRakvpg1wKiTX7QQeRqZUB1AgZqX7ZfmHW5psm",
+      "tx": "27XxjixvjTAySmat7VW9Kcx8gJNCBTdpnDmVeQFKa4StKxsGdRM6DHLCn1PRjX5Y8F5MLE7st5Vf2yfJ65Y9Uouj",
+      "file": "2025-12-06T18-39-29-747Z_492ba252-9ff5-4809-81cd-fa55aaee5554.json",
+      "sha256": "2cf094de0aa562154c63d627a1ed735ad932042b635c489189924f59ffa8e2aa",
+      "ts": "2025-12-06T19:03:06.011Z",
+      "status": "finalized",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmS6GpQZNRakvpg1wKiTX7QQeRqZUB1AgZqX7ZfmHW5psm",
+      "tx": "KqQ3fd5HuHXDpnhFQpnDUENWseWMgDp43Gu84xCx9tafMStPmSjJ56LNKVyb3qZ8PsPMbAVhDGYAKGfsbH3iHfZ",
+      "file": "2025-12-06T18-39-29-747Z_492ba252-9ff5-4809-81cd-fa55aaee5554.json",
+      "sha256": "2cf094de0aa562154c63d627a1ed735ad932042b635c489189924f59ffa8e2aa",
+      "ts": "2025-12-06T18:42:34.611Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmPoWUuupWcCDtBphepV5o7SVoRhzFL5Mgda25wbde5srJ",
+      "tx": "2q2HvqdnXuaq9DEnifGHRi55oFov31gJcpvmpXqy5bsCxmQDLMQP2JBj1xgCkxk1qRfrEhwjN4XEnxQeA9nTbv17",
+      "file": "2025-12-06T17-08-24_3d9c4dc3-98fd-4dd4-84c6-6b19ba021c24.json",
+      "sha256": "92674653d3b553e9a3a918ef378713f037ec77283aa7cb79f97da0d7479ff41b",
+      "ts": "2025-12-06T17:13:25.531Z",
+      "status": "submitted",
       "slot": null,
       "source": "ingest",
-      "team": "unknown",
-      "points": 50
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "Qmbf4vQBA714auNsHDqauYdkXZ2M6upEFyB9snBhSxCgtN",
+      "tx": "2ETN66CLqnmnegZG3gQKiXKZizBQdproyfz1xi2L1Laec5wyFUJkjCgTadP9KeU5doZCfQ1BySbdT7SzQPUcdYED",
+      "file": "2025-12-06T17-07-09_3e60a2c6-330c-4206-a64c-4f978cc74b71.json",
+      "sha256": "3dad48a486128fadcf92a2e821d1dc0d464d1a5acec2fa1d5ca7effb8840ac48",
+      "ts": "2025-12-06T17:10:59.608Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "ingest",
+      "team": "gede_university"
+    },
+    {
+      "cid": "Qmbf4vQBA714auNsHDqauYdkXZ2M6upEFyB9snBhSxCgtN",
+      "tx": "4Pk5V6r3DiPD61wgVQT5EmtRBFgQBZyknK2GdsD6iFTBj4B2zqRQkM6DzAAmJmqj8FK5RKXZHzb2JTwu9gZFahMJ",
+      "file": "2025-12-06T17-07-09_3e60a2c6-330c-4206-a64c-4f978cc74b71.json",
+      "sha256": "3dad48a486128fadcf92a2e821d1dc0d464d1a5acec2fa1d5ca7effb8840ac48",
+      "ts": "2025-12-06T17:10:26.285Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "ingest",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmZDpQEyQNAQXcGU1JaRaK2jEdnDPLMSF48753NXk2rsiq",
+      "tx": "2cZ37bSKozsiyboqHpRaxDLD8KfiahtPQfbi1XuAZGFxPNh6CbkTuLWR8iEfTr7P9tLpRKiNYv5Kidswh5XY1kUt",
+      "file": "2025-12-06T12-14-31_a2e8893d-5822-470c-a316-f68de2abb163.json",
+      "sha256": "3dca533f362020b8f976e5188af8bbe177f019efbced522a28377393c62eb8cc",
+      "ts": "2025-12-06T17:00:16.148Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "ingest",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "QmZDpQEyQNAQXcGU1JaRaK2jEdnDPLMSF48753NXk2rsiq",
+      "tx": "3RJnWFp2UL29jVB8apYWCcSUgYEhHNppPtkUJFBQJ3y9sVtnzwRR4mdFUsfjoLsemQ8Se8AxK3VxP1G2hc8TQR6j",
+      "file": "2025-12-06T12-14-31_a2e8893d-5822-470c-a316-f68de2abb163.json",
+      "sha256": "3dca533f362020b8f976e5188af8bbe177f019efbced522a28377393c62eb8cc",
+      "ts": "2025-12-06T16:58:21.596Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "ingest",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmZDpQEyQNAQXcGU1JaRaK2jEdnDPLMSF48753NXk2rsiq",
+      "tx": "3Z79SzMHF6MniKb5cY6ipkFLFqYJDiHcjkhj5Gkx94tTTv5mVvBWPo4RMzDt5bGvBQQtaKAwXRjXZAJ6d5YVcabR",
+      "file": "2025-12-06T12-14-31_a2e8893d-5822-470c-a316-f68de2abb163.json",
+      "sha256": "3dca533f362020b8f976e5188af8bbe177f019efbced522a28377393c62eb8cc",
+      "ts": "2025-12-06T12:14:59.731Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmbHFCuWS1uHsw5MExMAJ8P7jtUqEmZeiAbvwZVsp1dd6H",
@@ -24,11 +122,10 @@
       "file": "scak-korhogo-1000-zone-B-Prod-4.json",
       "sha256": "b69c1c5e20c0c8c60616121eadda6047586f15f518d8f1fffa5757f6bc253a2f",
       "ts": "2025-11-17T17:55:46.287Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmdFxcQEDjoZaXJH5hRcg9BCqpQd9Jw3uHULLTBY68g1S9",
@@ -36,11 +133,10 @@
       "file": "scak-korhogo-1000-zone-B-Prod-3.json",
       "sha256": "a6c9aa73212a2da0b59edceef4563d26bdb22c7b3cf013816cc0c1b6a7188896",
       "ts": "2025-11-17T17:55:29.551Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmSa9snDnWBpS8mBMCudTiDsWTnuAR7fGLPqsHywVGhM12",
@@ -48,11 +144,10 @@
       "file": "scak-korhogo-1000-zone-B-Prod-2.json",
       "sha256": "cf865072c5e9e8ede83b0c0be57322efa75db52fa4f4b5188b15face3e7a7baf",
       "ts": "2025-11-17T17:55:17.754Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmQ5DAbc8eyivyrMZzrbN8bjdfsQ6KUmtiMiSkAPdn9XG2",
@@ -60,11 +155,10 @@
       "file": "scak-korhogo-1000-zone-B-Prod-1.json",
       "sha256": "ec1922f27b768701410feef62bd505a4035069884ce409057a6125e78541119c",
       "ts": "2025-11-17T17:55:04.173Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmR2F6fXYkUzNKmsLYTmwrsS2PeG4Zs7fC7s8a1ASMGnFc",
@@ -72,11 +166,10 @@
       "file": "scak-korhogo-1000-zone-A-Prod-4.json",
       "sha256": "c5e5a34109fc0767225d27af8a17b7d4541e2048f4cb0576cc9bde9a1a0880d4",
       "ts": "2025-11-17T17:54:52.993Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmYCQQuDStahVr3Nk5jMwCTT3PMCQ7e4mHhfn2pY9nuzM6",
@@ -84,11 +177,10 @@
       "file": "scak-korhogo-1000-zone-A-Prod-3-Ouest.json",
       "sha256": "f6d4c730d7028ff9984cabf1a108ce30d2b92d0a48f885e24237c56f31169aa7",
       "ts": "2025-11-17T17:54:41.179Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmcsWgbbsnA4kuyV7vKUBKBcGyAVwwso8PYj76WZDn8as3",
@@ -96,11 +188,10 @@
       "file": "scak-korhogo-1000-zone-A-Prod-3-Est.json",
       "sha256": "8072ea93de1bfa74cd71d07b8c8e4c3dc6b3706c4cbcd4894470bf5d73be6fc3",
       "ts": "2025-11-17T17:54:24.921Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmQH8b4KuGjxpr6BB3b5pyPEs22Gk6wTgfVUHMa3bZx2Cy",
@@ -108,11 +199,10 @@
       "file": "scak-korhogo-1000-zone-A-Prod-2.json",
       "sha256": "28e03c27968e7ab64db9cb81c000fae5961d2c0cb985b762b7389efbfe9814f8",
       "ts": "2025-11-17T17:54:13.995Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmYSXCUnDQCPXGXcEXAN8cfavFbcbazq9XrrweFBPZ2WFb",
@@ -120,11 +210,10 @@
       "file": "scak-korhogo-1000-zone-A-Prod-1.json",
       "sha256": "9aa0d6bd09ff6ed4b8b6d93b8b9a06a7d196dbd8d2e2919b7d31ff1b830f68d6",
       "ts": "2025-11-17T17:54:02.841Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmUvy9VEqkXXhazVu9qbi51H6xgLgvjXKZ1crzYjWG3rTB",
@@ -132,11 +221,10 @@
       "file": "scak-korhogo-1000-3.json",
       "sha256": "847fd2a0d87ed7cabc03b9e1bf02574f895f2bff7cb3be0111afefb719c21ae8",
       "ts": "2025-11-17T17:17:05.729Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "Qmbfn55Gwz8PYWzryciKM6ZMtADab1apkfpUmJdJQSCrFP",
@@ -144,11 +232,10 @@
       "file": "scak-korhogo-1000-2.json",
       "sha256": "166e87e738a1565d0a70444b4d37915dcd65e417cff3c2eb2eea7b84ccb77cad",
       "ts": "2025-11-17T17:16:49.428Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmRDs88DTLhjV5oN5pam6VNoZSzwMo4i5o84oqnx4aFwoQ",
@@ -156,11 +243,10 @@
       "file": "scak-korhogo-1000-1.json",
       "sha256": "1803ae9ddabdafd66dc8e8bc0b28b55c415c8155b21d5f4a4a456b753b0a2e39",
       "ts": "2025-11-17T17:16:33.047Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-scak-coop",
-      "points": 7000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmTszzM4R9XovboQJ92iwE4ymsLVTeuY1wsNDAVwkZW6Vf",
@@ -168,11 +254,10 @@
       "file": "makm2-palmafrique-1000-3.json",
       "sha256": "390433969f873f8c174798a5b7651d5a37cc2288f367903867d95d955ab5d3e0",
       "ts": "2025-11-17T09:58:12.818Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-makm2",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmTTeGzQ3BfqhUykSrbkLs9L4NWmDXQDP7AKiDk2EJ159g",
@@ -180,11 +265,10 @@
       "file": "makm2-palmafrique-1000-2.json",
       "sha256": "a391287e571f4da80a590ec5c344cd0355772179b89f13f8c8ea2e857ae48e79",
       "ts": "2025-11-17T09:57:56.672Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-makm2",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmSmNWwxRcFhhFwSUVJTRWUBRx5zCTz9btHHerNLh774vm",
@@ -192,11 +276,10 @@
       "file": "makm2-palmafrique-1000-1.json",
       "sha256": "e148c2b5e28086aea345bec3e836cc8cd577e80f9bba541684683dc4cd02201d",
       "ts": "2025-11-17T09:54:22.461Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-makm2",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmU8UueaEuj3RCredyCXuHwaiELQUi2FELrckdN3amucLf",
@@ -204,11 +287,10 @@
       "file": "techlab-bingerville-1000-3.json",
       "sha256": "77dc536a70acd00cf8dfe1252434043c46327a0a3a536ce2290c1a7196db1efc",
       "ts": "2025-11-16T20:18:45.339Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-techlab-cme",
-      "points": 4000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPoKo6nqjQ3TH3gkVYFrkzZTQ51HmVhP88FAZ5Bnenm9h",
@@ -216,11 +298,10 @@
       "file": "techlab-bingerville-1000-1.json",
       "sha256": "9343270e4273398996925b9cb17818eef2503dfcb1e2360e1988b7e651ee53c9",
       "ts": "2025-11-16T19:59:10.241Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-techlab-cme",
-      "points": 4000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPoKo6nqjQ3TH3gkVYFrkzZTQ51HmVhP88FAZ5Bnenm9h",
@@ -228,11 +309,10 @@
       "file": "techlab-bingerville-1000-1.json",
       "sha256": "9343270e4273398996925b9cb17818eef2503dfcb1e2360e1988b7e651ee53c9",
       "ts": "2025-11-16T19:56:06.983Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "external",
-      "team": "team-techlab-cme",
-      "points": 4000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmbCvqxh9dENHn5jdeLJhtRnCsw2DWT7QLaZXMQYxkZsGi",
@@ -240,11 +320,10 @@
       "file": "sensor-batch-1500-6.json",
       "sha256": "f9a2650041bc09c495d2b9af1b6a6bc72178bbbbc179f9c5ee3e162431cc30ac",
       "ts": "2025-11-14T13:10:55.282Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmczBzSHvQ5se8Wrg8WzASpcKJRVeLNiq1BoYaiUPQysJt",
@@ -252,11 +331,10 @@
       "file": "sensor-batch-1500-5.json",
       "sha256": "4686e8b927e1c2cac8c1811ec4552565bd36323d4617d20365b9d84e9d107419",
       "ts": "2025-11-14T13:09:26.669Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmRKCiRrkumbAToG1LUBNyohQ95crSujPzoDFmTtE7gHy2",
@@ -264,11 +342,10 @@
       "file": "sensor-batch-1500-4.json",
       "sha256": "9d0f47511bfb14f0477813af2aa4577435e76826b0ce2f4b72d10aa1c5596909",
       "ts": "2025-11-14T13:08:06.647Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmUq3N2maXChe4gsmnK2vnNu8PveJEoS4sTyXeUDXjM9jY",
@@ -276,11 +353,10 @@
       "file": "sensor-batch-1500-3.json",
       "sha256": "f1d1768dd44393b4cb21cbb70eeefd0d788ad61a746778e532dceab66969a27b",
       "ts": "2025-11-14T12:55:37.251Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmbS2z5iY9WfrbT5p1y1bCS7ZEY2wpyZkVUbk5q8yHs2oR",
@@ -288,11 +364,10 @@
       "file": "sensor-batch-1500-2.json",
       "sha256": "5f26be4b7a3d65b89768867bd50dc67daa6adda8d90de2c2fc3f73f7c22064a1",
       "ts": "2025-11-14T12:52:40.015Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmSQQ5bjJUoz1jL2hTSWcVxuuk3Kp4o1qU3n1GQaUVSjos",
@@ -300,11 +375,10 @@
       "file": "sensor-batch-1500-1.json",
       "sha256": "466a02c3241643b344806a98f6d2906cdc26062f684bfe24ea9513ac3bba2470",
       "ts": "2025-11-14T12:47:14.617Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 6000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmSCkQ1wbR85hpXFb7qHRtgWfEW4HgcVTenWRWZtnTdkZt",
@@ -312,11 +386,10 @@
       "file": "sensor-batch-1000.json",
       "sha256": "eeea19ea7635c4fb3a8e292cbf9f02ce59e5dd7d7a93bf82c4f639e8fdffd9d0",
       "ts": "2025-11-14T12:27:00.077Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 4000
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmTzjpT8ryqdLwuA43Nuok3hQuj3qsiyHnoZnXAVPquDvH",
@@ -324,11 +397,10 @@
       "file": "sensor-batch-60.json",
       "sha256": "8fa7e437b20c13bacc283c4eb5f76a8303fc3bf85c86751b11c32313a9e2aef2",
       "ts": "2025-11-14T12:16:27.997Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "simulated",
-      "team": "Wakama_team",
-      "points": 240
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmQi2gvtDDATogyS6hB1gzRdyaTsfEyA3oJdPT7ySc7Mg3",
@@ -336,11 +408,10 @@
       "file": "coop-delivery-etra-bouake.json",
       "sha256": "2b302fd529d68002f3ff6233e074876044c43e1aebcdac3ab5fbb91eeeaf8483",
       "ts": "2025-10-30T19:28:07.413Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "coop-simulated",
-      "team": "Wakama_team",
-      "points": 1
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmNUsgk543ckLNQtizQot6Nj3Y5mWqmJLkQrdVWpEUZ2sN",
@@ -348,11 +419,10 @@
       "file": "sensor_batch-etra-bouake.json",
       "sha256": "990f8c346c5b5d879faf866c9e0b10e13c3de85439d3b47f36e32ecdeecef95c",
       "ts": "2025-10-30T19:27:41.185Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "field-simulated",
-      "team": "Wakama_team",
-      "points": 30
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -363,8 +433,7 @@
       "status": "n/a",
       "slot": null,
       "source": "coop-simulated",
-      "team": "Wakama_team",
-      "points": 1
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -375,8 +444,7 @@
       "status": "n/a",
       "slot": null,
       "source": "field-simulated",
-      "team": "Wakama_team",
-      "points": 30
+      "team": "Wakama_team"
     },
     {
       "cid": "QmQi2gvtDDATogyS6hB1gzRdyaTsfEyA3oJdPT7ySc7Mg3",
@@ -384,11 +452,10 @@
       "file": "coop-delivery-etra-bouake.json",
       "sha256": "2b302fd529d68002f3ff6233e074876044c43e1aebcdac3ab5fbb91eeeaf8483",
       "ts": "2025-10-30T19:09:12.242Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "coop-simulated",
-      "team": "Wakama_team",
-      "points": 1
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmNUsgk543ckLNQtizQot6Nj3Y5mWqmJLkQrdVWpEUZ2sN",
@@ -396,11 +463,10 @@
       "file": "sensor_batch-etra-bouake.json",
       "sha256": "990f8c346c5b5d879faf866c9e0b10e13c3de85439d3b47f36e32ecdeecef95c",
       "ts": "2025-10-30T19:02:29.650Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
-      "source": "field-simulated",
-      "team": "Wakama_team",
-      "points": 30
+      "source": "ingest",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmS1s2oLFWuFisL6PGHBvCcW92njEohefNBfBgf52pnnne",
@@ -408,11 +474,10 @@
       "file": "wakama-batch-2025-10-30T18-31-32-879Z.json",
       "sha256": "352b59d1abd575a95f2f3e4739a4f633e0a80122374bcc9f39120a4279a635c7",
       "ts": "2025-10-30T18:31:41.808Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -423,8 +488,7 @@
       "status": "n/a",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 1
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -435,8 +499,7 @@
       "status": "n/a",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 30
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -447,8 +510,7 @@
       "status": "n/a",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -459,8 +521,7 @@
       "status": "n/a",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -471,8 +532,7 @@
       "status": "n/a",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -480,11 +540,10 @@
       "file": "2025-10-28T12-09-01_752b9958-cd50-4ddd-90a7-e53870e18fda.json",
       "sha256": "0431c3064b058418b0598ad32d3f41921f2273d6f8c60617221c3ed5319d161d",
       "ts": "2025-10-30T11:21:08.111Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
       "source": "ingest",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmPLACEHOLDER",
@@ -495,8 +554,7 @@
       "status": "n/a",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXJ96ELnmvueG7SvkizR8ymfAf8zg6aCZm9AXkrJUkgG8",
@@ -504,11 +562,10 @@
       "file": "wakama-batch-2025-10-29T22-27-20-617Z.json",
       "sha256": "bc0bc2e170d40f83ef775f7fd4281d80778538cc516e802a1359dbf7941d6baf",
       "ts": "2025-10-29T22:27:28.270Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmS9KVJs42KvM5AiPS52tr81dVcp4QvbFFZiDCXXnh66vK",
@@ -516,11 +573,10 @@
       "file": "wakama-batch-2025-10-29T22-22-45-035Z.json",
       "sha256": "df742451d26a1b82f0e5d86a8c5cbe99fc14edc7a872fec800e6be02be2e4af4",
       "ts": "2025-10-29T22:23:13.975Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXQJVvFbn96HzUopyJZ29knigL167Wo21y9QPesXFwzUa",
@@ -528,11 +584,10 @@
       "file": "wakama-batch-2025-10-29T21-41-11-099Z.json",
       "sha256": "35423c98eaf895a39cb882faa60db62d0e4965228a99c84c0dd964e85e844b3f",
       "ts": "2025-10-29T21:41:55.912Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmZwKkB3gqhqARTt9D532x1Kf2S6vuwqShCTesNBPGYXDk",
@@ -540,11 +595,10 @@
       "file": "wakama-batch-2025-10-29T21-39-33-782Z.json",
       "sha256": "9e7cad9200aef9e771178b62b6552817994cded9ad0769fcf296eb96e39b0ee1",
       "ts": "2025-10-29T21:40:04.554Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmQtuXECVHQBXQDopENQCSXwZiBP6jbrG1hc2MQSW8KPDn",
@@ -552,11 +606,10 @@
       "file": "wakama-batch-2025-10-29T21-29-45-917Z.json",
       "sha256": "5aa273229a5634070edacbf37fa863be8cc17d1bbf943e8dd7fdeaf729c5632e",
       "ts": "2025-10-29T21:30:35.348Z",
-      "status": "unknown",
+      "status": "submitted",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmcC75wgFJXDKSFEtVc98LLrjSW55SDw3rgs8Tb3z8Viwx",
@@ -567,8 +620,7 @@
       "status": "submitted",
       "slot": null,
       "source": "simulated",
-      "team": "Wakama_team",
-      "points": 0
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -578,9 +630,8 @@
       "ts": "2025-10-29T18-13-21Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -590,9 +641,8 @@
       "ts": "2025-10-29T18-13-05Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -602,9 +652,8 @@
       "ts": "2025-10-29T18-12-50Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -614,9 +663,8 @@
       "ts": "2025-10-29T18-12-26Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -626,9 +674,8 @@
       "ts": "2025-10-29T18-12-07Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -638,9 +685,8 @@
       "ts": "2025-10-29T18-11-54Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -650,9 +696,8 @@
       "ts": "2025-10-29T18-11-37Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -662,9 +707,8 @@
       "ts": "2025-10-29T18-11-26Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -674,9 +718,8 @@
       "ts": "2025-10-29T18-11-14Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -686,9 +729,8 @@
       "ts": "2025-10-29T18-10-57Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -698,9 +740,8 @@
       "ts": "2025-10-29T17-10-45Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     },
     {
       "cid": "QmXsJE79H9FUn3Yvj97W5HTK4TRPa24MSkYvLKWZ4qMcJd",
@@ -710,29 +751,8 @@
       "ts": "2025-10-29T17-06-02Z",
       "status": "submitted",
       "slot": null,
-      "source": "unknown_source",
-      "team": "Wakama_team",
-      "points": 0
+      "source": "",
+      "team": "Wakama_team"
     }
-  ],
-  "pointsSummary": {
-    "totalPoints": 154414,
-    "externalPoints": 114000,
-    "externalPct": 73.82750268758014,
-    "byTeam": {
-      "Wakama_team": 40364,
-      "team-techlab-cme": 12000,
-      "team-makm2": 18000,
-      "team-scak-coop": 84000,
-      "unknown": 50
-    },
-    "bySource": {
-      "simulated": 40271,
-      "ingest": 50,
-      "field-simulated": 90,
-      "coop-simulated": 3,
-      "external": 114000,
-      "unknown_source": 0
-    }
-  }
+  ]
 }
