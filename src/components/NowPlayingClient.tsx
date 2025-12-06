@@ -45,6 +45,7 @@ const formatNumber = (n: number) => n.toLocaleString('en-US');
 
 /**
  * Catalog + meta teams (M2)
+ * Canonical interne: Wakama_team
  */
 type TeamType = 'core' | 'coop' | 'university' | 'partner' | 'internal' | 'other';
 
@@ -56,14 +57,20 @@ type TeamCatalogItem = {
   external: boolean;
 };
 
+/**
+ * ✅ Aliases legacy -> canonical (verrouillage UI)
+ * On retire "Wakama Core" du catalogue et on le mappe vers Wakama_team.
+ */
+const TEAM_ALIASES: Record<string, string> = {
+  'Wakama Core': 'Wakama_team',
+  team_wakama: 'Wakama_team',
+};
+
+/**
+ * ✅ Catalogue canonique
+ * (pas de Wakama Core ici)
+ */
 const TEAM_CATALOG: TeamCatalogItem[] = [
-  {
-    id: 'Wakama Core',
-    name: 'Wakama Core',
-    type: 'core',
-    url: 'https://github.com/Wakama-Edge-Ventures',
-    external: false,
-  },
   {
     id: 'Wakama_team',
     name: 'Wakama Team',
@@ -117,22 +124,38 @@ const TEAM_META_BY_KEY: Map<string, TeamCatalogItem> = (() => {
   return m;
 })();
 
-function getTeamMeta(teamKey: string) {
-  const key = (teamKey || '').trim();
-  if (!key) return { label: '—', url: '', type: 'other' as TeamType, external: false };
+function normalizeTeamKey(teamKey?: string) {
+  const raw = (teamKey || '').trim();
+  if (!raw) return '';
+  return TEAM_ALIASES[raw] || raw;
+}
 
-  const t = TEAM_META_BY_KEY.get(key);
+function getTeamMeta(teamKey: string) {
+  const raw = (teamKey || '').trim();
+  if (!raw) return { label: '—', url: '', type: 'other' as TeamType, external: false };
+
+  const normalized = normalizeTeamKey(raw);
+
+  const t = TEAM_META_BY_KEY.get(normalized) || TEAM_META_BY_KEY.get(raw);
+
   if (t) {
     return {
       label: t.name || t.id,
       url: t.url || '',
       type: (t.type || 'other') as TeamType,
       external: !!t.external,
+      canonicalId: t.id,
     };
   }
 
   // fallback: si une team apparait sans seed
-  return { label: key, url: '', type: 'other' as TeamType, external: true };
+  return {
+    label: raw,
+    url: '',
+    type: 'other' as TeamType,
+    external: true,
+    canonicalId: normalized || raw,
+  };
 }
 
 function TeamTypeBadge({ type }: { type: TeamType | string }) {
@@ -283,14 +306,25 @@ export default function NowPlayingClient({
     bySource: {},
   };
 
-  const teamEntries = useMemo(
-    () => Object.entries(ps.byTeam || {}).sort((a, b) => b[1] - a[1]),
-    [ps.byTeam],
-  );
+  /**
+   * ✅ Verrouillage UI:
+   * - normalise + merge les teams côté affichage pour éviter doublons
+   */
+  const teamEntries = useMemo(() => {
+    const acc = new Map<string, number>();
+
+    for (const [rawKey, pts] of Object.entries(ps.byTeam || {})) {
+      const canonical = normalizeTeamKey(rawKey) || rawKey;
+      acc.set(canonical, (acc.get(canonical) || 0) + (pts || 0));
+    }
+
+    return Array.from(acc.entries()).sort((a, b) => b[1] - a[1]);
+  }, [ps.byTeam]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return data.items;
+
     return data.items.filter((it) => {
       return (
         it.cid?.toLowerCase().includes(q) ||
@@ -311,6 +345,11 @@ export default function NowPlayingClient({
   const metaCME = getTeamMeta('team-techlab-cme');
   const metaMAKM2 = getTeamMeta('team-makm2');
   const metaSCAK = getTeamMeta('team-scak-coop');
+
+  function applyTeamFilter(label: string) {
+    setQuery(label);
+    setPage(1);
+  }
 
   return (
     <>
@@ -426,6 +465,7 @@ export default function NowPlayingClient({
               {teamEntries.length} teams
             </div>
           </div>
+
           <div className="space-y-1.5 text-[12px]">
             {teamEntries.length === 0 ? (
               <div className="text-white/40">No team data yet.</div>
@@ -438,10 +478,7 @@ export default function NowPlayingClient({
                     : '0.0';
 
                 return (
-                  <div
-                    key={teamKey}
-                    className="flex items-center justify-between"
-                  >
+                  <div key={teamKey} className="flex items-center justify-between">
                     <span className="text-white/70 truncate pr-2 flex items-center gap-1">
                       {url ? (
                         <a
@@ -456,6 +493,14 @@ export default function NowPlayingClient({
                         <span>{label}</span>
                       )}
                       <TeamTypeBadge type={type} />
+                      <button
+                        type="button"
+                        onClick={() => applyTeamFilter(label)}
+                        className="ml-1 text-[10px] text-white/40 hover:text-[#14F195] underline decoration-dotted underline-offset-2"
+                        title="Filter table by this team"
+                      >
+                        View team activity
+                      </button>
                     </span>
 
                     <span className="text-white/80 font-mono text-[11px]">
@@ -714,6 +759,7 @@ export default function NowPlayingClient({
                             <span>{teamMeta.label}</span>
                           )}
                           {teamMeta.url && <GithubIcon />}
+                          <TeamTypeBadge type={teamMeta.type} />
                         </span>
                       ) : (
                         <span className="text-white/40">—</span>

@@ -19,8 +19,7 @@ const db = admin.firestore();
 
 const TEAMS = [
   // Core/internal
-  { id: "Wakama Core", name: "Wakama Core", type: "core", external: false },
-  { id: "Wakama_team", name: "Wakama Team", type: "core", external: false },
+    { id: "Wakama_team", name: "Wakama Team", type: "core", external: false },
 
   // M1 externals existants (si tu veux les normaliser)
   { id: "team-scak-coop", name: "SCAK Cooperative", type: "coop", external: true },

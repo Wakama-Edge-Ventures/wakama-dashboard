@@ -160,8 +160,14 @@ async function loadTeamsMap() {
     if (t?.id) teamNameById.set(t.id, t.name || t.id);
   }
 
+// ✅ Aliases legacy -> canonical
+teamNameById.set('Wakama Core', 'Wakama Team');
+teamNameById.set('team_wakama', 'Wakama Team');
+
   return teamNameById;
 }
+
+
 
 async function readLatestBatchesFromCollection(
   collectionName: string,
@@ -266,10 +272,11 @@ function safePoints(n: unknown) {
 // Adjust this list freely if your team labels evolve.
 // We reference human-facing labels seen in the merged items.
 const INTERNAL_TEAM_LABELS = new Set<string>([
-  "Wakama Core",
-  "Wakama_team",
-  "Wakama team",
+  'Wakama_team',  // ID Firestore canonical
+  'Wakama Team',  // label après normalisation legacy
+  'Wakama team',  // sécurité si une ancienne UI renvoie ça
 ]);
+
 
 function computePointsSummary(items: NowItem[]): PointsSummary {
   const byTeam: Record<string, number> = {};
