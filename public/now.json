@@ -1,11 +1,187 @@
 {
   "totals": {
-    "files": 68,
-    "cids": 42,
-    "onchainTx": 60,
-    "lastTs": "2025-12-06T19:32:53.165Z"
+    "files": 84,
+    "cids": 54,
+    "onchainTx": 76,
+    "lastTs": "2025-12-07T16:06:22.425Z"
   },
   "items": [
+    {
+      "cid": "QmVq8P1TzgKipDVjm7nZbHRLsuXaS28wa5ML9eW6oJsrNm",
+      "tx": "4wfUrH9iRkQ49Q37nUyaspA4UdUqdE4FhJEJ6qxXVHRzZkbDeqExY5wAxKGvP7WkM3oEYdJSg2rg3Xbuhr6wbmbE",
+      "file": "2025-12-07T16-03-29-710Z_b500bac2-9c5f-4439-9f92-d9bd48a5f277.json",
+      "sha256": "02dac7833ad04a6d6cb1e5c405c0b252f53a3b7d7915f17aae3dcfea422f29be",
+      "ts": "2025-12-07T16:06:22.425Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "Qmd2coF7jmYQVFFuzaDxiQWMTm4vaJUdb8QBXH3nkxRzmk",
+      "tx": "2oKhVNiceQ2p7r6acv6wUX1G3YS8JefAfwxZ7YVy8MAjuU3avwmj2W6VH6RmxNF6SfFMdvGr2zZiyjZbbhY7sxMq",
+      "file": "2025-12-07T16-02-58-982Z_a128d1bb-57fe-4655-a3a9-eb824be56d0a.json",
+      "sha256": "a0543e2c672103f39fdf20e5f0d0b05d2a78fdbbfd0cdf84e1fd9e9b91f6c566",
+      "ts": "2025-12-07T16:05:02.619Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmbMSuDus9VjLai9wagJAfXZbA7rErQ1Ht7YWgunQVsPeQ",
+      "tx": "29Zwrfitv26dSzMemwKHXFRGHgBvwKAXdzeArKpMT3ip9yiJVUCSNpZTh2EhCUnNWUskEiPaNWXC7Wo3nycBaadT",
+      "file": "2025-12-07T12-00-15-574Z_d5893362-6c8b-4f32-a76b-33ec89e23686.json",
+      "sha256": "2ebce2b5fef03632bc2783586ad92ed9631b781bce5ecc70ba96794e7c9f9082",
+      "ts": "2025-12-07T12:02:28.633Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "Qmf7BpHEkJS8tXCuw8qSX2EaQWVcTBkt7pGyhaPSCdnngQ",
+      "tx": "5jGyrpkejsdhVNJ2baaFSpsHjPDvUg9dRz395MRezYH3tXXncu4P9YvGYoXsqAh7VZaLPpjUzxgNFjFHtsbedeH1",
+      "file": "2025-12-07T11-59-55-519Z_004dc34c-c727-4c3e-bd01-47edfd6ad821.json",
+      "sha256": "0981bad44a27836d786afb83ce91c8ef1481da1d02471ca0398556b1c494879b",
+      "ts": "2025-12-07T12:01:47.665Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmfA8Seppj5g6zM48tPryrGqsKPDniocHMyqinCBN8oKTp",
+      "tx": "32qmcuB1xgSkJTZnHDdY2Ya9gAMs6ZWq87j6FG2MpvzGqca95EjP9QPSXruqBL2STTjUNmUfLn65HtjaTkj1Qsns",
+      "file": "2025-12-07T11-37-08-037Z_fec8b417-180d-46c5-b1c8-4d673f3a47d9.json",
+      "sha256": "a2a47d75a598bf0c10cbcc077f2f76f68d8a4a7784f6d7e2ef11bcc8760de4af",
+      "ts": "2025-12-07T11:39:29.727Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "QmUDzv8UsYUwXVqfLcZh3s77rMEXP3JriJLiWiaVtEdHzb",
+      "tx": "2tgfVYRgw8aAtnez8xCs61MNEfXqhMxUc9v3gGPhq2a3LatSCyaPrVFJ3CYJj7MViVP8CNvHLAMpEzGDkQGQaTPd",
+      "file": "2025-12-07T11-36-27-535Z_2072aecd-50e9-400e-b5ba-b5e7b1bf8272.json",
+      "sha256": "8253e3b087c23cc4ff5af87c7e7ddc5b08c126b49b178cff937cf0499f772aec",
+      "ts": "2025-12-07T11:38:57.479Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmWjZULuKw9xJ8Gg32BS97cbMNsD3Q7grbuSZQSKS36W5G",
+      "tx": "5AgfCzdeomf1rDbEfrpztDT1gFTc61fgT2nfgaJsZbyJTExKotbefFhhVdX3LryafsKSpDTELLbbVWqrdYBY3aU5",
+      "file": "2025-12-07T11-08-30-689Z_bf9689f4-87e6-4f2e-8f1c-330980bf7091.json",
+      "sha256": "5761c9259254c2efa7203402229286ed7b291882b77426b3ae993aa0468a14ff",
+      "ts": "2025-12-07T11:11:11.567Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "QmV8a9XeA3j3kpMCuvxVyQvTzshnQNesxxwyepnookQ8QD",
+      "tx": "4hZUea4HsKb1eYznsWzW2hckxoNMLrjDN5yRJgRR4UaRUczXP41t921BJK8HE8QEgbGGFkY6zjYkJ1rcExiJTvRd",
+      "file": "2025-12-07T11-08-18-581Z_3a5bbd73-ba1e-4778-8e3d-f46a6132f23e.json",
+      "sha256": "1cd1319229cebff3e7068038c19b3e3223479954ddf52da013529ff03fae46ce",
+      "ts": "2025-12-07T11:10:38.662Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmY4YRKBgHmhdKXWHEib2HR83daAQ8X5VBJ8Qcx27dg9zN",
+      "tx": "3D4pMg8kMoNNk4Y5RYHDXrqJjmem5XTt45dgF5DCRsG9wPp1KXLtV2M8YbpQAcqgbPefQVtQYxUGAiEZdgijHpub",
+      "file": "2025-12-07T10-42-29-875Z_d57fec60-d0fb-4222-a1ce-ce0fb2984ab5.json",
+      "sha256": "60e6090a35972f3b0dcd799a8e7d0b17129da1bda434e119b9db71abe98f7c0a",
+      "ts": "2025-12-07T10:51:36.184Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "QmVbVnjNTcDCf4ai7Yv7HyC37ofd6Javk5QvNr5Bwr5jcC",
+      "tx": "5LCYQ3w3kdaTDXd4EtzLh2pv6fGmL79nbwecBAmJB4mjrYE3AdTVU1dRUdjPENcKHMm5EeNCafyxUbwqJ5vCjiwe",
+      "file": "2025-12-07T10-42-25-066Z_576cf882-15e8-4629-b788-ee6b48409782.json",
+      "sha256": "e32605d534b1126049c196382e14d51297bdbc71e5f7157e715e13bafae33ad4",
+      "ts": "2025-12-07T10:51:10.556Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmVbVnjNTcDCf4ai7Yv7HyC37ofd6Javk5QvNr5Bwr5jcC",
+      "tx": "2ZKWBMSf9ZXgUyKrmUdia8kesxD7ErR985w2bCnAoT5YtduQRk5riBd2Wizz9GiR1pJw9svUUqwuSuuUH8S4dnRT",
+      "file": "2025-12-07T10-42-25-066Z_576cf882-15e8-4629-b788-ee6b48409782.json",
+      "sha256": "e32605d534b1126049c196382e14d51297bdbc71e5f7157e715e13bafae33ad4",
+      "ts": "2025-12-07T10:45:19.074Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmY4YRKBgHmhdKXWHEib2HR83daAQ8X5VBJ8Qcx27dg9zN",
+      "tx": "8PiUT12VAqTBPTZEWTgJdNNJ3F2u4jisyATQS4P88WifNbyoYhrJ6Yvw1ZvoTwv9KT1AYnCrdAm7tFrEXUH4E98",
+      "file": "2025-12-07T10-42-29-875Z_d57fec60-d0fb-4222-a1ce-ce0fb2984ab5.json",
+      "sha256": "60e6090a35972f3b0dcd799a8e7d0b17129da1bda434e119b9db71abe98f7c0a",
+      "ts": "2025-12-07T10:44:47.275Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "QmXpVzmU7pt8SktALFNZAvbKd9bhFXbAiYUkz1sDxVfvGJ",
+      "tx": "4r4P81FtBeEJWN121xAgoSFPh5BjcVvcaN7D8iwdXZ3XHXZtRketuxKDzVbGV5kpeCFuPtaN7Mf2M651rZxrEtuX",
+      "file": "2025-12-06T20-12-58-516Z_437469df-7b89-4298-9623-5607031b1a42.json",
+      "sha256": "a95766e4c95f9eda4360e1ebf2063ee1b49cf2356affb1dddfb210cbd3afc170",
+      "ts": "2025-12-07T10:33:22.920Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmPYn7ghTREwV5FXsy7vkCnKU3AKLBMTpKM3gM25F1betW",
+      "tx": "4zkATsySvAJzXAhkXS4gsfm12JozZN2Bs5peKTGhe3ccte424YL2bbtUVvhEeSmTP7RWUwJo4nneTCrVvQQr2FFD",
+      "file": "2025-12-06T20-14-06-361Z_c0d39ffa-dbc7-45fa-a0f2-237e5e5d9186.json",
+      "sha256": "44af98515bc4c5f5a195f257c1d7571e7ae706d483fb41453b9067919074db5a",
+      "ts": "2025-12-06T20:15:18.040Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "capn_san_pedro"
+    },
+    {
+      "cid": "QmRsd1gQxR6EZwnvcBG7qhaKkQ5w345MfSyjtCPXwJMZKi",
+      "tx": "3dGXfVXVq52bc5CQXdDYPcqioZB4cLks6FZkeWNYcEvab9oiUpFJu45TXJxfKQVVbdScPw2ovvkvpsMyVrFbyP5a",
+      "file": "2025-12-06T19-31-31-173Z_7642694b-d652-4524-ab57-7c24c2ad34bb.json",
+      "sha256": "05783663fec01fe8a37f64f7f40a882cfdbdfa1f5279c336bea702bcc5b69d55",
+      "ts": "2025-12-06T20:14:00.746Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
+    {
+      "cid": "QmRsd1gQxR6EZwnvcBG7qhaKkQ5w345MfSyjtCPXwJMZKi",
+      "tx": "4txDzFpKGSqa84xZ7dnj1wWt3QRVPHLQtsLMYfTsw5bRyXEQJvkzmzYridfnGyo5sjGX4yD8VLGPWjxsKdDhbtVm",
+      "file": "2025-12-06T19-31-31-173Z_7642694b-d652-4524-ab57-7c24c2ad34bb.json",
+      "sha256": "05783663fec01fe8a37f64f7f40a882cfdbdfa1f5279c336bea702bcc5b69d55",
+      "ts": "2025-12-06T20:08:13.412Z",
+      "status": "submitted",
+      "slot": null,
+      "source": "simulated",
+      "team": "gede_university"
+    },
     {
       "cid": "QmRsd1gQxR6EZwnvcBG7qhaKkQ5w345MfSyjtCPXwJMZKi",
       "tx": "412n9mNqDHa61F55rHL7zGgnioEkf3w2UsgF85GuUFr26mDuRmDfTFnKn8JafmcHNdbKnnwZiRd4YrQWmf7X3Fjb",
