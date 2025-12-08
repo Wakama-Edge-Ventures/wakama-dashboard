@@ -81,26 +81,6 @@ const EMPTY: Now = {
   },
 };
 
-
-async function loadPublicSnapshot(): Promise<Now | null> {
-  try {
-    const filePath = path.join(process.cwd(), "public", "now.json");
-    const raw = await fs.readFile(filePath, "utf-8");
-    const parsed = JSON.parse(raw) as Now;
-
-    if (!parsed || !Array.isArray(parsed.items)) return null;
-
-    return {
-      totals: parsed.totals ?? EMPTY.totals,
-      items: parsed.items ?? [],
-      pointsSummary: parsed.pointsSummary,
-    };
-  } catch {
-    return null;
-  }
-}
-
-
 // -------- Legacy (Milestone 1) --------
 
 async function loadLegacyNow(): Promise<Now> {
@@ -292,11 +272,9 @@ function safePoints(n: unknown) {
 // Adjust this list freely if your team labels evolve.
 // We reference human-facing labels seen in the merged items.
 const INTERNAL_TEAM_LABELS = new Set<string>([
-  "Wakama_team",
-  "Wakama Team",
-  "Wakama team",
-  "Wakama Core",
-  "team_wakama",
+  'Wakama_team',  // ID Firestore canonical
+  'Wakama Team',  // label après normalisation legacy
+  'Wakama team',  // sécurité si une ancienne UI renvoie ça
 ]);
 
 
@@ -340,22 +318,6 @@ function computePointsSummary(items: NowItem[]): PointsSummary {
 
 export async function GET() {
   try {
-// ✅ 1) Source de vérité: snapshot public généré par le publisher
-    const snap = await loadPublicSnapshot();
-    if (snap && snap.items.length > 0) {
-      const items = snap.items ?? [];
-      const pointsSummary = snap.pointsSummary ?? computePointsSummary(items);
-
-      return NextResponse.json(
-        {
-          totals: snap.totals ?? EMPTY.totals,
-          items,
-          pointsSummary,
-        },
-        { headers: { "Cache-Control": "no-store, max-age=0" } },
-      );
-    }
-
     // ✅ Charge la map teams une seule fois
     const teamNameById = await loadTeamsMap();
 
