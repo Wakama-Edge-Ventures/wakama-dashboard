@@ -1,0 +1,24 @@
+{
+  "m2_points_summary": {
+    "cutoff_m1": "2025-12-06T10:33:38.414Z",
+    "m2_points": 205640,
+    "m2_txs": 21
+  },
+  "m2_points_by_team": [
+    {
+      "team": "capn_san_pedro",
+      "points": 102020,
+      "txs": 8
+    },
+    {
+      "team": "gede_university",
+      "points": 103520,
+      "txs": 11
+    },
+    {
+      "team": "unknown",
+      "points": 100,
+      "txs": 2
+    }
+  ]
+}

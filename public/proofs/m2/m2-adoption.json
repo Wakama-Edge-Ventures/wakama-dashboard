@@ -1,0 +1,63 @@
+{
+  "m2_adoption_summary": {
+    "rule": "For M2 adoption, evidence can be either (a) >=7 active days + >=20k points per team OR (b) a live RWA minted on testnet.",
+    "selected_path_for_fast_delivery": "points + tx links now; RWA mint proof can be added as soon as a mint tx exists"
+  },
+  "m2_adoption": [
+    {
+      "team": "capn_san_pedro",
+      "team_id": "capn_san_pedro",
+      "wallet": "Chyuh2bDCYVSUrwNJxC8BFcjCo1D15Sskxi5DrUaxyUb",
+      "points": 102020,
+      "active_days": 2,
+      "days": [
+        "2025-12-06",
+        "2025-12-07"
+      ],
+      "txs": 10,
+      "tx_list": [
+        "29Zwrfitv26dSzMemwKHXFRGHgBvwKAXdzeArKpMT3ip9yiJVUCSNpZTh2EhCUnNWUskEiPaNWXC7Wo3nycBaadT",
+        "2FoVkBaexcDAZf3xUdYNMiVLmdLJEzWraVK55BPdGxYK4XfZ1qEQoWHu5vFRqstxchKPRxpB7RiPSSTjPSDJQkRX",
+        "2cZ37bSKozsiyboqHpRaxDLD8KfiahtPQfbi1XuAZGFxPNh6CbkTuLWR8iEfTr7P9tLpRKiNYv5Kidswh5XY1kUt",
+        "2q2HvqdnXuaq9DEnifGHRi55oFov31gJcpvmpXqy5bsCxmQDLMQP2JBj1xgCkxk1qRfrEhwjN4XEnxQeA9nTbv17",
+        "32qmcuB1xgSkJTZnHDdY2Ya9gAMs6ZWq87j6FG2MpvzGqca95EjP9QPSXruqBL2STTjUNmUfLn65HtjaTkj1Qsns",
+        "3D4pMg8kMoNNk4Y5RYHDXrqJjmem5XTt45dgF5DCRsG9wPp1KXLtV2M8YbpQAcqgbPefQVtQYxUGAiEZdgijHpub",
+        "4wfUrH9iRkQ49Q37nUyaspA4UdUqdE4FhJEJ6qxXVHRzZkbDeqExY5wAxKGvP7WkM3oEYdJSg2rg3Xbuhr6wbmbE",
+        "4zkATsySvAJzXAhkXS4gsfm12JozZN2Bs5peKTGhe3ccte424YL2bbtUVvhEeSmTP7RWUwJo4nneTCrVvQQr2FFD",
+        "5AgfCzdeomf1rDbEfrpztDT1gFTc61fgT2nfgaJsZbyJTExKotbefFhhVdX3LryafsKSpDTELLbbVWqrdYBY3aU5",
+        "8PiUT12VAqTBPTZEWTgJdNNJ3F2u4jisyATQS4P88WifNbyoYhrJ6Yvw1ZvoTwv9KT1AYnCrdAm7tFrEXUH4E98"
+      ],
+      "status_note": ">=20k points achieved. Active days <7 for now; can be satisfied later or replaced by RWA mint proof."
+    },
+    {
+      "team": "gede_university",
+      "team_id": "gede_university",
+      "wallet": "2Zdq9kQH3Pts5YEvZTK8JeAX7o3vnfgxtSdBxKf4jEhj",
+      "points": 103520,
+      "active_days": 2,
+      "days": [
+        "2025-12-06",
+        "2025-12-07"
+      ],
+      "txs": 15,
+      "tx_list": [
+        "27XxjixvjTAySmat7VW9Kcx8gJNCBTdpnDmVeQFKa4StKxsGdRM6DHLCn1PRjX5Y8F5MLE7st5Vf2yfJ65Y9Uouj",
+        "2ETN66CLqnmnegZG3gQKiXKZizBQdproyfz1xi2L1Laec5wyFUJkjCgTadP9KeU5doZCfQ1BySbdT7SzQPUcdYED",
+        "2ZKWBMSf9ZXgUyKrmUdia8kesxD7ErR985w2bCnAoT5YtduQRk5riBd2Wizz9GiR1pJw9svUUqwuSuuUH8S4dnRT",
+        "2oKhVNiceQ2p7r6acv6wUX1G3YS8JefAfwxZ7YVy8MAjuU3avwmj2W6VH6RmxNF6SfFMdvGr2zZiyjZbbhY7sxMq",
+        "2tgfVYRgw8aAtnez8xCs61MNEfXqhMxUc9v3gGPhq2a3LatSCyaPrVFJ3CYJj7MViVP8CNvHLAMpEzGDkQGQaTPd",
+        "3RJnWFp2UL29jVB8apYWCcSUgYEhHNppPtkUJFBQJ3y9sVtnzwRR4mdFUsfjoLsemQ8Se8AxK3VxP1G2hc8TQR6j",
+        "3dGXfVXVq52bc5CQXdDYPcqioZB4cLks6FZkeWNYcEvab9oiUpFJu45TXJxfKQVVbdScPw2ovvkvpsMyVrFbyP5a",
+        "412n9mNqDHa61F55rHL7zGgnioEkf3w2UsgF85GuUFr26mDuRmDfTFnKn8JafmcHNdbKnnwZiRd4YrQWmf7X3Fjb",
+        "4Pk5V6r3DiPD61wgVQT5EmtRBFgQBZyknK2GdsD6iFTBj4B2zqRQkM6DzAAmJmqj8FK5RKXZHzb2JTwu9gZFahMJ",
+        "4hZUea4HsKb1eYznsWzW2hckxoNMLrjDN5yRJgRR4UaRUczXP41t921BJK8HE8QEgbGGFkY6zjYkJ1rcExiJTvRd",
+        "4r4P81FtBeEJWN121xAgoSFPh5BjcVvcaN7D8iwdXZ3XHXZtRketuxKDzVbGV5kpeCFuPtaN7Mf2M651rZxrEtuX",
+        "4txDzFpKGSqa84xZ7dnj1wWt3QRVPHLQtsLMYfTsw5bRyXEQJvkzmzYridfnGyo5sjGX4yD8VLGPWjxsKdDhbtVm",
+        "5LCYQ3w3kdaTDXd4EtzLh2pv6fGmL79nbwecBAmJB4mjrYE3AdTVU1dRUdjPENcKHMm5EeNCafyxUbwqJ5vCjiwe",
+        "5jGyrpkejsdhVNJ2baaFSpsHjPDvUg9dRz395MRezYH3tXXncu4P9YvGYoXsqAh7VZaLPpjUzxgNFjFHtsbedeH1",
+        "KqQ3fd5HuHXDpnhFQpnDUENWseWMgDp43Gu84xCx9tafMStPmSjJ56LNKVyb3qZ8PsPMbAVhDGYAKGfsbH3iHfZ"
+      ],
+      "status_note": ">=20k points achieved. Active days <7 for now; can be satisfied later or replaced by RWA mint proof."
+    }
+  ]
+}

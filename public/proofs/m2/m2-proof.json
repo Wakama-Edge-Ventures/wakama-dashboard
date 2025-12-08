@@ -1,0 +1,72 @@
+{
+  "m2_cutoff": "2025-12-06T10:33:38.414Z",
+  "source_dir": "~/dev/wakama/_receipts_m2",
+  "expected_rules": {
+    "new_points_target": ">=200000",
+    "external_ratio_target": ">=70% of new points",
+    "adoption_rule_per_team": ">=7 active days + >=20k points OR RWA testnet mint"
+  },
+  "teams": [
+    {
+      "team": "capn_san_pedro",
+      "team_id": "capn_san_pedro",
+      "points_m2": 102020,
+      "txs_m2": 8,
+      "days": [
+        "2025-12-06",
+        "2025-12-07"
+      ],
+      "active_days": 2,
+      "tx_list": [
+        "29Zwrfitv26dSzMemwKHXFRGHgBvwKAXdzeArKpMT3ip9yiJVUCSNpZTh2EhCUnNWUskEiPaNWXC7Wo3nycBaadT",
+        "2FoVkBaexcDAZf3xUdYNMiVLmdLJEzWraVK55BPdGxYK4XfZ1qEQoWHu5vFRqstxchKPRxpB7RiPSSTjPSDJQkRX",
+        "32qmcuB1xgSkJTZnHDdY2Ya9gAMs6ZWq87j6FG2MpvzGqca95EjP9QPSXruqBL2STTjUNmUfLn65HtjaTkj1Qsns",
+        "3D4pMg8kMoNNk4Y5RYHDXrqJjmem5XTt45dgF5DCRsG9wPp1KXLtV2M8YbpQAcqgbPefQVtQYxUGAiEZdgijHpub",
+        "4wfUrH9iRkQ49Q37nUyaspA4UdUqdE4FhJEJ6qxXVHRzZkbDeqExY5wAxKGvP7WkM3oEYdJSg2rg3Xbuhr6wbmbE",
+        "4zkATsySvAJzXAhkXS4gsfm12JozZN2Bs5peKTGhe3ccte424YL2bbtUVvhEeSmTP7RWUwJo4nneTCrVvQQr2FFD",
+        "5AgfCzdeomf1rDbEfrpztDT1gFTc61fgT2nfgaJsZbyJTExKotbefFhhVdX3LryafsKSpDTELLbbVWqrdYBY3aU5",
+        "8PiUT12VAqTBPTZEWTgJdNNJ3F2u4jisyATQS4P88WifNbyoYhrJ6Yvw1ZvoTwv9KT1AYnCrdAm7tFrEXUH4E98"
+      ],
+      "wallet": "Chyuh2bDCYVSUrwNJxC8BFcjCo1D15Sskxi5DrUaxyUb"
+    },
+    {
+      "team": "gede_university",
+      "team_id": "gede_university",
+      "points_m2": 103520,
+      "txs_m2": 11,
+      "days": [
+        "2025-12-06",
+        "2025-12-07"
+      ],
+      "active_days": 2,
+      "tx_list": [
+        "27XxjixvjTAySmat7VW9Kcx8gJNCBTdpnDmVeQFKa4StKxsGdRM6DHLCn1PRjX5Y8F5MLE7st5Vf2yfJ65Y9Uouj",
+        "2ZKWBMSf9ZXgUyKrmUdia8kesxD7ErR985w2bCnAoT5YtduQRk5riBd2Wizz9GiR1pJw9svUUqwuSuuUH8S4dnRT",
+        "2oKhVNiceQ2p7r6acv6wUX1G3YS8JefAfwxZ7YVy8MAjuU3avwmj2W6VH6RmxNF6SfFMdvGr2zZiyjZbbhY7sxMq",
+        "2tgfVYRgw8aAtnez8xCs61MNEfXqhMxUc9v3gGPhq2a3LatSCyaPrVFJ3CYJj7MViVP8CNvHLAMpEzGDkQGQaTPd",
+        "3dGXfVXVq52bc5CQXdDYPcqioZB4cLks6FZkeWNYcEvab9oiUpFJu45TXJxfKQVVbdScPw2ovvkvpsMyVrFbyP5a",
+        "412n9mNqDHa61F55rHL7zGgnioEkf3w2UsgF85GuUFr26mDuRmDfTFnKn8JafmcHNdbKnnwZiRd4YrQWmf7X3Fjb",
+        "4hZUea4HsKb1eYznsWzW2hckxoNMLrjDN5yRJgRR4UaRUczXP41t921BJK8HE8QEgbGGFkY6zjYkJ1rcExiJTvRd",
+        "4r4P81FtBeEJWN121xAgoSFPh5BjcVvcaN7D8iwdXZ3XHXZtRketuxKDzVbGV5kpeCFuPtaN7Mf2M651rZxrEtuX",
+        "4txDzFpKGSqa84xZ7dnj1wWt3QRVPHLQtsLMYfTsw5bRyXEQJvkzmzYridfnGyo5sjGX4yD8VLGPWjxsKdDhbtVm",
+        "5LCYQ3w3kdaTDXd4EtzLh2pv6fGmL79nbwecBAmJB4mjrYE3AdTVU1dRUdjPENcKHMm5EeNCafyxUbwqJ5vCjiwe",
+        "5jGyrpkejsdhVNJ2baaFSpsHjPDvUg9dRz395MRezYH3tXXncu4P9YvGYoXsqAh7VZaLPpjUzxgNFjFHtsbedeH1"
+      ],
+      "wallet": "2Zdq9kQH3Pts5YEvZTK8JeAX7o3vnfgxtSdBxKf4jEhj"
+    },
+    {
+      "team": "unknown",
+      "team_id": "unknown",
+      "points_m2": 100,
+      "txs_m2": 2,
+      "days": [
+        "2025-12-06"
+      ],
+      "active_days": 1,
+      "tx_list": [
+        "2KLW4oJZRLAXc1Sj3LN3potBL5KkSiovZ7ABdpoiqGgMdGrGDfnzrsgFfPYFhGQ5pZm3rmym5e4pb9SB8chmkBbw",
+        "4B6hQwvVe6wcoxAGx22KYtRiHCkbY44M9pQ62EEv5deepmhwUGGUkf2iftzJhMAR8QjVvwzJFYR4jZrXbCWEcpUb"
+      ]
+    }
+  ]
+}
