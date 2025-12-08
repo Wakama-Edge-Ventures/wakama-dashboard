@@ -36,8 +36,11 @@ type PointsSummary = {
   bySource: Record<string, number>;
 };
 
-export type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
-
+export type Now = {
+  totals: Totals;
+  items: NowItem[];
+  pointsSummary?: PointsSummary;
+};
 
 const EMPTY: Now = {
   totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' },
