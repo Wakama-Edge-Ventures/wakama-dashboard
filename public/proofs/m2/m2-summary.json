@@ -1,7 +1,30 @@
 {
-  "m2_total_points": 205640,
-  "m2_wakama_points": 0,
-  "m2_external_points": 205640,
-  "m2_external_ratio": 1,
-  "m2_external_percent": 100
+  "milestone": "M2",
+  "asOf": "2025-12-08",
+  "status": "in-progress",
+  "highlights": [
+    "Public RWA dashboard live",
+    "Firestore/IPFS integrated",
+    "On-chain points target exceeded (cumulative)"
+  ],
+  "metrics": {
+    "totalPoints": 352882,
+    "externalPoints": 298885,
+    "externalPct": 84.70,
+    "targetNewPointsM2": 200000,
+    "targetExternalPctM2": 70,
+    "targetCumulativePointsAfterM2": 350000
+  },
+  "teamsSnapshot": [
+    { "team": "Université Jean Lorougnon Guédé (UJLoG)", "points": 147803 },
+    { "team": "CAPN – Coopérative Agricole de Petit Nando", "points": 133082 },
+    { "team": "Wakama Team", "points": 53997 },
+    { "team": "SCAK Cooperative", "points": 12000 },
+    { "team": "MAKM2 Partner", "points": 3000 },
+    { "team": "TechLab CME", "points": 3000 }
+  ],
+  "notes": [
+    "Values aligned with dashboard live pointsSummary.",
+    "This summary is intended to unlock the M2 proof panel."
+  ]
 }
