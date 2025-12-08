@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import NowPlayingClient from '@/components/NowPlayingClient';
 import Link from 'next/link';
+export const revalidate = 0;
 
 
 export const dynamic = 'force-dynamic';
@@ -27,10 +28,29 @@ export type NowItem = {
 
 export type Now = { totals: Totals; items: NowItem[] };
 
+type PointsSummary = {
+  totalPoints: number;
+  externalPoints: number;
+  externalPct: number;
+  byTeam: Record<string, number>;
+  bySource: Record<string, number>;
+};
+
+export type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
+
+
 const EMPTY: Now = {
   totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' },
   items: [],
+  pointsSummary: {
+    totalPoints: 0,
+    externalPoints: 0,
+    externalPct: 0,
+    byTeam: {},
+    bySource: {},
+  },
 };
+
 
 // -------- Helpers (SSR-safe) --------
 const GW_RAW =
@@ -69,12 +89,12 @@ async function readNowFromDisk(): Promise<Now> {
 
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
-  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(
-    /\/+$/,
-    '',
-  );
-  // 
-  const url = `${base}/api/now`;
+  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'https://rwa.wakama.farm').replace(
+  /\/+$/,
+  '',
+);
+const url = `${base}/api/now`;
+
 
   try {
     const res = await fetch(url, { cache: 'no-store' });
