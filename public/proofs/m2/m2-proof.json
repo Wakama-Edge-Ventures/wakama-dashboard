@@ -91,3 +91,12 @@
     "next_action": "Expose Realms governance links/section for oracle feed proposals and voting."
   }
 }
+"dao_governance": {
+  "platform": "Realms",
+  "dao": "Wakama DAO",
+  "proposal_title": "Wakama Oracle Feeds Policy v1 (M2)",
+  "status": "voting",
+  "scope": "Devnet",
+  "purpose": "Community governance of oracle feed & counting rules"
+}
+
