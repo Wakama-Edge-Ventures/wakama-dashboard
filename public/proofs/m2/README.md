@@ -34,3 +34,10 @@ The DAO is intended to:
 - oversee RWA listing policies for early pilots.
 
 The dashboard references DAO readiness as part of the M2 technical scope.
+Live public dashboard
+
+Firestore/IPFS OK
+
+M2 points + external % OK
+
+Realms: “Oracle Feeds Policy v1 (M2)” created to govern wave/feed and counting rules.
