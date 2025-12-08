@@ -1,12 +1,12 @@
 // src/app/now-playing/page.tsx
-import { promises as fs } from 'fs';
-import path from 'path';
-import NowPlayingClient from '@/components/NowPlayingClient';
-import Link from 'next/link';
+import { promises as fs } from "fs";
+import path from "path";
+import NowPlayingClient from "@/components/NowPlayingClient";
+import Link from "next/link";
+import { headers } from "next/headers";
 
-
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 // -------- Types --------
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
@@ -28,73 +28,101 @@ export type NowItem = {
 export type Now = { totals: Totals; items: NowItem[] };
 
 const EMPTY: Now = {
-  totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' },
+  totals: { files: 0, cids: 0, onchainTx: 0, lastTs: "—" },
   items: [],
 };
 
 // -------- Helpers (SSR-safe) --------
 const GW_RAW =
-  process.env.NEXT_PUBLIC_IPFS_GATEWAY?.replace(/\/+$/, '') ||
-  'https://gateway.pinata.cloud/ipfs';
+  process.env.NEXT_PUBLIC_IPFS_GATEWAY?.replace(/\/+$/, "") ||
+  "https://gateway.pinata.cloud/ipfs";
 
 function safeHost(u: string) {
   try {
     return new URL(u).host;
   } catch {
-    return '';
+    return "";
   }
 }
 
 const GW_HOST = safeHost(GW_RAW);
-const GW = GW_HOST ? GW_RAW : 'https://gateway.pinata.cloud/ipfs';
+const GW = GW_HOST ? GW_RAW : "https://gateway.pinata.cloud/ipfs";
 
 // hard lock to devnet for milestone phase
-const EXPLORER = 'https://explorer.solana.com/tx';
-const CLUSTER = 'devnet';
+const EXPLORER = "https://explorer.solana.com/tx";
+const CLUSTER = "devnet";
 
 // -------- Fallback: read snapshot from disk --------
 async function readNowFromDisk(): Promise<Now> {
   try {
-    const p = path.join(process.cwd(), 'public', 'now.json');
-    const raw = await fs.readFile(p, 'utf-8');
+    const p = path.join(process.cwd(), "public", "now.json");
+    const raw = await fs.readFile(p, "utf-8");
     const parsed: Now = JSON.parse(raw);
+
     parsed.items = [...(parsed.items || [])].sort((a, b) =>
-      String(b.ts || '').localeCompare(String(a.ts || '')),
+      String(b.ts || "").localeCompare(String(a.ts || "")),
     );
+
     return parsed;
   } catch {
     return EMPTY;
   }
 }
 
+// -------- Build base URL from request headers (prod-safe) --------
+function getRequestBaseUrl() {
+  const h = headers();
+  const host =
+    h.get("x-forwarded-host") ||
+    h.get("host");
+
+  const proto =
+    h.get("x-forwarded-proto") ||
+    "https";
+
+  if (host) return `${proto}://${host}`;
+
+  // Last resort: keep your previous env logic if available
+  const envBase = (process.env.NEXT_PUBLIC_BASE_URL || "").replace(/\/+$/, "");
+  return envBase || "https://rwa.wakama.farm";
+}
+
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
-  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(
-    /\/+$/,
-    '',
-  );
-  // 
+  const base = getRequestBaseUrl().replace(/\/+$/, "");
   const url = `${base}/api/now`;
 
   try {
-    const res = await fetch(url, { cache: 'no-store' });
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const parsed: Now = await res.json();
 
-    // Compat M2: 
+    // Keep legacy compatibility:
     parsed.items = (parsed.items || []).map((it: NowItem) => ({
       ...it,
-      count: it.count ?? it.points ?? 0,
+      count:
+        typeof it.count === "number"
+          ? it.count
+          : typeof it.points === "number"
+          ? it.points
+          : 0,
+      points:
+        typeof it.points === "number"
+          ? it.points
+          : typeof it.count === "number"
+          ? it.count
+          : 0,
     }));
 
     parsed.items = [...parsed.items].sort((a, b) =>
-      String(b.ts || '').localeCompare(String(a.ts || '')),
+      String(b.ts || "").localeCompare(String(a.ts || "")),
     );
 
     if (!parsed.items || parsed.items.length === 0) {
       return await readNowFromDisk();
     }
+
     return parsed;
   } catch {
     return await readNowFromDisk();
@@ -117,7 +145,8 @@ export default async function Page() {
       {/* Top bar */}
       <header className="mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <Link href="/"
+          <Link
+            href="/"
             className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors"
           >
             · Wakama Oracle
@@ -127,7 +156,7 @@ export default async function Page() {
           <span>
             GW:&nbsp;
             <code className="rounded bg-white/10 px-1 py-0.5 text-[10px]">
-              {GW_HOST || 'gateway.pinata.cloud'}
+              {GW_HOST || "gateway.pinata.cloud"}
             </code>
           </span>
           <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-[10px] text-emerald-200">
