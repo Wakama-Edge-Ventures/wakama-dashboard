@@ -1,30 +1,39 @@
 {
   "milestone": "M2",
-  "asOf": "2025-12-08",
+  "asOf": "2025-12-08T15:48:17.000Z",
   "status": "in-progress",
   "highlights": [
     "Public RWA dashboard live",
     "Firestore/IPFS integrated",
-    "On-chain points target exceeded (cumulative)"
+    "On-chain points target exceeded (cumulative)",
+    "External contribution ratio exceeds M2 target",
+    "DAO on Realms available for oracle-feeds governance"
   ],
   "metrics": {
     "totalPoints": 352882,
     "externalPoints": 298885,
-    "externalPct": 84.70,
+    "externalPct": 84.7,
     "targetNewPointsM2": 200000,
     "targetExternalPctM2": 70,
     "targetCumulativePointsAfterM2": 350000
   },
+  "adoptionRule": ">=20,000 points per team OR RWA testnet/devnet mint",
   "teamsSnapshot": [
-    { "team": "Université Jean Lorougnon Guédé (UJLoG)", "points": 147803 },
-    { "team": "CAPN – Coopérative Agricole de Petit Nando", "points": 133082 },
-    { "team": "Wakama Team", "points": 53997 },
-    { "team": "SCAK Cooperative", "points": 12000 },
-    { "team": "MAKM2 Partner", "points": 3000 },
-    { "team": "TechLab CME", "points": 3000 }
+    { "team": "Université Jean Lorougnon Guédé (UJLoG)", "points": 147803, "category": "University" },
+    { "team": "CAPN – Coopérative Agricole de Petit Nando", "points": 133082, "category": "Coop" },
+    { "team": "Wakama Team", "points": 53997, "category": "Core" },
+    { "team": "SCAK Cooperative", "points": 12000, "category": "Coop" },
+    { "team": "MAKM2 Partner", "points": 3000, "category": "Partner" },
+    { "team": "TechLab CME", "points": 3000, "category": "University" }
   ],
+  "dao": {
+    "platform": "Realms (Solana)",
+    "scope": "Community governance of oracle feeds",
+    "status": "DAO exists; M2 highlights reference governance readiness"
+  },
   "notes": [
     "Values aligned with dashboard live pointsSummary.",
-    "This summary is intended to unlock the M2 proof panel."
+    "This summary is intended to unlock the M2 proof panel.",
+    "External-teams screen and points split are used as supporting signal for M2 adoption and external ratio."
   ]
 }
