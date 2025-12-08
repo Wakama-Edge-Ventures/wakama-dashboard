@@ -1,12 +1,11 @@
 // src/app/now-playing/page.tsx
-import { promises as fs } from 'fs';
-import path from 'path';
-import NowPlayingClient from '@/components/NowPlayingClient';
-import Link from 'next/link';
+import { promises as fs } from "fs";
+import path from "path";
+import NowPlayingClient from "@/components/NowPlayingClient";
+import Link from "next/link";
 
-
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 // -------- Types --------
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
@@ -28,40 +27,65 @@ export type NowItem = {
 export type Now = { totals: Totals; items: NowItem[] };
 
 const EMPTY: Now = {
-  totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' },
+  totals: { files: 0, cids: 0, onchainTx: 0, lastTs: "—" },
   items: [],
 };
 
 // -------- Helpers (SSR-safe) --------
 const GW_RAW =
-  process.env.NEXT_PUBLIC_IPFS_GATEWAY?.replace(/\/+$/, '') ||
-  'https://gateway.pinata.cloud/ipfs';
+  process.env.NEXT_PUBLIC_IPFS_GATEWAY?.replace(/\/+$/, "") ||
+  "https://gateway.pinata.cloud/ipfs";
 
 function safeHost(u: string) {
   try {
     return new URL(u).host;
   } catch {
-    return '';
+    return "";
   }
 }
 
 const GW_HOST = safeHost(GW_RAW);
-const GW = GW_HOST ? GW_RAW : 'https://gateway.pinata.cloud/ipfs';
+const GW = GW_HOST ? GW_RAW : "https://gateway.pinata.cloud/ipfs";
 
 // hard lock to devnet for milestone phase
-const EXPLORER = 'https://explorer.solana.com/tx';
-const CLUSTER = 'devnet';
+const EXPLORER = "https://explorer.solana.com/tx";
+const CLUSTER = "devnet";
 
 // -------- Fallback: read snapshot from disk --------
 async function readNowFromDisk(): Promise<Now> {
   try {
-    const p = path.join(process.cwd(), 'public', 'now.json');
-    const raw = await fs.readFile(p, 'utf-8');
-    const parsed: Now = JSON.parse(raw);
-    parsed.items = [...(parsed.items || [])].sort((a, b) =>
-      String(b.ts || '').localeCompare(String(a.ts || '')),
+    const p = path.join(process.cwd(), "public", "now.json");
+    const raw = await fs.readFile(p, "utf-8");
+    const parsed = JSON.parse(raw) as Partial<Now>;
+
+    const items = Array.isArray(parsed.items) ? (parsed.items as NowItem[]) : [];
+
+    const totals: Totals = {
+      files: typeof parsed?.totals?.files === "number" ? parsed.totals.files : items.length,
+      cids:
+        typeof parsed?.totals?.cids === "number"
+          ? parsed.totals.cids
+          : items.filter((i) => !!i.cid).length,
+      onchainTx:
+        typeof parsed?.totals?.onchainTx === "number"
+          ? parsed.totals.onchainTx
+          : items.filter((i) => !!i.tx).length,
+      lastTs:
+        typeof parsed?.totals?.lastTs === "string" && parsed.totals.lastTs
+          ? parsed.totals.lastTs
+          : "—",
+    };
+
+    const normalized = items.map((it) => ({
+      ...it,
+      count: it.count ?? it.points ?? 0,
+    }));
+
+    const sorted = [...normalized].sort((a, b) =>
+      String(b.ts || "").localeCompare(String(a.ts || "")),
     );
-    return parsed;
+
+    return { totals, items: sorted };
   } catch {
     return EMPTY;
   }
@@ -69,33 +93,55 @@ async function readNowFromDisk(): Promise<Now> {
 
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
-  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(
-    /\/+$/,
-    '',
-  );
-  // 
-  const url = `${base}/api/now`;
+  // IMPORTANT:
+  // Do NOT default to localhost in production.
+  // Use the same pattern as fetchRwaData.
+  const base = (process.env.NEXT_PUBLIC_BASE_URL || "").replace(/\/+$/, "");
+  const url = base ? `${base}/api/now` : "/api/now";
 
   try {
-    const res = await fetch(url, { cache: 'no-store' });
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    const parsed: Now = await res.json();
+    const parsed = (await res.json()) as Partial<Now>;
+    const items = Array.isArray(parsed.items) ? (parsed.items as NowItem[]) : [];
 
-    // Compat M2: 
-    parsed.items = (parsed.items || []).map((it: NowItem) => ({
+    // Compat M2 (without changing your route.ts)
+    const normalized = items.map((it) => ({
       ...it,
       count: it.count ?? it.points ?? 0,
     }));
 
-    parsed.items = [...parsed.items].sort((a, b) =>
-      String(b.ts || '').localeCompare(String(a.ts || '')),
+    const sorted = [...normalized].sort((a, b) =>
+      String(b.ts || "").localeCompare(String(a.ts || "")),
     );
 
-    if (!parsed.items || parsed.items.length === 0) {
-      return await readNowFromDisk();
-    }
-    return parsed;
+    const totals: Totals = parsed.totals
+      ? {
+          files: typeof parsed.totals.files === "number" ? parsed.totals.files : sorted.length,
+          cids:
+            typeof parsed.totals.cids === "number"
+              ? parsed.totals.cids
+              : sorted.filter((i) => !!i.cid).length,
+          onchainTx:
+            typeof parsed.totals.onchainTx === "number"
+              ? parsed.totals.onchainTx
+              : sorted.filter((i) => !!i.tx).length,
+          lastTs:
+            typeof parsed.totals.lastTs === "string" && parsed.totals.lastTs
+              ? parsed.totals.lastTs
+              : "—",
+        }
+      : {
+          files: sorted.length,
+          cids: sorted.filter((i) => !!i.cid).length,
+          onchainTx: sorted.filter((i) => !!i.tx).length,
+          lastTs: "—",
+        };
+
+    if (sorted.length === 0) return await readNowFromDisk();
+
+    return { totals, items: sorted };
   } catch {
     return await readNowFromDisk();
   }
@@ -117,8 +163,9 @@ export default async function Page() {
       {/* Top bar */}
       <header className="mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <Link href="/"
-            className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors"
+          <Link
+            href="/"
+            className="text-lg font-semibold tracking-tight transition-colors hover:text-[#14F195]"
           >
             · Wakama Oracle
           </Link>
@@ -127,7 +174,7 @@ export default async function Page() {
           <span>
             GW:&nbsp;
             <code className="rounded bg-white/10 px-1 py-0.5 text-[10px]">
-              {GW_HOST || 'gateway.pinata.cloud'}
+              {GW_HOST || "gateway.pinata.cloud"}
             </code>
           </span>
           <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-[10px] text-emerald-200">
