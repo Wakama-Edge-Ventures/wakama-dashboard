@@ -11,6 +11,7 @@ export const runtime = 'nodejs';
 
 // -------- Types --------
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
+
 export type NowItem = {
   cid: string;
   tx?: string;
@@ -26,8 +27,6 @@ export type NowItem = {
   points?: number;
 };
 
-export type Now = { totals: Totals; items: NowItem[] };
-
 type PointsSummary = {
   totalPoints: number;
   externalPoints: number;
@@ -41,6 +40,7 @@ export type Now = {
   items: NowItem[];
   pointsSummary?: PointsSummary;
 };
+
 
 const EMPTY: Now = {
   totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' },
