@@ -163,6 +163,11 @@ async function loadTeamsMap() {
 // ✅ Aliases legacy -> canonical
 teamNameById.set('Wakama Core', 'Wakama Team');
 teamNameById.set('team_wakama', 'Wakama Team');
+teamNameById.set('gede_university', 'Université Jean Lorougnon Guédé (UJLoG)');
+teamNameById.set('Université Jean Lorougnon Guédé (UJLoG)', 'Université Jean Lorougnon Guédé (UJLoG)');
+
+teamNameById.set('capn_san_pedro', 'CAPN – Coopérative Agricole de Petit Nando');
+teamNameById.set('CAPN – Coopérative Agricole de Petit Nando', 'CAPN – Coopérative Agricole de Petit Nando');
 
   return teamNameById;
 }
@@ -373,4 +378,5 @@ export async function GET() {
     });
   }
 }
+
 
