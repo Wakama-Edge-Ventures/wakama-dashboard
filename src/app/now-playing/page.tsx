@@ -126,13 +126,15 @@ function RealmsBadge() {
     <span className="inline-flex items-center gap-2">
       <span className="relative inline-grid h-7 w-7 place-items-center rounded-full bg-white/10 ring-1 ring-white/10">
         <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] opacity-70 blur-[10px]" />
-        <span className="relative text-[11px] font800 font-semibold tracking-tight text-white">
+        {/* Animated green "R" to signal live governance */}
+        <span
+          className="relative text-[11px] font-semibold tracking-tight text-emerald-200 animate-pulse"
+          title="Realms governance live"
+        >
           R
         </span>
       </span>
-      <span className="text-sm font-semibold tracking-tight">
-        Realms
-      </span>
+      <span className="text-sm font-semibold tracking-tight">Realms</span>
     </span>
   );
 }
@@ -201,11 +203,11 @@ export default async function Page() {
 
             <div className="flex items-center gap-2">
               <a
-                href="https://app.realms.today"
+                href="https://v2.realms.today/dao/8Xw1myCYCtKbZFpogf9jR3ambD6xCzaGCe9wdMfFfG9T/proposal/98G2HTdMPrXjfKFs651es28Gc4pb1a3h8RKNHQKWtNA2"
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-xl bg-white/10 px-3 py-2 text-[11px] font-semibold text-white/90 hover:bg-white/15 transition"
-                title="Open Realms"
+                title="Open Realms proposal: Wakama Oracle Feeds Policy v1 (M2)"
               >
                 Open Realms
               </a>
