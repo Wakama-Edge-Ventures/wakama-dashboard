@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-02-10T16:11:19.746Z",
-  "count": 11,
+  "generatedAt": "2026-02-10T18:14:14.940Z",
+  "count": 12,
   "items": [
+    {
+      "teamId": "team_mks",
+      "createdAt": "2026-02-10T18:13:34.447Z",
+      "amountUsdc": "1022",
+      "amountBaseUnits": "1022000000",
+      "tx": "5mVSYpXjY5QYxjbm2wTbnpmDxFhoA25j2U2Rs4h8CxcEtAJh3jiuqQyXeMchgYi5RMTDmAXMtqLzMRPcYTCi25yi",
+      "receiptFile": "2026-02-10T18-13-34-448Z-5mVSYpXjY5QYxjbm2wTbnpmDxFhoA25j2U2Rs4h8CxcEtAJh3jiuqQyXeMchgYi5RMTDmAXMtqLzMRPcYTCi25yi.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-10T18-13-34-448Z-5mVSYpXjY5QYxjbm2wTbnpmDxFhoA25j2U2Rs4h8CxcEtAJh3jiuqQyXeMchgYi5RMTDmAXMtqLzMRPcYTCi25yi.json"
+    },
     {
       "teamId": "team_mks",
       "createdAt": "2026-02-10T16:10:11.807Z",
