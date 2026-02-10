@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-02-10T09:50:35.297Z",
+  "count": 9,
+  "items": [
+    {
+      "teamId": "team_mks",
+      "createdAt": "2026-02-09T19:39:36.534Z",
+      "amountUsdc": "260",
+      "amountBaseUnits": "260000000",
+      "tx": "5hPADAUfrCqeBWaXh2zFJW5NSkioftoJT2gP5iTSvs8guoTJ3h2RvrcEV18GAQWqTju8kLFHWNUgFQMVEVZFkj5S",
+      "receiptFile": "2026-02-09T19-39-36-535Z-5hPADAUfrCqeBWaXh2zFJW5NSkioftoJT2gP5iTSvs8guoTJ3h2RvrcEV18GAQWqTju8kLFHWNUgFQMVEVZFkj5S.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-09T19-39-36-535Z-5hPADAUfrCqeBWaXh2zFJW5NSkioftoJT2gP5iTSvs8guoTJ3h2RvrcEV18GAQWqTju8kLFHWNUgFQMVEVZFkj5S.json"
+    },
+    {
+      "teamId": "team_mks",
+      "createdAt": "2026-02-09T19:35:18.358Z",
+      "amountUsdc": "500",
+      "amountBaseUnits": "500000000",
+      "tx": "3Jn1WjN6RdmnZmvMFyCs79QmeeQPWeYSziVuA6QctScwTPZ4qGAtLjmk27D8BMyhAVyM5EpvaLt55vhnqvGXXgV9",
+      "receiptFile": "2026-02-09T19-35-18-359Z-3Jn1WjN6RdmnZmvMFyCs79QmeeQPWeYSziVuA6QctScwTPZ4qGAtLjmk27D8BMyhAVyM5EpvaLt55vhnqvGXXgV9.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-09T19-35-18-359Z-3Jn1WjN6RdmnZmvMFyCs79QmeeQPWeYSziVuA6QctScwTPZ4qGAtLjmk27D8BMyhAVyM5EpvaLt55vhnqvGXXgV9.json"
+    },
+    {
+      "teamId": "team_etra",
+      "createdAt": "2026-02-09T13:23:50.716Z",
+      "amountUsdc": "800",
+      "amountBaseUnits": "800000000",
+      "tx": "3w4yiDZv7mG9emhB2gtDDrPGir1mMHd1448Tf4UyoD28tqjrBEiE7THXALcWHPB8rMrM8G7f8uEB793V1JuyytuH",
+      "receiptFile": "2026-02-09T13-23-50-721Z-3w4yiDZv7mG9emhB2gtDDrPGir1mMHd1448Tf4UyoD28tqjrBEiE7THXALcWHPB8rMrM8G7f8uEB793V1JuyytuH.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_etra/2026-02-09T13-23-50-721Z-3w4yiDZv7mG9emhB2gtDDrPGir1mMHd1448Tf4UyoD28tqjrBEiE7THXALcWHPB8rMrM8G7f8uEB793V1JuyytuH.json"
+    },
+    {
+      "teamId": "team_mks",
+      "createdAt": "2026-02-09T09:42:21.365Z",
+      "amountUsdc": "1049",
+      "amountBaseUnits": "1049000000",
+      "tx": "2q7ai4Mwb3i3EieWH7yENpbTRFpGaANoy5GYFBfRtSf3tqawLAhhon4f5g2fxumSqK6A8gZxGQ61bjtuGYTGZcMV",
+      "receiptFile": "2026-02-09T09-42-21-372Z-2q7ai4Mwb3i3EieWH7yENpbTRFpGaANoy5GYFBfRtSf3tqawLAhhon4f5g2fxumSqK6A8gZxGQ61bjtuGYTGZcMV.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-09T09-42-21-372Z-2q7ai4Mwb3i3EieWH7yENpbTRFpGaANoy5GYFBfRtSf3tqawLAhhon4f5g2fxumSqK6A8gZxGQ61bjtuGYTGZcMV.json"
+    },
+    {
+      "teamId": "team_mks",
+      "createdAt": "2026-02-07T19:28:44.371Z",
+      "amountUsdc": "671.640852",
+      "amountBaseUnits": "671640852",
+      "tx": "E2gdUaAKYqdj5UnbMm2geNb9uSrJgFxQNSy9uuGbFpSxs5SHvQAZr9KWfM7ZAMWWB5Ju66vHS1B3JSHJAGfCMgm",
+      "receiptFile": "2026-02-07T19-28-44-372Z-E2gdUaAKYqdj5UnbMm2geNb9uSrJgFxQNSy9uuGbFpSxs5SHvQAZr9KWfM7ZAMWWB5Ju66vHS1B3JSHJAGfCMgm.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-07T19-28-44-372Z-E2gdUaAKYqdj5UnbMm2geNb9uSrJgFxQNSy9uuGbFpSxs5SHvQAZr9KWfM7ZAMWWB5Ju66vHS1B3JSHJAGfCMgm.json"
+    },
+    {
+      "teamId": "team_mks",
+      "createdAt": "2026-02-07T07:11:42.576Z",
+      "amountUsdc": "190",
+      "amountBaseUnits": "190000000",
+      "tx": "4d5kW3WdSQvo3ZdNq4qm9qAhyaVgUft6vE31TEAPx88mjWuRVAjrFtJsXmiW2EmT2hD8hk5mAJmXzxrgL1UwpDw4",
+      "receiptFile": "2026-02-07T07-11-42-576Z-4d5kW3WdSQvo3ZdNq4qm9qAhyaVgUft6vE31TEAPx88mjWuRVAjrFtJsXmiW2EmT2hD8hk5mAJmXzxrgL1UwpDw4.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-07T07-11-42-576Z-4d5kW3WdSQvo3ZdNq4qm9qAhyaVgUft6vE31TEAPx88mjWuRVAjrFtJsXmiW2EmT2hD8hk5mAJmXzxrgL1UwpDw4.json"
+    },
+    {
+      "teamId": "team_etra",
+      "createdAt": "2026-02-07T07:11:31.542Z",
+      "amountUsdc": "200",
+      "amountBaseUnits": "200000000",
+      "tx": "2zDPkyx7dG5WysKN5AxzgFBZahLxfPpkk2erYHqhiTDGM6EEJ9U29BYsaFDL3Jiy5n9L7EBgNrTjU9EYDc1QbZgr",
+      "receiptFile": "2026-02-07T07-11-31-547Z-2zDPkyx7dG5WysKN5AxzgFBZahLxfPpkk2erYHqhiTDGM6EEJ9U29BYsaFDL3Jiy5n9L7EBgNrTjU9EYDc1QbZgr.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_etra/2026-02-07T07-11-31-547Z-2zDPkyx7dG5WysKN5AxzgFBZahLxfPpkk2erYHqhiTDGM6EEJ9U29BYsaFDL3Jiy5n9L7EBgNrTjU9EYDc1QbZgr.json"
+    },
+    {
+      "teamId": "team_etra",
+      "createdAt": "2026-02-06T17:20:05.470Z",
+      "amountUsdc": "1",
+      "amountBaseUnits": "1000000",
+      "tx": "7ge8ELEvL41WrpRdUSZ8AxmYCH3YP8HYwvhXs5RdxWz29BXBd8esr9oRZd5ShiPwituMsQ6H2EYND5kB9kVk1av",
+      "receiptFile": "2026-02-06T17-20-05-470Z-7ge8ELEvL41WrpRdUSZ8AxmYCH3YP8HYwvhXs5RdxWz29BXBd8esr9oRZd5ShiPwituMsQ6H2EYND5kB9kVk1av.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_etra/2026-02-06T17-20-05-470Z-7ge8ELEvL41WrpRdUSZ8AxmYCH3YP8HYwvhXs5RdxWz29BXBd8esr9oRZd5ShiPwituMsQ6H2EYND5kB9kVk1av.json"
+    },
+    {
+      "teamId": "team_mks",
+      "createdAt": "2026-02-06T17:19:48.928Z",
+      "amountUsdc": "1",
+      "amountBaseUnits": "1000000",
+      "tx": "65dtJG7QR7KD7jueMfKN4DHmC9JdoRaL5uuf1f5mMbWDLjTp2daf5NeZNNDW4WUSXrVX9soXJTgGwmVxE4QhCCMX",
+      "receiptFile": "2026-02-06T17-19-48-930Z-65dtJG7QR7KD7jueMfKN4DHmC9JdoRaL5uuf1f5mMbWDLjTp2daf5NeZNNDW4WUSXrVX9soXJTgGwmVxE4QhCCMX.json",
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-06T17-19-48-930Z-65dtJG7QR7KD7jueMfKN4DHmC9JdoRaL5uuf1f5mMbWDLjTp2daf5NeZNNDW4WUSXrVX9soXJTgGwmVxE4QhCCMX.json"
+    }
+  ]
+}
