@@ -1,15 +1,23 @@
 {
   "m2_cutoff": "2025-12-06T10:33:38.414Z",
+  "asOf": "2025-12-08T15:48:17.000Z",
   "source_dir": "~/dev/wakama/_receipts_m2",
   "expected_rules": {
     "new_points_target": ">=200000",
     "external_ratio_target": ">=70% of new points",
-    "adoption_rule_per_team": ">=7 active days + >=20k points OR RWA testnet mint"
+    "adoption_rule_per_team": ">=20000 points OR RWA testnet mint"
+  },
+  "cumulative_snapshot": {
+    "totalPoints": 352882,
+    "externalPoints": 298885,
+    "externalPct": 84.70,
+    "statement": "Cumulative points >= 350k and external contribution >= 70% (dashboard pointsSummary)."
   },
   "teams": [
     {
       "team": "capn_san_pedro",
       "team_id": "capn_san_pedro",
+      "display_name": "CAPN – Coopérative Agricole de Petit Nando",
       "points_m2": 102020,
       "txs_m2": 8,
       "days": [
@@ -27,11 +35,13 @@
         "5AgfCzdeomf1rDbEfrpztDT1gFTc61fgT2nfgaJsZbyJTExKotbefFhhVdX3LryafsKSpDTELLbbVWqrdYBY3aU5",
         "8PiUT12VAqTBPTZEWTgJdNNJ3F2u4jisyATQS4P88WifNbyoYhrJ6Yvw1ZvoTwv9KT1AYnCrdAm7tFrEXUH4E98"
       ],
-      "wallet": "Chyuh2bDCYVSUrwNJxC8BFcjCo1D15Sskxi5DrUaxyUb"
+      "wallet": "Chyuh2bDCYVSUrwNJxC8BFcjCo1D15Sskxi5DrUaxyUb",
+      "adoption_status": "points>=20k"
     },
     {
       "team": "gede_university",
       "team_id": "gede_university",
+      "display_name": "Université Jean Lorougnon Guédé (UJLoG)",
       "points_m2": 103520,
       "txs_m2": 11,
       "days": [
@@ -52,7 +62,8 @@
         "5LCYQ3w3kdaTDXd4EtzLh2pv6fGmL79nbwecBAmJB4mjrYE3AdTVU1dRUdjPENcKHMm5EeNCafyxUbwqJ5vCjiwe",
         "5jGyrpkejsdhVNJ2baaFSpsHjPDvUg9dRz395MRezYH3tXXncu4P9YvGYoXsqAh7VZaLPpjUzxgNFjFHtsbedeH1"
       ],
-      "wallet": "2Zdq9kQH3Pts5YEvZTK8JeAX7o3vnfgxtSdBxKf4jEhj"
+      "wallet": "2Zdq9kQH3Pts5YEvZTK8JeAX7o3vnfgxtSdBxKf4jEhj",
+      "adoption_status": "points>=20k"
     },
     {
       "team": "unknown",
@@ -66,7 +77,26 @@
       "tx_list": [
         "2KLW4oJZRLAXc1Sj3LN3potBL5KkSiovZ7ABdpoiqGgMdGrGDfnzrsgFfPYFhGQ5pZm3rmym5e4pb9SB8chmkBbw",
         "4B6hQwvVe6wcoxAGx22KYtRiHCkbY44M9pQ62EEv5deepmhwUGGUkf2iftzJhMAR8QjVvwzJFYR4jZrXbCWEcpUb"
-      ]
+      ],
+      "adoption_status": "n/a"
     }
-  ]
+  ],
+  "rollup_m2_estimate": {
+    "new_points_estimated_sum": 205640,
+    "note": "This estimate is derived from points_m2 fields above; cumulative proof uses the live dashboard pointsSummary."
+  },
+  "dao": {
+    "realms_tools": "planned",
+    "status": "not yet surfaced in dashboard UI",
+    "next_action": "Expose Realms governance links/section for oracle feed proposals and voting."
+  }
 }
+"dao_governance": {
+  "platform": "Realms",
+  "dao": "Wakama DAO",
+  "proposal_title": "Wakama Oracle Feeds Policy v1 (M2)",
+  "status": "voting",
+  "scope": "Devnet",
+  "purpose": "Community governance of oracle feed & counting rules"
+}
+

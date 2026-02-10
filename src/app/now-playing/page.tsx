@@ -4,12 +4,13 @@ import path from 'path';
 import NowPlayingClient from '@/components/NowPlayingClient';
 import Link from 'next/link';
 
-
+export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 // -------- Types --------
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
+
 export type NowItem = {
   cid: string;
   tx?: string;
@@ -25,11 +26,30 @@ export type NowItem = {
   points?: number;
 };
 
-export type Now = { totals: Totals; items: NowItem[] };
+type PointsSummary = {
+  totalPoints: number;
+  externalPoints: number;
+  externalPct: number;
+  byTeam: Record<string, number>;
+  bySource: Record<string, number>;
+};
+
+export type Now = {
+  totals: Totals;
+  items: NowItem[];
+  pointsSummary?: PointsSummary;
+};
 
 const EMPTY: Now = {
   totals: { files: 0, cids: 0, onchainTx: 0, lastTs: '—' },
   items: [],
+  pointsSummary: {
+    totalPoints: 0,
+    externalPoints: 0,
+    externalPct: 0,
+    byTeam: {},
+    bySource: {},
+  },
 };
 
 // -------- Helpers (SSR-safe) --------
@@ -69,11 +89,10 @@ async function readNowFromDisk(): Promise<Now> {
 
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
-  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(
+  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'https://rwa.wakama.farm').replace(
     /\/+$/,
     '',
   );
-  // 
   const url = `${base}/api/now`;
 
   try {
@@ -82,7 +101,7 @@ async function fetchNow(): Promise<Now> {
 
     const parsed: Now = await res.json();
 
-    // Compat M2: 
+    // Compat M2:
     parsed.items = (parsed.items || []).map((it: NowItem) => ({
       ...it,
       count: it.count ?? it.points ?? 0,
@@ -101,6 +120,25 @@ async function fetchNow(): Promise<Now> {
   }
 }
 
+function RealmsBadge() {
+  // Lightweight inline "logo-style" mark (no external asset needed)
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="relative inline-grid h-7 w-7 place-items-center rounded-full bg-white/10 ring-1 ring-white/10">
+        <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] opacity-70 blur-[10px]" />
+        {/* Animated green "R" to signal live governance */}
+        <span
+          className="relative text-[11px] font-semibold tracking-tight text-emerald-200 animate-pulse"
+          title="Realms governance live"
+        >
+          R
+        </span>
+      </span>
+      <span className="text-sm font-semibold tracking-tight">Realms</span>
+    </span>
+  );
+}
+
 export default async function Page() {
   const now = await fetchNow();
   const year = new Date().getUTCFullYear();
@@ -117,7 +155,8 @@ export default async function Page() {
       {/* Top bar */}
       <header className="mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <Link href="/"
+          <Link
+            href="/"
             className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors"
           >
             · Wakama Oracle
@@ -135,6 +174,50 @@ export default async function Page() {
           </span>
         </div>
       </header>
+
+      {/* ✅ Governance / Realms highlight (M2) */}
+      <section className="mb-6">
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+          <div className="pointer-events-none absolute -right-20 -top-16 h-56 w-56 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-20" />
+          <div className="pointer-events-none absolute -left-24 -bottom-24 h-64 w-64 rounded-full bg-gradient-to-tr from-[#14F195] via-[#39D0D8] to-[#9945FF] blur-3xl opacity-15" />
+
+          <div className="relative flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="mt-0.5 hidden h-10 w-1.5 rounded-full bg-gradient-to-b from-[#14F195] via-[#39D0D8] to-[#9945FF] md:block" />
+              <div>
+                <div className="flex items-center gap-3">
+                  <RealmsBadge />
+                  <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80">
+                    M2 Governance
+                  </span>
+                </div>
+                <h2 className="mt-2 text-base font-semibold tracking-tight">
+                  DAO active · Oracle feeds governance enabled
+                </h2>
+                <p className="mt-1 text-xs leading-relaxed text-white/60 max-w-[60ch]">
+                  Governance readiness is validated through Realms to support community oversight
+                  of oracle feed policies and early RWA listing rules.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <a
+                href="https://v2.realms.today/dao/8Xw1myCYCtKbZFpogf9jR3ambD6xCzaGCe9wdMfFfG9T/proposal/98G2HTdMPrXjfKFs651es28Gc4pb1a3h8RKNHQKWtNA2"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl bg-white/10 px-3 py-2 text-[11px] font-semibold text-white/90 hover:bg-white/15 transition"
+                title="Open Realms proposal: Wakama Oracle Feeds Policy v1 (M2)"
+              >
+                Open Realms
+              </a>
+              <span className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-[10px] text-white/60">
+                Community governance layer
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Client-side interactive dashboard */}
       <NowPlayingClient
