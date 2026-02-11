@@ -1,5 +1,7 @@
 // app/api/capital-pool/route.ts
 import { NextResponse } from "next/server";
+import fs from "node:fs";
+import path from "node:path";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { CAPITAL_POOL, TEAM_MAP } from "@/lib/capitalPoolConfig";
 
@@ -14,192 +16,211 @@ type Row = {
   memo: string | null;
 };
 
-const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
+type SnapshotSummary = any;
+type SnapshotIndex = { items?: any[]; generatedAt?: string; count?: number };
 
-function parseMemoFromTx(tx: any): string | null {
-  try {
-    const ix = tx?.transaction?.message?.instructions ?? [];
-    for (const i of ix) {
-      // Parsed memo (some RPCs)
-      if (i?.program === "spl-memo") {
-        if (typeof i?.parsed === "string") return i.parsed;
-        if (typeof i?.parsed === "object" && i?.parsed?.memo) return String(i.parsed.memo);
-      }
-
-      // Raw memo (Memo program id)
-      const pid = i?.programId?.toString?.() ?? i?.programId;
-      if (pid === MEMO_PROGRAM_ID && typeof i?.data === "string") {
-        // Often base58; keep as-is (still audit-visible)
-        return i.data;
-      }
-    }
-  } catch {}
-  return null;
+function safeJsonRead(filePath: string) {
+  const raw = fs.readFileSync(filePath, "utf8");
+  return JSON.parse(raw);
 }
 
-function getAccountKeys(tx: any): string[] {
-  const keys = tx?.transaction?.message?.accountKeys ?? [];
-  return keys
-    .map((k: any) => {
-      if (!k) return null;
-      if (typeof k === "string") return k;
-      return k?.pubkey?.toString?.() ?? k?.toString?.() ?? null;
-    })
-    .filter(Boolean) as string[];
+function snapshotPaths() {
+  // Next.js build output still has project root; public is available here.
+  const root = process.cwd();
+  return {
+    summary: path.join(root, "public", "capital-pool", "mainnet", "summary.json"),
+    receipts: path.join(root, "public", "capital-pool", "mainnet", "receipts.index.json"),
+  };
 }
 
-// Some RPCs return uiAmount as null; fallback to amount/decimals
-function uiAmountToNumber(uiTokenAmount: any): number {
-  if (!uiTokenAmount) return 0;
-  const ui = uiTokenAmount.uiAmount;
-  if (typeof ui === "number") return ui;
+function rowsFromSnapshots(summary: SnapshotSummary, receipts: SnapshotIndex): { rows: Row[]; totalDeposits: number } {
+  const items = Array.isArray(receipts?.items) ? receipts.items : [];
 
-  const amountStr = uiTokenAmount.amount; // string base units
-  const decimals = Number(uiTokenAmount.decimals ?? 0);
-  if (typeof amountStr === "string" && amountStr.length) {
-    const base = Number(amountStr);
-    if (Number.isFinite(base)) return base / Math.pow(10, decimals);
-  }
-  return 0;
+  const totalFromSummary = Number(summary?.global?.totalUsdc ?? 0);
+
+  // We only have DEPOSIT rows in receipts.index.json (your generator indexes receipts)
+  const rows: Row[] = items.map((x: any) => {
+    const teamId = x.teamId ?? null;
+    const teamLabel = teamId ? String(teamId).replace("team_", "").toUpperCase() : null;
+
+    // createdAt in receipts index is ISO string. We keep blockTime null to avoid false precision.
+    // If you want, we can parse createdAt to blockTime later (but that would be "not on-chain time").
+    const memo = x.memo ?? null;
+
+    return {
+      signature: String(x.tx ?? ""),
+      blockTime: null,
+      slot: 0,
+      type: "DEPOSIT",
+      amountUsdc: Number(x.amountUsdc ?? 0),
+      teamId,
+      teamLabel,
+      memo,
+    };
+  });
+
+  // If summary exists, trust it (Amira-proof snapshot)
+  const totalDeposits = Number.isFinite(totalFromSummary)
+    ? totalFromSummary
+    : rows.filter((r) => r.amountUsdc > 0).reduce((a, r) => a + r.amountUsdc, 0);
+
+  return { rows, totalDeposits };
 }
 
-function getVaultDeltaUsdc(tx: any, vaultAta: string, usdcMint: string): number {
-  const keys = getAccountKeys(tx);
-  const vaultIndex = keys.findIndex((k) => k === vaultAta);
-  if (vaultIndex < 0) return 0;
+/**
+ * Lightweight RPC mode:
+ * - only fetch signatures list (cheap-ish)
+ * - do NOT call getTransaction per signature (this is what triggers 429)
+ * - returns rows with type=OTHER and amountUsdc=0, just for "live tx list" placeholder
+ *
+ * If you really want amount/memo from chain, we can add an opt-in mode:
+ *   /api/capital-pool?mode=full&limit=20
+ * that fetches transactions but small limit + throttling.
+ */
+async function rpcLight(limit: number) {
+  const conn = new Connection(CAPITAL_POOL.rpc, "confirmed");
+  const vaultAta = new PublicKey(CAPITAL_POOL.vaultUsdcAta);
 
-  const pre = tx?.meta?.preTokenBalances ?? [];
-  const post = tx?.meta?.postTokenBalances ?? [];
+  const sigs = await conn.getSignaturesForAddress(vaultAta, { limit });
 
-  const preByIdx = pre.find((b: any) => b.accountIndex === vaultIndex && b.mint === usdcMint);
-  const postByIdx = post.find((b: any) => b.accountIndex === vaultIndex && b.mint === usdcMint);
+  const rows: Row[] = sigs.map((s) => {
+    // Infer team from known keys in signature info is impossible; keep null.
+    return {
+      signature: s.signature,
+      blockTime: s.blockTime ?? null,
+      slot: s.slot,
+      type: "OTHER",
+      amountUsdc: 0,
+      teamId: null,
+      teamLabel: null,
+      memo: null,
+    };
+  });
 
-  const a = uiAmountToNumber(preByIdx?.uiTokenAmount);
-  const b = uiAmountToNumber(postByIdx?.uiTokenAmount);
-
-  return +(b - a);
-}
-
-function inferTeam(
-  tx: any,
-  memo: string | null
-): { teamId: string | null; teamLabel: string | null } {
-  // 1) memo convention: "team=team_etra; purpose=..."
-  if (memo) {
-    const m = memo.match(/team\s*=\s*([a-zA-Z0-9_:-]+)/);
-    if (m?.[1]) {
-      const id = m[1];
-      return { teamId: id, teamLabel: id.replace("team_", "").toUpperCase() };
-    }
-  }
-
-  // 2) mapping by known wallets/ATAs appearing in account keys
-  try {
-    const keys = getAccountKeys(tx);
-    for (const k of keys) {
-      const hit = (TEAM_MAP as any)[k];
-      if (hit) return { teamId: hit.teamId, teamLabel: hit.label };
-    }
-  } catch {}
-
-  return { teamId: null, teamLabel: null };
+  return { rows };
 }
 
 export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const limit = Math.min(Number(searchParams.get("limit") ?? "50"), 200);
+  const { searchParams } = new URL(req.url);
 
-    const conn = new Connection(CAPITAL_POOL.rpc, "confirmed");
-    const vaultAta = new PublicKey(CAPITAL_POOL.vaultUsdcAta);
+  // Keep limits small by default to avoid RPC pressure.
+  const limit = Math.min(Number(searchParams.get("limit") ?? "20"), 100);
 
-    const sigs = await conn.getSignaturesForAddress(vaultAta, { limit });
+  // mode:
+  // - "snapshot" forces snapshot mode
+  // - "rpc" forces rpcLight mode
+  const mode = (searchParams.get("mode") ?? "auto").toLowerCase();
 
-    const rows: Row[] = [];
-    for (const s of sigs) {
-      let tx: any = null;
-      try {
-        tx = await conn.getTransaction(s.signature, {
-          maxSupportedTransactionVersion: 0,
-        });
-      } catch {
-        continue;
-      }
-      if (!tx) continue;
-
-      const memo = parseMemoFromTx(tx);
-      const delta = getVaultDeltaUsdc(tx, CAPITAL_POOL.vaultUsdcAta, CAPITAL_POOL.usdcMint);
-      if (delta === 0) continue;
-
-      const type: Row["type"] = delta > 0 ? "DEPOSIT" : "SWEEP";
-      const team = inferTeam(tx, memo);
-
-      rows.push({
-        signature: s.signature,
-        blockTime: tx.blockTime ?? null,
-        slot: tx.slot,
-        type,
-        amountUsdc: +delta,
-        teamId: team.teamId,
-        teamLabel: team.teamLabel,
-        memo,
-      });
-    }
-
-    const totalDeposits = rows
-      .filter((r) => r.amountUsdc > 0)
-      .reduce((a, r) => a + r.amountUsdc, 0);
-
-    return NextResponse.json({
-      generatedAt: new Date().toISOString(),
-      vaultAta: CAPITAL_POOL.vaultUsdcAta,
-      totalDeposits,
-      rows,
-      ok: true,
-    });
-  } catch (e: any) {
-    // Fallback: serve snapshot files that already exist in /public
+  // 1) SNAPSHOT forced
+  if (mode === "snapshot") {
     try {
-      const base = new URL(req.url);
-      const origin = `${base.protocol}//${base.host}`;
-
-      const [summaryRes, receiptsRes] = await Promise.all([
-        fetch(`${origin}/capital-pool/mainnet/summary.json`, { cache: "no-store" }),
-        fetch(`${origin}/capital-pool/mainnet/receipts.index.json`, { cache: "no-store" }),
-      ]);
-
-      const summary = await summaryRes.json();
-      const receipts = await receiptsRes.json();
-
-      const items =
-        receipts?.items ??
-        receipts?.receipts?.items ??
-        receipts?.data?.items ??
-        [];
-
-      const rows: Row[] = (Array.isArray(items) ? items : []).map((x: any) => ({
-        signature: String(x.tx ?? ""),
-        blockTime: null,
-        slot: 0,
-        type: "DEPOSIT",
-        amountUsdc: Number(x.amountUsdc ?? 0),
-        teamId: x.teamId ?? null,
-        teamLabel: x.teamId ? String(x.teamId).replace("team_", "").toUpperCase() : null,
-        memo: x.memo ?? null,
-      }));
+      const p = snapshotPaths();
+      const summary = safeJsonRead(p.summary);
+      const receipts = safeJsonRead(p.receipts);
+      const { rows, totalDeposits } = rowsFromSnapshots(summary, receipts);
 
       return NextResponse.json({
+        ok: true,
+        mode: "snapshot",
+        fallback: null,
         generatedAt: summary?.generatedAt ?? new Date().toISOString(),
         vaultAta: CAPITAL_POOL.vaultUsdcAta,
-        totalDeposits: Number(summary?.global?.totalUsdc ?? 0),
+        totalDeposits,
         rows,
+      });
+    } catch (e: any) {
+      return NextResponse.json(
+        { ok: false, mode: "snapshot", error: String(e?.message ?? e) },
+        { status: 500 }
+      );
+    }
+  }
+
+  // 2) RPC forced (light)
+  if (mode === "rpc") {
+    try {
+      const { rows } = await rpcLight(limit);
+      return NextResponse.json({
+        ok: true,
+        mode: "rpc-light",
+        generatedAt: new Date().toISOString(),
+        vaultAta: CAPITAL_POOL.vaultUsdcAta,
+        totalDeposits: null, // not computed in light mode
+        rows,
+      });
+    } catch (e: any) {
+      // If rpc fails, fall back to snapshots
+      modeFallbackSnapshot: {
+        try {
+          const p = snapshotPaths();
+          const summary = safeJsonRead(p.summary);
+          const receipts = safeJsonRead(p.receipts);
+          const { rows, totalDeposits } = rowsFromSnapshots(summary, receipts);
+
+          return NextResponse.json({
+            ok: false,
+            mode: "rpc-light",
+            fallback: "snapshot",
+            error: String(e?.message ?? e),
+            generatedAt: summary?.generatedAt ?? new Date().toISOString(),
+            vaultAta: CAPITAL_POOL.vaultUsdcAta,
+            totalDeposits,
+            rows,
+          });
+        } catch (e2: any) {
+          return NextResponse.json(
+            { ok: false, mode: "rpc-light", error: String(e?.message ?? e), error2: String(e2?.message ?? e2) },
+            { status: 500 }
+          );
+        }
+      }
+    }
+  }
+
+  // 3) AUTO: try rpc-light first, but ALWAYS return snapshot totals/rows if available.
+  // This is the safest for Amira-proof + UI stability.
+  try {
+    // First try reading snapshots from disk (fast, no rate limit)
+    const p = snapshotPaths();
+    const summary = safeJsonRead(p.summary);
+    const receipts = safeJsonRead(p.receipts);
+    const { rows, totalDeposits } = rowsFromSnapshots(summary, receipts);
+
+    // Optionally enrich with rpc-light signatures (last N txs) without breaking if it fails
+    let rpcRows: Row[] = [];
+    try {
+      const r = await rpcLight(Math.min(limit, 20));
+      rpcRows = r.rows;
+    } catch {
+      rpcRows = [];
+    }
+
+    return NextResponse.json({
+      ok: true,
+      mode: "auto",
+      generatedAt: summary?.generatedAt ?? new Date().toISOString(),
+      vaultAta: CAPITAL_POOL.vaultUsdcAta,
+      totalDeposits,
+      rows, // snapshot rows (DEPOSIT)
+      rpcRows, // optional list of last signatures (OTHER)
+    });
+  } catch (e: any) {
+    // If snapshots missing, attempt rpc-light only
+    try {
+      const { rows } = await rpcLight(limit);
+      return NextResponse.json({
         ok: false,
-        fallback: "static-snapshots",
+        mode: "auto",
+        fallback: "rpc-light",
         error: String(e?.message ?? e),
+        generatedAt: new Date().toISOString(),
+        vaultAta: CAPITAL_POOL.vaultUsdcAta,
+        totalDeposits: null,
+        rows,
       });
     } catch (e2: any) {
       return NextResponse.json(
-        { ok: false, error: String(e?.message ?? e), error2: String(e2?.message ?? e2) },
+        { ok: false, mode: "auto", error: String(e?.message ?? e), error2: String(e2?.message ?? e2) },
         { status: 500 }
       );
     }
