@@ -1,13 +1,14 @@
 // app/capital-pool/page.tsx
-// FIX: bars not visible + x-axis labels alignment
+// FIX: bars not visible + x-axis labels alignment + custom Y scale (expand 0..5000)
 // - don't mutate events with shift()
 // - render grid inside a content area that matches bars baseline
 // - add explicit bar min-height + z-index over grid
 // - move x labels to an absolute bottom lane
+// - custom (warped) Y axis ticks: 0..5000 uses more vertical space
 
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import useSWR from "swr";
 
 type ApiRow = {
@@ -106,7 +107,25 @@ export default function CapitalPoolPage() {
   const paged = enriched.slice(start, start + pageSize);
 
   const target = 20000;
-  const yMax = 30000;
+
+  // --- Custom warped Y axis (readable 0..5000) ---
+  const Y_TICKS = [0, 100, 300, 500, 700, 1000, 2000, 5000, 10000, 15000, 20000, 25000] as const;
+  const Y_MAX = Y_TICKS[Y_TICKS.length - 1]; // 25000
+  const LOW_MAX = 5000;
+  const LOW_PORTION = 0.65; // 0..5000 uses 65% of chart height
+
+  function yToPct(v: number) {
+    const x = clamp(v, 0, Y_MAX);
+    if (x <= LOW_MAX) {
+      return 1 - (x / LOW_MAX) * LOW_PORTION;
+    }
+    const hi = (x - LOW_MAX) / (Y_MAX - LOW_MAX); // 0..1
+    return 1 - (LOW_PORTION + hi * (1 - LOW_PORTION));
+  }
+
+  function valToHeightPct(v: number) {
+    return (1 - yToPct(v)) * 100;
+  }
 
   const chart = useMemo(() => {
     const nowSec = data?.generatedAt
@@ -162,13 +181,13 @@ export default function CapitalPoolPage() {
     }
 
     return { points };
-  }, [data?.rows, data?.rpcRows, data?.generatedAt, range]);
+  }, [data?.rows, data?.rpcRows, data?.generatedAt, range, target]);
 
   // keep page safe
-  useMemo(() => {
+  useEffect(() => {
     if (safePage !== page) setPage(safePage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalPages]);
+  }, [totalPages, safePage]);
 
   if (isLoading && !data) return <div className="p-6">Loading…</div>;
   if (error && !data) return <div className="p-6">Error loading data</div>;
@@ -282,15 +301,15 @@ export default function CapitalPoolPage() {
                   team === "MKS"
                     ? "border-cyan-400/20 bg-cyan-400/10 text-cyan-200"
                     : team === "ETRA"
-                      ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"
-                      : "border-white/10 bg-white/5 text-white/70";
+                    ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"
+                    : "border-white/10 bg-white/5 text-white/70";
 
                 const typePill =
                   r.type === "DEPOSIT"
                     ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"
                     : r.type === "SWEEP"
-                      ? "border-rose-400/20 bg-rose-400/10 text-rose-200"
-                      : "border-white/10 bg-white/5 text-white/70";
+                    ? "border-rose-400/20 bg-rose-400/10 text-rose-200"
+                    : "border-white/10 bg-white/5 text-white/70";
 
                 return (
                   <tr key={r.signature} className="border-t border-white/10 text-white/80">
@@ -348,19 +367,25 @@ export default function CapitalPoolPage() {
 
           <div className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 p-1">
             <button
-              className={`rounded-lg px-3 py-1.5 text-xs ${range === "30m" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"}`}
+              className={`rounded-lg px-3 py-1.5 text-xs ${
+                range === "30m" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"
+              }`}
               onClick={() => setRange("30m")}
             >
               30m
             </button>
             <button
-              className={`rounded-lg px-3 py-1.5 text-xs ${range === "2h" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"}`}
+              className={`rounded-lg px-3 py-1.5 text-xs ${
+                range === "2h" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"
+              }`}
               onClick={() => setRange("2h")}
             >
               2H
             </button>
             <button
-              className={`rounded-lg px-3 py-1.5 text-xs ${range === "12h" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"}`}
+              className={`rounded-lg px-3 py-1.5 text-xs ${
+                range === "12h" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"
+              }`}
               onClick={() => setRange("12h")}
             >
               12H
@@ -373,8 +398,8 @@ export default function CapitalPoolPage() {
           <div className="grid grid-cols-[64px_1fr] gap-3">
             {/* Y labels */}
             <div className="relative h-[260px]">
-              {[30000, 20000, 10000, 6000, 4000, 2000, 0].map((v) => {
-                const y = (1 - v / yMax) * 100;
+              {[...Y_TICKS].reverse().map((v) => {
+                const y = yToPct(v) * 100;
                 return (
                   <div key={v} className="absolute right-0" style={{ top: `${y}%`, transform: "translateY(-50%)" }}>
                     <div className="font-mono text-[11px] text-white/40">{v.toLocaleString()}</div>
@@ -386,8 +411,8 @@ export default function CapitalPoolPage() {
             {/* Plot */}
             <div className="relative h-[260px]">
               {/* gridlines */}
-              {[0, 2000, 4000, 6000, 10000, 20000, 30000].map((v) => {
-                const y = (1 - v / yMax) * 100;
+              {Y_TICKS.map((v) => {
+                const y = yToPct(v) * 100;
                 return (
                   <div key={v} className="absolute left-0 right-0" style={{ top: `${y}%` }}>
                     <div className="h-px bg-white/10" />
@@ -399,23 +424,33 @@ export default function CapitalPoolPage() {
               <div className="absolute inset-0 pb-7">
                 <div className="flex h-full items-end gap-2">
                   {chart.points.map((p) => {
-                    const depositH = clamp((p.deposit / yMax) * 100, 0, 100);
-                    const remainingH = clamp((p.remaining / yMax) * 100, 0, 100);
+                    const depositH = clamp(valToHeightPct(p.deposit), 0, 100);
+                    const remainingH = clamp(valToHeightPct(p.remaining), 0, 100);
 
-                    // ensure visible if >0
                     const depStyle = p.deposit > 0 ? { height: `${depositH}%`, minHeight: "2px" } : { height: "0%" };
-                    const remStyle = p.remaining > 0 ? { height: `${remainingH}%`, minHeight: "2px" } : { height: "0%" };
+                    const remStyle =
+                      p.remaining > 0 ? { height: `${remainingH}%`, minHeight: "2px" } : { height: "0%" };
 
                     return (
                       <div key={p.t} className="relative flex-1">
                         <div className="absolute bottom-0 left-0 right-0 z-10">
                           {/* remaining on top */}
                           {p.remaining > 0 && (
-                            <div className="w-full rounded-t-lg bg-fuchsia-500/80" style={remStyle} title={`Remaining: ${p.remaining.toFixed(0)} USDC`} />
+                            <div
+                              className="w-full rounded-t-lg bg-fuchsia-500/80"
+                              style={remStyle}
+                              title={`Remaining: ${p.remaining.toFixed(0)} USDC`}
+                            />
                           )}
                           {/* deposits bottom */}
                           {p.deposit > 0 && (
-                            <div className={`w-full ${p.remaining > 0 ? "rounded-b-lg" : "rounded-lg"} bg-emerald-400/80`} style={depStyle} title={`Deposits: ${p.deposit.toFixed(2)} USDC`} />
+                            <div
+                              className={`w-full ${
+                                p.remaining > 0 ? "rounded-b-lg" : "rounded-lg"
+                              } bg-emerald-400/80`}
+                              style={depStyle}
+                              title={`Deposits: ${p.deposit.toFixed(2)} USDC`}
+                            />
                           )}
                         </div>
                       </div>
@@ -428,13 +463,14 @@ export default function CapitalPoolPage() {
               <div className="absolute bottom-0 left-0 right-0 h-7">
                 <div className="flex h-full items-end gap-2">
                   {chart.points.map((p, idx) => {
-                    // reduce clutter: show every Nth label depending on range
                     const showEvery = range === "30m" ? 3 : range === "2h" ? 2 : 1;
                     const show = idx % showEvery === 0 || idx === chart.points.length - 1;
 
                     return (
                       <div key={p.t} className="flex-1">
-                        <div className="truncate text-center font-mono text-[10px] text-white/40">{show ? p.label : ""}</div>
+                        <div className="truncate text-center font-mono text-[10px] text-white/40">
+                          {show ? p.label : ""}
+                        </div>
                       </div>
                     );
                   })}
