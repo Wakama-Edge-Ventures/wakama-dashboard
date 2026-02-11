@@ -10,11 +10,13 @@
     "seed_teams": "node tools/seed-teams.cjs"
   },
   "dependencies": {
+    "@solana/web3.js": "^1.98.4",
     "firebase": "^12.6.0",
     "firebase-admin": "^13.6.0",
     "next": "16.0.1",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "swr": "^2.4.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
