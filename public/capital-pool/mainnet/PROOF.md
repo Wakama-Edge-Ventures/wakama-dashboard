@@ -1,18 +1,19 @@
 # Wakama Capital Pool — Proof (mainnet-beta)
-Generated: 2026-02-10T18:14:14.918Z
+Generated: 2026-02-11T11:39:41.636Z
 
 ## Global
-- Total: **5404.640852 USDC**
-- Deposits: **12**
+- Total: **5904.640852 USDC**
+- Deposits: **13**
 - Teams: **2**
 
 ## By team
 ### team_etra
-- Total: **1351 USDC** (deposits: 4)
+- Total: **1851 USDC** (deposits: 5)
   - 1 USDC — https://solscan.io/tx/7ge8ELEvL41WrpRdUSZ8AxmYCH3YP8HYwvhXs5RdxWz29BXBd8esr9oRZd5ShiPwituMsQ6H2EYND5kB9kVk1av
   - 200 USDC — https://solscan.io/tx/2zDPkyx7dG5WysKN5AxzgFBZahLxfPpkk2erYHqhiTDGM6EEJ9U29BYsaFDL3Jiy5n9L7EBgNrTjU9EYDc1QbZgr
   - 800 USDC — https://solscan.io/tx/3w4yiDZv7mG9emhB2gtDDrPGir1mMHd1448Tf4UyoD28tqjrBEiE7THXALcWHPB8rMrM8G7f8uEB793V1JuyytuH
   - 350 USDC — https://solscan.io/tx/5J7a5KRcFkDFPUwU9TRj5SzPA8ZYFpUzTGrncMg5v5ajACWmYfQANsTzg8mjV7PHjzW4Mwh3H2iXHZ77XC9cxDpk
+  - 500 USDC — https://solscan.io/tx/3kobreyVpAFWGZYKGaQQ71sigEuvFEE6SpSPyDXnPHrZSUJu64DcyRExFqdfENDywZFMcDveYQU6eZjcDCaT2xhT
 
 ### team_mks
 - Total: **4053.640852 USDC** (deposits: 8)
