@@ -1,9 +1,21 @@
-// src/app/capital-pool/page.tsx
+// app/capital-pool/page.tsx
 "use client";
 
+import { useMemo, useState } from "react";
 import useSWR from "swr";
 
 type ApiRow = {
+  signature: string;
+  blockTime: number | null;
+  slot: number;
+  type: "DEPOSIT" | "SWEEP" | "OTHER";
+  amountUsdc: number;
+  teamId: string | null;
+  teamLabel: string | null;
+  memo: string | null;
+};
+
+type ApiRpcRow = {
   signature: string;
   blockTime: number | null;
   slot: number;
@@ -23,14 +35,14 @@ type ApiResponse = {
   vaultAta?: string;
   totalDeposits?: number;
   rows?: ApiRow[];
+  rpcRows?: ApiRpcRow[];
 };
 
 const fetcher = async (url: string): Promise<ApiResponse> => {
   try {
     const r = await fetch(url, { cache: "no-store" });
     const j = (await r.json().catch(() => null)) as ApiResponse | null;
-
-    if (!j) return { ok: false, error: `Invalid JSON response (HTTP ${r.status})`, rows: [] };
+    if (!j) return { ok: false, error: `Invalid JSON (HTTP ${r.status})`, rows: [] };
     if (!r.ok) return { ...j, ok: false, error: j.error ?? `HTTP ${r.status}` };
     return { ...j, ok: j.ok ?? true };
   } catch (e: any) {
@@ -40,157 +52,239 @@ const fetcher = async (url: string): Promise<ApiResponse> => {
 
 function fmtDate(ts: number | null) {
   if (ts == null) return "-";
+  // display in UTC like other pages
   return new Date(ts * 1000).toISOString().replace("T", " ").replace("Z", " UTC");
 }
 
-function shortKey(s?: string | null) {
-  if (!s) return "-";
-  if (s.length <= 18) return s;
-  return `${s.slice(0, 6)}…${s.slice(-6)}`;
+function clamp(n: number, a: number, b: number) {
+  return Math.max(a, Math.min(b, n));
 }
 
-function fmtUsdc(n: number) {
-  const x = Number(n ?? 0);
-  if (!Number.isFinite(x)) return "0.000000";
-  return x.toFixed(6);
-}
-
-function pctOf(amount: number, total: number) {
-  if (!(total > 0) || !(amount > 0)) return null;
-  return (amount / total) * 100;
-}
-
-function typeChip(type: ApiRow["type"]) {
-  if (type === "DEPOSIT")
-    return "bg-emerald-500/15 text-emerald-200 ring-emerald-500/25";
-  if (type === "SWEEP") return "bg-rose-500/15 text-rose-200 ring-rose-500/25";
-  return "bg-slate-500/15 text-slate-200 ring-slate-500/25";
-}
-
-function teamChip(label?: string | null) {
-  const v = (label ?? "").toUpperCase();
-  if (v.includes("MKS")) return "bg-cyan-500/15 text-cyan-200 ring-cyan-500/25";
-  if (v.includes("ETRA")) return "bg-violet-500/15 text-violet-200 ring-violet-500/25";
-  return "bg-slate-500/15 text-slate-200 ring-slate-500/25";
+function roundTo(n: number, step: number) {
+  return Math.floor(n / step) * step;
 }
 
 export default function CapitalPoolPage() {
-  const { data, error, isLoading } = useSWR<ApiResponse>(
-    "/api/capital-pool?limit=50",
-    fetcher,
-    {
-      refreshInterval: 15000,
-      revalidateOnFocus: true,
-      shouldRetryOnError: false,
-      errorRetryCount: 0,
-    }
-  );
+  const [page, setPage] = useState(1);
+  const [range, setRange] = useState<"30m" | "2h" | "12h">("30m");
 
-  const rows = data?.rows ?? [];
+  const { data, error, isLoading } = useSWR<ApiResponse>("/api/capital-pool?limit=200", fetcher, {
+    refreshInterval: 15000,
+    revalidateOnFocus: true,
+    shouldRetryOnError: false,
+    errorRetryCount: 0,
+  });
+
+  const enriched = useMemo(() => {
+    const rows = data?.rows ?? [];
+    const rpcRows = data?.rpcRows ?? [];
+
+    const bySig = new Map<string, { blockTime: number | null; slot: number }>();
+    for (const r of rpcRows) {
+      if (!r?.signature) continue;
+      bySig.set(r.signature, { blockTime: r.blockTime ?? null, slot: r.slot ?? 0 });
+    }
+
+    const out = rows.map((r) => {
+      const hit = bySig.get(r.signature);
+      const blockTime = r.blockTime ?? hit?.blockTime ?? null;
+      const slot = r.slot ?? hit?.slot ?? 0;
+      return { ...r, blockTime, slot };
+    });
+
+    // newest first
+    out.sort((a, b) => {
+      const ta = a.blockTime ?? 0;
+      const tb = b.blockTime ?? 0;
+      if (tb !== ta) return tb - ta;
+      return (b.slot ?? 0) - (a.slot ?? 0);
+    });
+
+    return out;
+  }, [data?.rows, data?.rpcRows]);
+
   const total = Number(data?.totalDeposits ?? 0);
 
-  // render states (avoid “infinite loading” feeling)
-  const showSkeleton = isLoading && !data;
-  const hardError = (error && !data) || (!showSkeleton && !data);
+  // pagination
+  const pageSize = 5;
+  const totalPages = Math.max(1, Math.ceil(enriched.length / pageSize));
+  const safePage = clamp(page, 1, totalPages);
+  const start = (safePage - 1) * pageSize;
+  const paged = enriched.slice(start, start + pageSize);
 
-  if (showSkeleton) {
-    return (
-      <div className="p-6">
-        <div className="mb-6">
-          <div className="h-7 w-64 rounded-lg bg-white/10" />
-          <div className="mt-2 h-4 w-80 rounded-lg bg-white/5" />
-        </div>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="h-24 rounded-2xl border border-white/10 bg-white/5" />
-          <div className="h-24 rounded-2xl border border-white/10 bg-white/5" />
-          <div className="h-24 rounded-2xl border border-white/10 bg-white/5" />
-        </div>
-        <div className="mt-6 h-96 rounded-2xl border border-white/10 bg-white/5" />
-      </div>
-    );
+  // chart settings
+  const target = 20000;
+  const yMax = 30000;
+
+  const chart = useMemo(() => {
+    // prefer generatedAt as "now" anchor (stable), fallback to Date.now
+    const nowSec = data?.generatedAt ? Math.floor(new Date(data.generatedAt).getTime() / 1000) : Math.floor(Date.now() / 1000);
+
+    const windowSec = range === "30m" ? 30 * 60 : range === "2h" ? 2 * 60 * 60 : 12 * 60 * 60;
+    const stepSec = range === "30m" ? 60 : range === "2h" ? 5 * 60 : 60 * 60;
+
+    const fromSec = nowSec - windowSec;
+
+    // build deposit events (positive only) with timestamps
+    const events = (data?.rows ?? [])
+      .map((r) => {
+        // enrich time from rpcRows map as well (same as table)
+        let t = r.blockTime;
+        if (t == null) {
+          const hit = (data?.rpcRows ?? []).find((x) => x.signature === r.signature);
+          t = hit?.blockTime ?? null;
+        }
+        return { t: t ?? null, amt: Number(r.amountUsdc ?? 0) };
+      })
+      .filter((x) => x.t != null && x.amt > 0) as { t: number; amt: number }[];
+
+    events.sort((a, b) => a.t - b.t);
+
+    // cumulative totals per bucket end
+    const buckets: { t: number; label: string; cum: number }[] = [];
+
+    // start aligned for nice labels
+    const firstBucketEnd = roundTo(fromSec, stepSec) + stepSec;
+    let cum = 0;
+
+    // pre-sum events before window (so cum is global cum)
+    for (const e of events) {
+      if (e.t < fromSec) cum += e.amt;
+      else break;
+    }
+
+    for (let t = firstBucketEnd; t <= nowSec; t += stepSec) {
+      // add events up to bucket end
+      while (events.length && events[0].t <= t) {
+        const e = events.shift()!;
+        if (e.t >= fromSec) cum += e.amt;
+        // if it was <fromSec it would have been already counted, but we shifted only after sort, so safe.
+      }
+
+      // label: HH:MM
+      const d = new Date(t * 1000);
+      const hh = String(d.getUTCHours()).padStart(2, "0");
+      const mm = String(d.getUTCMinutes()).padStart(2, "0");
+      const label = `${hh}:${mm}`;
+
+      buckets.push({ t, label, cum });
+    }
+
+    // compute stacked values
+    const points = buckets.map((b) => {
+      const deposit = b.cum;
+      const remaining = Math.max(0, target - deposit);
+      return { ...b, deposit, remaining };
+    });
+
+    return { points };
+  }, [data?.rows, data?.rpcRows, data?.generatedAt, range]);
+
+  // reset page if data length changes
+  useMemo(() => {
+    if (safePage !== page) setPage(safePage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalPages]);
+
+  if (isLoading && !data) {
+    return <div className="p-6">Loading…</div>;
   }
-
-  if (hardError) {
-    return (
-      <div className="p-6">
-        <div className="rounded-2xl border border-rose-500/25 bg-rose-500/10 p-4 text-sm text-rose-100">
-          Error loading data.
-        </div>
-      </div>
-    );
+  if (error && !data) {
+    return <div className="p-6">Error loading data</div>;
   }
-
-  const updatedLabel = data?.generatedAt ? String(data.generatedAt) : "-";
-  const vaultAta = data?.vaultAta ?? "-";
 
   return (
     <div className="p-6">
-      {/* Header (aligned with “Now Playing” mood) */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-        <div className="pointer-events-none absolute inset-0 opacity-70">
-          <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
-          <div className="absolute -right-24 -top-28 h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
-          <div className="absolute left-1/3 top-10 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+      {/* Header aligned with dashboard mood */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs tracking-wide text-white/80">
+            WAKAMA ORACLE • CAPITAL POOL
+          </div>
+          <h1 className="mt-3 bg-gradient-to-r from-emerald-300 via-cyan-300 to-indigo-300 bg-clip-text text-3xl font-semibold text-transparent">
+            Wakama Capital Pool (Mainnet)
+          </h1>
+
+          <div className="mt-2 text-sm text-white/60">
+            Updated: <span className="text-white/80">{data?.generatedAt ? String(data.generatedAt) : "-"}</span>
+          </div>
         </div>
 
-        <div className="relative flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <div className="text-xs uppercase tracking-wider text-white/60">Wakama Oracle • Capital Pool</div>
-            <h1 className="mt-1 text-2xl font-semibold text-white">Wakama Capital Pool</h1>
+        <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            Mainnet
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/70 ring-1 ring-white/10">
-              Updated: {updatedLabel}
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+            GW:{" "}
+            <span className="font-mono text-white/80">
+              {process.env.NEXT_PUBLIC_IPFS_GATEWAY ? new URL(process.env.NEXT_PUBLIC_IPFS_GATEWAY).host : "gateway.pinata.cloud"}
             </span>
-            <a
-              href="/capital-pool/mainnet/summary.json"
-              className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/70 ring-1 ring-white/10 hover:bg-white/10"
-            >
-              View summary
-            </a>
           </div>
         </div>
-
-        {/* Degraded mode banner */}
-        {data?.ok === false && (
-          <div className="relative mt-4 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4 text-sm text-amber-100">
-            <div className="font-medium">Degraded mode</div>
-            <div className="mt-1 text-white/80">
-              {data?.fallback ? `Source: ${data.fallback}. ` : ""}
-              {data?.error ? `Error: ${data.error}` : ""}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* KPI cards */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <div className="text-sm text-white/60">Total deposits</div>
-          <div className="mt-1 text-xl font-semibold text-white">{fmtUsdc(total)} USDC</div>
-          <div className="mt-2 text-xs text-white/50">Computed from receipts / RPC.</div>
+      {/* Degraded mode banner */}
+      {data?.ok === false && (
+        <div className="mt-4 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="font-medium text-amber-200">Degraded mode</div>
+            {data?.fallback && (
+              <div className="rounded-full border border-amber-400/20 bg-black/20 px-3 py-1 text-xs text-amber-100/80">
+                Source: {data.fallback}
+              </div>
+            )}
+          </div>
+          {data?.error && <div className="mt-2 text-amber-100/80">{data.error}</div>}
+        </div>
+      )}
+
+      {/* Stats cards */}
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
+          <div className="text-sm text-white/60">Total deposits (computed)</div>
+          <div className="mt-2 text-2xl font-semibold text-white">{total.toFixed(6)} USDC</div>
+          <div className="mt-1 text-xs text-white/50">Target: {target.toLocaleString()} USDC</div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-          <div className="text-sm text-white/60">Rows</div>
-          <div className="mt-1 text-xl font-semibold text-white">{rows.length}</div>
-          <div className="mt-2 text-xs text-white/50">Latest transactions in the table.</div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="text-sm text-white/60">Transactions</div>
+          <div className="mt-2 text-2xl font-semibold text-white">{enriched.length}</div>
+          <div className="mt-1 text-xs text-white/50">
+            Showing {pageSize}/page • Page {safePage}/{totalPages}
+          </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="text-sm text-white/60">Vault ATA</div>
-          <div className="mt-1 font-mono text-xs text-white/80">{vaultAta}</div>
-          <div className="mt-2 text-xs text-white/50">Short: {shortKey(vaultAta)}</div>
+          <div className="mt-2 break-all font-mono text-xs text-white/80">{data?.vaultAta ?? "-"}</div>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
+      {/* TABLE (top) */}
+      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5">
         <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-          <div className="text-sm font-medium text-white">Transactions</div>
-          <div className="text-xs text-white/60">
-            Refresh: <span className="text-white/80">15s</span>
+          <div className="text-sm font-medium text-white/80">Latest transactions</div>
+
+          <div className="flex items-center gap-2">
+            <button
+              className="rounded-lg border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-white/80 disabled:opacity-40"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={safePage <= 1}
+            >
+              Prev
+            </button>
+            <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-white/70">
+              {safePage}/{totalPages}
+            </div>
+            <button
+              className="rounded-lg border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-white/80 disabled:opacity-40"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={safePage >= totalPages}
+            >
+              Next
+            </button>
           </div>
         </div>
 
@@ -198,84 +292,78 @@ export default function CapitalPoolPage() {
           <table className="w-full text-sm">
             <thead className="bg-black/20">
               <tr className="text-white/70">
-                <th className="p-3 text-left font-medium">Date</th>
-                <th className="p-3 text-left font-medium">Team</th>
-                <th className="p-3 text-left font-medium">Type</th>
-                <th className="p-3 text-right font-medium">Amount (USDC)</th>
-                <th className="p-3 text-right font-medium">% total</th>
-                <th className="p-3 text-left font-medium">Memo / Comment</th>
-                <th className="p-3 text-left font-medium">Tx</th>
+                <th className="p-3 text-left">Date</th>
+                <th className="p-3 text-left">Team</th>
+                <th className="p-3 text-left">Type</th>
+                <th className="p-3 text-right">Amount (USDC)</th>
+                <th className="p-3 text-right">% total</th>
+                <th className="p-3 text-left">Memo / Comment</th>
+                <th className="p-3 text-left">Tx</th>
               </tr>
             </thead>
 
             <tbody>
-              {rows.map((r) => {
+              {paged.map((r) => {
                 const amt = Number(r.amountUsdc ?? 0);
-                const pct = pctOf(amt, total);
+                const pct = total > 0 && amt > 0 ? (amt / total) * 100 : 0;
+
+                const team = r.teamLabel ?? r.teamId ?? "unknown";
+                const teamPill =
+                  team === "MKS"
+                    ? "border-cyan-400/20 bg-cyan-400/10 text-cyan-200"
+                    : team === "ETRA"
+                      ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"
+                      : "border-white/10 bg-white/5 text-white/70";
+
+                const typePill =
+                  r.type === "DEPOSIT"
+                    ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-200"
+                    : r.type === "SWEEP"
+                      ? "border-rose-400/20 bg-rose-400/10 text-rose-200"
+                      : "border-white/10 bg-white/5 text-white/70";
 
                 return (
-                  <tr key={r.signature} className="border-t border-white/10 text-white/85 hover:bg-white/[0.03]">
-                    <td className="p-3 whitespace-nowrap font-mono text-xs text-white/70">
-                      {fmtDate(r.blockTime)}
-                    </td>
+                  <tr key={r.signature} className="border-t border-white/10 text-white/80">
+                    <td className="p-3 whitespace-nowrap font-mono text-xs text-white/70">{fmtDate(r.blockTime)}</td>
 
                     <td className="p-3">
-                      <span
-                        className={[
-                          "inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs ring-1",
-                          teamChip(r.teamLabel ?? r.teamId ?? null),
-                        ].join(" ")}
-                        title={r.teamId ?? ""}
-                      >
-                        {(r.teamLabel ?? r.teamId ?? "unknown").toString()}
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs ${teamPill}`}>
+                        {team}
                       </span>
                     </td>
 
                     <td className="p-3">
-                      <span
-                        className={[
-                          "inline-flex items-center rounded-full px-2.5 py-1 text-xs ring-1",
-                          typeChip(r.type),
-                        ].join(" ")}
-                      >
+                      <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs ${typePill}`}>
                         {r.type}
                       </span>
                     </td>
 
-                    <td className="p-3 text-right font-semibold tabular-nums text-white">
-                      {fmtUsdc(amt)}
-                    </td>
+                    <td className="p-3 text-right font-medium text-white">{amt.toFixed(6)}</td>
 
-                    <td className="p-3 text-right tabular-nums text-white/80">
-                      {pct != null ? `${pct.toFixed(2)}%` : "-"}
-                    </td>
+                    <td className="p-3 text-right text-white/70">{pct ? `${pct.toFixed(2)}%` : "-"}</td>
 
-                    <td className="p-3 max-w-[520px]">
-                      <div className="truncate text-white/80" title={r.memo ?? ""}>
-                        {r.memo ?? "-"}
-                      </div>
-                      <div className="mt-1 font-mono text-[11px] text-white/45">
-                        {shortKey(r.signature)}
-                      </div>
+                    <td className="p-3 max-w-[420px] truncate text-white/70" title={r.memo ?? ""}>
+                      {r.memo ?? "-"}
                     </td>
 
                     <td className="p-3">
                       <a
-                        className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1 text-xs text-white/80 ring-1 ring-white/10 hover:bg-white/10"
+                        className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-white/80 hover:bg-black/30"
                         target="_blank"
                         rel="noreferrer"
                         href={`https://solscan.io/tx/${r.signature}`}
                       >
                         solscan
+                        <span className="text-white/40">↗</span>
                       </a>
                     </td>
                   </tr>
                 );
               })}
 
-              {!rows.length && (
+              {!paged.length && (
                 <tr>
-                  <td className="p-6 text-center text-white/60" colSpan={7}>
+                  <td className="p-6 text-white/50" colSpan={7}>
                     No transactions found
                   </td>
                 </tr>
@@ -283,10 +371,88 @@ export default function CapitalPoolPage() {
             </tbody>
           </table>
         </div>
+      </div>
 
-        <div className="border-t border-white/10 px-4 py-3 text-xs text-white/50">
-          Tip: memo strings can be displayed here once deposits include a memo convention (e.g.{" "}
-          <span className="font-mono text-white/70">team=team_etra; purpose=...</span>).
+      {/* CHART (below) */}
+      <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-sm font-medium text-white/80">Capital Pool progress</div>
+            <div className="mt-1 text-xs text-white/50">
+              Stacked bars: green = deposits, mauve = remaining to {target.toLocaleString()} USDC
+            </div>
+          </div>
+
+          <div className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 p-1">
+            <button
+              className={`rounded-lg px-3 py-1.5 text-xs ${range === "30m" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"}`}
+              onClick={() => setRange("30m")}
+            >
+              30m
+            </button>
+            <button
+              className={`rounded-lg px-3 py-1.5 text-xs ${range === "2h" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"}`}
+              onClick={() => setRange("2h")}
+            >
+              2H
+            </button>
+            <button
+              className={`rounded-lg px-3 py-1.5 text-xs ${range === "12h" ? "bg-emerald-400/20 text-emerald-200" : "text-white/70"}`}
+              onClick={() => setRange("12h")}
+            >
+              12H
+            </button>
+          </div>
+        </div>
+
+        {/* chart area */}
+        <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+          {/* y-axis labels */}
+          <div className="relative h-[260px]">
+            {/* gridlines */}
+            {[0, 2000, 4000, 6000, 10000, 20000, 30000].map((v) => {
+              const y = 100 - (v / yMax) * 100;
+              return (
+                <div key={v} className="absolute left-0 right-0" style={{ top: `${y}%` }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 text-right font-mono text-[11px] text-white/40">{v === 0 ? "0" : v.toLocaleString()}</div>
+                    <div className="h-px flex-1 bg-white/10" />
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* bars */}
+            <div className="absolute inset-0 ml-16 flex items-end gap-2 pb-6">
+              {chart.points.map((p) => {
+                const depositH = clamp((p.deposit / yMax) * 100, 0, 100);
+                const remainingH = clamp((p.remaining / yMax) * 100, 0, 100);
+
+                return (
+                  <div key={p.t} className="flex h-full flex-1 flex-col items-center justify-end">
+                    <div className="relative w-full">
+                      {/* remaining (mauve) on top */}
+                      {p.remaining > 0 && (
+                        <div
+                          className="w-full rounded-t-lg bg-fuchsia-500/80"
+                          style={{ height: `${remainingH}%` }}
+                          title={`Remaining: ${p.remaining.toFixed(0)} USDC`}
+                        />
+                      )}
+                      {/* deposit (green) bottom */}
+                      <div
+                        className={`w-full ${p.remaining > 0 ? "rounded-b-lg" : "rounded-lg"} bg-emerald-400/80`}
+                        style={{ height: `${depositH}%` }}
+                        title={`Deposits: ${p.deposit.toFixed(2)} USDC`}
+                      />
+                    </div>
+
+                    <div className="mt-2 w-full truncate text-center font-mono text-[10px] text-white/40">{p.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>
