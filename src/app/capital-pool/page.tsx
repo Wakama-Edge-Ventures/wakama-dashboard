@@ -1,21 +1,16 @@
 // app/capital-pool/page.tsx
+// FIX: bars not visible + x-axis labels alignment
+// - don't mutate events with shift()
+// - render grid inside a content area that matches bars baseline
+// - add explicit bar min-height + z-index over grid
+// - move x labels to an absolute bottom lane
+
 "use client";
 
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 
 type ApiRow = {
-  signature: string;
-  blockTime: number | null;
-  slot: number;
-  type: "DEPOSIT" | "SWEEP" | "OTHER";
-  amountUsdc: number;
-  teamId: string | null;
-  teamLabel: string | null;
-  memo: string | null;
-};
-
-type ApiRpcRow = {
   signature: string;
   blockTime: number | null;
   slot: number;
@@ -35,7 +30,7 @@ type ApiResponse = {
   vaultAta?: string;
   totalDeposits?: number;
   rows?: ApiRow[];
-  rpcRows?: ApiRpcRow[];
+  rpcRows?: ApiRow[];
 };
 
 const fetcher = async (url: string): Promise<ApiResponse> => {
@@ -52,7 +47,6 @@ const fetcher = async (url: string): Promise<ApiResponse> => {
 
 function fmtDate(ts: number | null) {
   if (ts == null) return "-";
-  // display in UTC like other pages
   return new Date(ts * 1000).toISOString().replace("T", " ").replace("Z", " UTC");
 }
 
@@ -60,7 +54,7 @@ function clamp(n: number, a: number, b: number) {
   return Math.max(a, Math.min(b, n));
 }
 
-function roundTo(n: number, step: number) {
+function floorTo(n: number, step: number) {
   return Math.floor(n / step) * step;
 }
 
@@ -92,7 +86,6 @@ export default function CapitalPoolPage() {
       return { ...r, blockTime, slot };
     });
 
-    // newest first
     out.sort((a, b) => {
       const ta = a.blockTime ?? 0;
       const tb = b.blockTime ?? 0;
@@ -112,90 +105,76 @@ export default function CapitalPoolPage() {
   const start = (safePage - 1) * pageSize;
   const paged = enriched.slice(start, start + pageSize);
 
-  // chart settings
   const target = 20000;
   const yMax = 30000;
 
   const chart = useMemo(() => {
-    // prefer generatedAt as "now" anchor (stable), fallback to Date.now
-    const nowSec = data?.generatedAt ? Math.floor(new Date(data.generatedAt).getTime() / 1000) : Math.floor(Date.now() / 1000);
+    const nowSec = data?.generatedAt
+      ? Math.floor(new Date(data.generatedAt).getTime() / 1000)
+      : Math.floor(Date.now() / 1000);
 
     const windowSec = range === "30m" ? 30 * 60 : range === "2h" ? 2 * 60 * 60 : 12 * 60 * 60;
     const stepSec = range === "30m" ? 60 : range === "2h" ? 5 * 60 : 60 * 60;
 
     const fromSec = nowSec - windowSec;
 
-    // build deposit events (positive only) with timestamps
+    // build a stable events array (DO NOT mutate with shift)
+    const bySig = new Map<string, number | null>();
+    for (const r of data?.rpcRows ?? []) bySig.set(r.signature, r.blockTime ?? null);
+
     const events = (data?.rows ?? [])
       .map((r) => {
-        // enrich time from rpcRows map as well (same as table)
-        let t = r.blockTime;
-        if (t == null) {
-          const hit = (data?.rpcRows ?? []).find((x) => x.signature === r.signature);
-          t = hit?.blockTime ?? null;
-        }
-        return { t: t ?? null, amt: Number(r.amountUsdc ?? 0) };
+        const t = r.blockTime ?? bySig.get(r.signature) ?? null;
+        return { t, amt: Number(r.amountUsdc ?? 0) };
       })
       .filter((x) => x.t != null && x.amt > 0) as { t: number; amt: number }[];
 
     events.sort((a, b) => a.t - b.t);
 
-    // cumulative totals per bucket end
-    const buckets: { t: number; label: string; cum: number }[] = [];
-
-    // start aligned for nice labels
-    const firstBucketEnd = roundTo(fromSec, stepSec) + stepSec;
+    // cumulative deposits over time (global cum, not per-window)
     let cum = 0;
+    let idx = 0;
 
-    // pre-sum events before window (so cum is global cum)
-    for (const e of events) {
-      if (e.t < fromSec) cum += e.amt;
-      else break;
+    // sum everything before window so cum reflects global state
+    while (idx < events.length && events[idx].t < fromSec) {
+      cum += events[idx].amt;
+      idx++;
     }
 
-    for (let t = firstBucketEnd; t <= nowSec; t += stepSec) {
-      // add events up to bucket end
-      while (events.length && events[0].t <= t) {
-        const e = events.shift()!;
-        if (e.t >= fromSec) cum += e.amt;
-        // if it was <fromSec it would have been already counted, but we shifted only after sort, so safe.
-      }
+    const points: { t: number; label: string; deposit: number; remaining: number }[] = [];
 
-      // label: HH:MM
+    const firstBucketEnd = floorTo(fromSec, stepSec) + stepSec;
+
+    for (let t = firstBucketEnd; t <= nowSec; t += stepSec) {
+      while (idx < events.length && events[idx].t <= t) {
+        cum += events[idx].amt;
+        idx++;
+      }
       const d = new Date(t * 1000);
       const hh = String(d.getUTCHours()).padStart(2, "0");
       const mm = String(d.getUTCMinutes()).padStart(2, "0");
       const label = `${hh}:${mm}`;
 
-      buckets.push({ t, label, cum });
-    }
-
-    // compute stacked values
-    const points = buckets.map((b) => {
-      const deposit = b.cum;
+      const deposit = cum;
       const remaining = Math.max(0, target - deposit);
-      return { ...b, deposit, remaining };
-    });
+
+      points.push({ t, label, deposit, remaining });
+    }
 
     return { points };
   }, [data?.rows, data?.rpcRows, data?.generatedAt, range]);
 
-  // reset page if data length changes
+  // keep page safe
   useMemo(() => {
     if (safePage !== page) setPage(safePage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalPages]);
 
-  if (isLoading && !data) {
-    return <div className="p-6">Loading…</div>;
-  }
-  if (error && !data) {
-    return <div className="p-6">Error loading data</div>;
-  }
+  if (isLoading && !data) return <div className="p-6">Loading…</div>;
+  if (error && !data) return <div className="p-6">Error loading data</div>;
 
   return (
     <div className="p-6">
-      {/* Header aligned with dashboard mood */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs tracking-wide text-white/80">
@@ -204,7 +183,6 @@ export default function CapitalPoolPage() {
           <h1 className="mt-3 bg-gradient-to-r from-emerald-300 via-cyan-300 to-indigo-300 bg-clip-text text-3xl font-semibold text-transparent">
             Wakama Capital Pool (Mainnet)
           </h1>
-
           <div className="mt-2 text-sm text-white/60">
             Updated: <span className="text-white/80">{data?.generatedAt ? String(data.generatedAt) : "-"}</span>
           </div>
@@ -215,17 +193,12 @@ export default function CapitalPoolPage() {
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             Mainnet
           </div>
-
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
-            GW:{" "}
-            <span className="font-mono text-white/80">
-              {process.env.NEXT_PUBLIC_IPFS_GATEWAY ? new URL(process.env.NEXT_PUBLIC_IPFS_GATEWAY).host : "gateway.pinata.cloud"}
-            </span>
+            GW: <span className="font-mono text-white/80">gateway.pinata.cloud</span>
           </div>
         </div>
       </div>
 
-      {/* Degraded mode banner */}
       {data?.ok === false && (
         <div className="mt-4 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -240,14 +213,12 @@ export default function CapitalPoolPage() {
         </div>
       )}
 
-      {/* Stats cards */}
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="text-sm text-white/60">Total deposits (computed)</div>
           <div className="mt-2 text-2xl font-semibold text-white">{total.toFixed(6)} USDC</div>
           <div className="mt-1 text-xs text-white/50">Target: {target.toLocaleString()} USDC</div>
         </div>
-
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="text-sm text-white/60">Transactions</div>
           <div className="mt-2 text-2xl font-semibold text-white">{enriched.length}</div>
@@ -255,14 +226,13 @@ export default function CapitalPoolPage() {
             Showing {pageSize}/page • Page {safePage}/{totalPages}
           </div>
         </div>
-
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="text-sm text-white/60">Vault ATA</div>
           <div className="mt-2 break-all font-mono text-xs text-white/80">{data?.vaultAta ?? "-"}</div>
         </div>
       </div>
 
-      {/* TABLE (top) */}
+      {/* TABLE */}
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5">
         <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
           <div className="text-sm font-medium text-white/80">Latest transactions</div>
@@ -325,27 +295,21 @@ export default function CapitalPoolPage() {
                 return (
                   <tr key={r.signature} className="border-t border-white/10 text-white/80">
                     <td className="p-3 whitespace-nowrap font-mono text-xs text-white/70">{fmtDate(r.blockTime)}</td>
-
                     <td className="p-3">
                       <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs ${teamPill}`}>
                         {team}
                       </span>
                     </td>
-
                     <td className="p-3">
                       <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs ${typePill}`}>
                         {r.type}
                       </span>
                     </td>
-
                     <td className="p-3 text-right font-medium text-white">{amt.toFixed(6)}</td>
-
                     <td className="p-3 text-right text-white/70">{pct ? `${pct.toFixed(2)}%` : "-"}</td>
-
                     <td className="p-3 max-w-[420px] truncate text-white/70" title={r.memo ?? ""}>
                       {r.memo ?? "-"}
                     </td>
-
                     <td className="p-3">
                       <a
                         className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/20 px-3 py-1.5 text-xs text-white/80 hover:bg-black/30"
@@ -353,8 +317,7 @@ export default function CapitalPoolPage() {
                         rel="noreferrer"
                         href={`https://solscan.io/tx/${r.signature}`}
                       >
-                        solscan
-                        <span className="text-white/40">↗</span>
+                        solscan <span className="text-white/40">↗</span>
                       </a>
                     </td>
                   </tr>
@@ -373,7 +336,7 @@ export default function CapitalPoolPage() {
         </div>
       </div>
 
-      {/* CHART (below) */}
+      {/* CHART */}
       <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -405,53 +368,91 @@ export default function CapitalPoolPage() {
           </div>
         </div>
 
-        {/* chart area */}
         <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
-          {/* y-axis labels */}
-          <div className="relative h-[260px]">
-            {/* gridlines */}
-            {[0, 2000, 4000, 6000, 10000, 20000, 30000].map((v) => {
-              const y = 100 - (v / yMax) * 100;
-              return (
-                <div key={v} className="absolute left-0 right-0" style={{ top: `${y}%` }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-14 text-right font-mono text-[11px] text-white/40">{v === 0 ? "0" : v.toLocaleString()}</div>
-                    <div className="h-px flex-1 bg-white/10" />
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* bars */}
-            <div className="absolute inset-0 ml-16 flex items-end gap-2 pb-6">
-              {chart.points.map((p) => {
-                const depositH = clamp((p.deposit / yMax) * 100, 0, 100);
-                const remainingH = clamp((p.remaining / yMax) * 100, 0, 100);
-
+          {/* Layout: left labels column + right plot column */}
+          <div className="grid grid-cols-[64px_1fr] gap-3">
+            {/* Y labels */}
+            <div className="relative h-[260px]">
+              {[30000, 20000, 10000, 6000, 4000, 2000, 0].map((v) => {
+                const y = (1 - v / yMax) * 100;
                 return (
-                  <div key={p.t} className="flex h-full flex-1 flex-col items-center justify-end">
-                    <div className="relative w-full">
-                      {/* remaining (mauve) on top */}
-                      {p.remaining > 0 && (
-                        <div
-                          className="w-full rounded-t-lg bg-fuchsia-500/80"
-                          style={{ height: `${remainingH}%` }}
-                          title={`Remaining: ${p.remaining.toFixed(0)} USDC`}
-                        />
-                      )}
-                      {/* deposit (green) bottom */}
-                      <div
-                        className={`w-full ${p.remaining > 0 ? "rounded-b-lg" : "rounded-lg"} bg-emerald-400/80`}
-                        style={{ height: `${depositH}%` }}
-                        title={`Deposits: ${p.deposit.toFixed(2)} USDC`}
-                      />
-                    </div>
-
-                    <div className="mt-2 w-full truncate text-center font-mono text-[10px] text-white/40">{p.label}</div>
+                  <div key={v} className="absolute right-0" style={{ top: `${y}%`, transform: "translateY(-50%)" }}>
+                    <div className="font-mono text-[11px] text-white/40">{v.toLocaleString()}</div>
                   </div>
                 );
               })}
             </div>
+
+            {/* Plot */}
+            <div className="relative h-[260px]">
+              {/* gridlines */}
+              {[0, 2000, 4000, 6000, 10000, 20000, 30000].map((v) => {
+                const y = (1 - v / yMax) * 100;
+                return (
+                  <div key={v} className="absolute left-0 right-0" style={{ top: `${y}%` }}>
+                    <div className="h-px bg-white/10" />
+                  </div>
+                );
+              })}
+
+              {/* bars area: leave bottom lane for x labels */}
+              <div className="absolute inset-0 pb-7">
+                <div className="flex h-full items-end gap-2">
+                  {chart.points.map((p) => {
+                    const depositH = clamp((p.deposit / yMax) * 100, 0, 100);
+                    const remainingH = clamp((p.remaining / yMax) * 100, 0, 100);
+
+                    // ensure visible if >0
+                    const depStyle = p.deposit > 0 ? { height: `${depositH}%`, minHeight: "2px" } : { height: "0%" };
+                    const remStyle = p.remaining > 0 ? { height: `${remainingH}%`, minHeight: "2px" } : { height: "0%" };
+
+                    return (
+                      <div key={p.t} className="relative flex-1">
+                        <div className="absolute bottom-0 left-0 right-0 z-10">
+                          {/* remaining on top */}
+                          {p.remaining > 0 && (
+                            <div className="w-full rounded-t-lg bg-fuchsia-500/80" style={remStyle} title={`Remaining: ${p.remaining.toFixed(0)} USDC`} />
+                          )}
+                          {/* deposits bottom */}
+                          {p.deposit > 0 && (
+                            <div className={`w-full ${p.remaining > 0 ? "rounded-b-lg" : "rounded-lg"} bg-emerald-400/80`} style={depStyle} title={`Deposits: ${p.deposit.toFixed(2)} USDC`} />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* x-axis lane */}
+              <div className="absolute bottom-0 left-0 right-0 h-7">
+                <div className="flex h-full items-end gap-2">
+                  {chart.points.map((p, idx) => {
+                    // reduce clutter: show every Nth label depending on range
+                    const showEvery = range === "30m" ? 3 : range === "2h" ? 2 : 1;
+                    const show = idx % showEvery === 0 || idx === chart.points.length - 1;
+
+                    return (
+                      <div key={p.t} className="flex-1">
+                        <div className="truncate text-center font-mono text-[10px] text-white/40">{show ? p.label : ""}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* legend */}
+          <div className="mt-4 flex flex-wrap gap-3 text-xs text-white/60">
+            <span className="inline-flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400/80" />
+              Deposits
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-sm bg-fuchsia-500/80" />
+              Remaining to 20k
+            </span>
           </div>
         </div>
       </div>
