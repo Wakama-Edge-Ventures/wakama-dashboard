@@ -1,7 +1,15 @@
 {
-  "generatedAt": "2026-02-11T19:23:38.201Z",
-  "count": 15,
+  "generatedAt": "2026-02-12T09:24:28.405Z",
+  "count": 16,
   "items": [
+    {
+      "file": "team_etra/2026-02-12T09-23-39-789Z-5fG1sD1AN85b3hR2GBBpeKAbssURdHWof1e3KYVBk1eiUMKVU3xGKnkhpVupzHi5vsGcn6egaUUetBg4hZEuh1sN.json",
+      "tx": "5fG1sD1AN85b3hR2GBBpeKAbssURdHWof1e3KYVBk1eiUMKVU3xGKnkhpVupzHi5vsGcn6egaUUetBg4hZEuh1sN",
+      "amountUsdc": 1000,
+      "teamId": "team_etra",
+      "memo": null,
+      "ts": 1770888219781
+    },
     {
       "file": "team_mks/2026-02-11T19-18-57-216Z-pC21qZaWPUDkMubQpnC42MCTHS2McMrU56L7ivBCFSorJSgRexzQ9aPzcZUGWg8yqFMjBauqwwpuAXfBtQifTD6.json",
       "tx": "pC21qZaWPUDkMubQpnC42MCTHS2McMrU56L7ivBCFSorJSgRexzQ9aPzcZUGWg8yqFMjBauqwwpuAXfBtQifTD6",
