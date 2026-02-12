@@ -1,9 +1,9 @@
 # Wakama Capital Pool — Proof (mainnet-beta)
-Generated: 2026-02-12T19:23:09.441Z
+Generated: 2026-02-12T21:27:27.530Z
 
 ## Global
-- Total: **10112.640852 USDC**
-- Deposits: **19**
+- Total: **11112.640852 USDC**
+- Deposits: **20**
 - Teams: **2**
 
 ## By team
@@ -17,7 +17,7 @@ Generated: 2026-02-12T19:23:09.441Z
   - 1000 USDC — https://solscan.io/tx/5fG1sD1AN85b3hR2GBBpeKAbssURdHWof1e3KYVBk1eiUMKVU3xGKnkhpVupzHi5vsGcn6egaUUetBg4hZEuh1sN
 
 ### team_mks
-- Total: **7261.640852 USDC** (deposits: 13)
+- Total: **8261.640852 USDC** (deposits: 14)
   - 1 USDC — https://solscan.io/tx/65dtJG7QR7KD7jueMfKN4DHmC9JdoRaL5uuf1f5mMbWDLjTp2daf5NeZNNDW4WUSXrVX9soXJTgGwmVxE4QhCCMX
   - 190 USDC — https://solscan.io/tx/4d5kW3WdSQvo3ZdNq4qm9qAhyaVgUft6vE31TEAPx88mjWuRVAjrFtJsXmiW2EmT2hD8hk5mAJmXzxrgL1UwpDw4
   - 671.640852 USDC — https://solscan.io/tx/E2gdUaAKYqdj5UnbMm2geNb9uSrJgFxQNSy9uuGbFpSxs5SHvQAZr9KWfM7ZAMWWB5Ju66vHS1B3JSHJAGfCMgm
@@ -31,3 +31,4 @@ Generated: 2026-02-12T19:23:09.441Z
   - 302 USDC — https://solscan.io/tx/5556u3eDfjgQrGFGdkxX3wmowv7F372gwzJuQGXS4fD4DQuRcX65FRssfgbnozB66NMjcffDwZG5JxzM67DaMFiN
   - 706 USDC — https://solscan.io/tx/448YtoHsJDZ9V9QkkNNWuCMmkE3H1EPKBmfJ1MNao77B92WNLqS2ji4riexqnECsF6JtDqE6aUKhfHZDpKxpKUAE
   - 600 USDC — https://solscan.io/tx/3rMaeEkFGngsPDgmZ3vst4hpsYt1ZYjE4xJUYCiVtE66ijK8xUccyAG3tPjWrkykowEkQ9YQEDhkU44d1XGDDyfE
+  - 1000 USDC — https://solscan.io/tx/4rsLRurcEfveLgXck77hqGXXZEYnDGrVxHGMS3qdRm7RwhyXGJaVqv2DzwdpPtxBohvsUnLAbFU4n15N5xnEt26M
