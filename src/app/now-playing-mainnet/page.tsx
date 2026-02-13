@@ -1,7 +1,7 @@
-// src/app/now-playing/page.tsx
+// src/app/now-playing-mainnet/page.tsx
 import { promises as fs } from 'fs';
 import path from 'path';
-import NowPlayingClient from '@/components/NowPlayingClient';
+import NowPlayingMainnetClient from '@/components/NowPlayingMainnetClient';
 import Link from 'next/link';
 
 export const revalidate = 0;
@@ -68,23 +68,31 @@ function safeHost(u: string) {
 const GW_HOST = safeHost(GW_RAW);
 const GW = GW_HOST ? GW_RAW : 'https://gateway.pinata.cloud/ipfs';
 
-// hard lock to devnet for milestone phase
+// mainnet
 const EXPLORER = 'https://explorer.solana.com/tx';
-const CLUSTER = 'devnet';
+const CLUSTER = 'mainnet-beta';
 
 // -------- Fallback: read snapshot from disk --------
 async function readNowFromDisk(): Promise<Now> {
-  try {
-    const p = path.join(process.cwd(), 'public', 'now.json');
-    const raw = await fs.readFile(p, 'utf-8');
-    const parsed: Now = JSON.parse(raw);
-    parsed.items = [...(parsed.items || [])].sort((a, b) =>
-      String(b.ts || '').localeCompare(String(a.ts || '')),
-    );
-    return parsed;
-  } catch {
-    return EMPTY;
+  // try mainnet snapshot first, then fallback to now.json
+  const candidates = [
+    path.join(process.cwd(), 'public', 'now.mainnet.json'),
+    path.join(process.cwd(), 'public', 'now.json'),
+  ];
+
+  for (const p of candidates) {
+    try {
+      const raw = await fs.readFile(p, 'utf-8');
+      const parsed: Now = JSON.parse(raw);
+      parsed.items = [...(parsed.items || [])].sort((a, b) =>
+        String(b.ts || '').localeCompare(String(a.ts || '')),
+      );
+      return parsed;
+    } catch {
+      // continue
+    }
   }
+  return EMPTY;
 }
 
 // -------- Data fetch (Server) --------
@@ -93,7 +101,7 @@ async function fetchNow(): Promise<Now> {
     /\/+$/,
     '',
   );
-  const url = `${base}/api/now`;
+  const url = `${base}/api/now-mainnet`;
 
   try {
     const res = await fetch(url, { cache: 'no-store' });
@@ -101,7 +109,7 @@ async function fetchNow(): Promise<Now> {
 
     const parsed: Now = await res.json();
 
-    // Compat M2:
+    // compat: points/count
     parsed.items = (parsed.items || []).map((it: NowItem) => ({
       ...it,
       count: it.count ?? it.points ?? 0,
@@ -121,12 +129,10 @@ async function fetchNow(): Promise<Now> {
 }
 
 function RealmsBadge() {
-  // Lightweight inline "logo-style" mark (no external asset needed)
   return (
     <span className="inline-flex items-center gap-2">
       <span className="relative inline-grid h-7 w-7 place-items-center rounded-full bg-white/10 ring-1 ring-white/10">
         <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] opacity-70 blur-[10px]" />
-        {/* Animated green "R" to signal live governance */}
         <span
           className="relative text-[11px] font-semibold tracking-tight text-emerald-200 animate-pulse"
           title="Realms governance live"
@@ -145,11 +151,13 @@ export default async function Page() {
 
   return (
     <main className="relative mx-auto min-h-screen max-w-[1400px] overflow-hidden px-6 py-8 text-white">
-      {/* --- Background gradient Solana --- */}
+      {/* --- Background gradient Solana x Wakama --- */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[#0A0B1A]" />
+        <div className="absolute inset-0 bg-[#070816]" />
         <div className="absolute -top-24 -left-40 h-80 w-[38rem] rotate-12 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-20" />
         <div className="absolute bottom-[-8rem] right-[-8rem] h-96 w-[42rem] -rotate-6 rounded-full bg-gradient-to-tr from-[#14F195] via-[#39D0D8] to-[#9945FF] blur-3xl opacity-15" />
+        {/* subtle “mil-tech” grid */}
+        <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:64px_64px]" />
       </div>
 
       {/* Top bar */}
@@ -161,7 +169,33 @@ export default async function Page() {
           >
             · Wakama Oracle
           </Link>
+
+          {/* quick nav (keeps existing links intact elsewhere) */}
+          <nav className="hidden md:flex items-center gap-2 text-xs text-white/70">
+            <Link
+              href="/now-playing"
+              className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 hover:bg-white/[0.08] transition"
+              title="Devnet history"
+            >
+              Devnet history
+            </Link>
+            <Link
+              href="/capital-pool"
+              className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 hover:bg-white/[0.08] transition"
+              title="Capital Pool"
+            >
+              Capital Pool
+            </Link>
+            <Link
+              href="/rwa"
+              className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 hover:bg-white/[0.08] transition"
+              title="RWA"
+            >
+              RWA
+            </Link>
+          </nav>
         </div>
+
         <div className="flex items-center gap-3 text-xs text-white/50">
           <span>
             GW:&nbsp;
@@ -170,12 +204,12 @@ export default async function Page() {
             </code>
           </span>
           <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-[10px] text-emerald-200">
-            Devnet locked
+            Mainnet verified
           </span>
         </div>
       </header>
 
-      {/* ✅ Governance / Realms highlight (M2) */}
+      {/* ✅ Governance / Realms highlight (keep badge + links; rename to Mainnet) */}
       <section className="mb-6">
         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] p-5">
           <div className="pointer-events-none absolute -right-20 -top-16 h-56 w-56 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-20" />
@@ -188,15 +222,15 @@ export default async function Page() {
                 <div className="flex items-center gap-3">
                   <RealmsBadge />
                   <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/80">
-                    M2 Governance
+                    Mainnet ops
                   </span>
                 </div>
                 <h2 className="mt-2 text-base font-semibold tracking-tight">
-                  DAO active · Oracle feeds governance enabled
+                  DAO active · Mainnet telemetry governance enabled
                 </h2>
-                <p className="mt-1 text-xs leading-relaxed text-white/60 max-w-[60ch]">
-                  Governance readiness is validated through Realms to support community oversight
-                  of oracle feed policies and early RWA listing rules.
+                <p className="mt-1 text-xs leading-relaxed text-white/60 max-w-[70ch]">
+                  Realms remains the governance layer for oracle feed policy, device onboarding rules,
+                  and public proof visibility for the mainnet pipeline.
                 </p>
               </div>
             </div>
@@ -207,7 +241,7 @@ export default async function Page() {
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-xl bg-white/10 px-3 py-2 text-[11px] font-semibold text-white/90 hover:bg-white/15 transition"
-                title="Open Realms proposal: Wakama Oracle Feeds Policy v1 (M2)"
+                title="Open Realms proposal: Wakama Oracle Feeds Policy v1"
               >
                 Open Realms
               </a>
@@ -219,8 +253,8 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* Client-side interactive dashboard */}
-      <NowPlayingClient
+      {/* ✅ Mainnet interactive dashboard (map + counters + charts live) */}
+      <NowPlayingMainnetClient
         data={now}
         explorerBase={EXPLORER}
         cluster={CLUSTER}
