@@ -5,6 +5,9 @@ import SearchBar from './SearchBar';
 import TxHistory from './TxHistory';
 import RefreshButton from '@/components/RefreshButton';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const CIV3DSatMap = dynamic(() => import('./CIV3DSatMap'), { ssr: false });
 
 // ---- Types locaux (côté client) ----
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
@@ -233,7 +236,14 @@ function useAnimatedNumber(target: number, ms = 900) {
   return val;
 }
 
-// Carte Afrique de l’Ouest (SVG simple + points clignotants + clic = filtre team)
+// Carte Côte d’Ivoire (SVG stylisé + points clignotants + clic = filtre team)
+//
+// ✅ Remplace “WestAfricaMap” par cette version (même API: onSelectTeam/selectedTeam)
+// ✅ Pins: Abidjan (Wakama) / Bouaké (ETRA) / Soubré (MKS)
+// ✅ Zoom “CI only” + effet satellite (grain + scanlines + grid)
+// ⚠️ Toujours non-géographique exact (SVG stylisé). Si tu veux une vraie vue satellite 3D,
+//    on basculera vers Mapbox/MapLibre ensuite.
+
 function WestAfricaMap({
   onSelectTeam,
   selectedTeam,
@@ -242,16 +252,21 @@ function WestAfricaMap({
   selectedTeam?: string;
 }) {
   const pins = [
-    { id: 'team_mks', label: 'MKS', x: 210, y: 170, tone: 'cyan' as const },
-    { id: 'team_etra', label: 'ETRA', x: 255, y: 190, tone: 'emerald' as const },
-    { id: 'Wakama_team', label: 'Wakama', x: 235, y: 155, tone: 'fuchsia' as const },
+    // Côte d’Ivoire — positions relatives dans le SVG
+    { id: 'Wakama_team', label: 'Abidjan · Wakama', x: 165, y: 200, tone: 'fuchsia' as const },
+    { id: 'team_etra', label: 'Bouaké · ETRA', x: 235, y: 135, tone: 'emerald' as const },
+    { id: 'team_mks', label: 'Soubré · MKS', x: 110, y: 150, tone: 'cyan' as const },
   ];
+
+  const selected = (selectedTeam || '').trim();
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">West Africa DePIN</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-white/70">
+            Côte d’Ivoire DePIN
+          </span>
           <Badge tone="ok" title="This view is for Mainnet pipeline monitoring">
             <span className="flex items-center gap-2">
               <PulseDot tone="emerald" />
@@ -259,23 +274,31 @@ function WestAfricaMap({
             </span>
           </Badge>
         </div>
-        <div className="text-[11px] text-white/50">
-          Click a node to filter the table
-        </div>
+        <div className="text-[11px] text-white/50">Click a city to filter the table</div>
       </div>
 
       <div className="relative">
-        {/* “military tech” grid overlay */}
-        <div className="pointer-events-none absolute inset-0 opacity-40 [background:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:18px_18px]" />
+        {/* “military tech” overlays */}
+        <div className="pointer-events-none absolute inset-0 opacity-35 [background:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.09)_1px,transparent_1px)] [background-size:18px_18px]" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background:repeating-linear-gradient(to_bottom,rgba(255,255,255,0.18)_0px,rgba(255,255,255,0.18)_1px,transparent_2px,transparent_6px)]" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background:radial-gradient(circle_at_center,rgba(20,241,149,0.25),transparent_55%)]" />
 
-        <svg viewBox="0 0 520 260" className="w-full">
-          {/* stylized coastline/blob (not geographic-accurate; juste visuel) */}
+        <svg viewBox="0 0 360 240" className="w-full">
           <defs>
-            <linearGradient id="sol" x1="0" x2="1">
-              <stop offset="0" stopColor="#9945FF" stopOpacity="0.45" />
-              <stop offset="0.55" stopColor="#39D0D8" stopOpacity="0.35" />
-              <stop offset="1" stopColor="#14F195" stopOpacity="0.35" />
+            {/* Solana-ish gradient */}
+            <linearGradient id="ciSol" x1="0" x2="1">
+              <stop offset="0" stopColor="#9945FF" stopOpacity="0.55" />
+              <stop offset="0.55" stopColor="#39D0D8" stopOpacity="0.38" />
+              <stop offset="1" stopColor="#14F195" stopOpacity="0.40" />
             </linearGradient>
+
+            {/* “satellite tint” */}
+            <linearGradient id="satTint" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stopColor="#0B1220" stopOpacity="0.50" />
+              <stop offset="1" stopColor="#030612" stopOpacity="0.75" />
+            </linearGradient>
+
+            {/* soft glow */}
             <filter id="glow">
               <feGaussianBlur stdDeviation="4" result="b" />
               <feMerge>
@@ -283,28 +306,106 @@ function WestAfricaMap({
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
+
+            {/* grain/noise */}
+            <filter id="grain">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+              <feColorMatrix type="matrix" values="
+                1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 .25 0" />
+            </filter>
+
+            {/* subtle shadow */}
+            <filter id="softShadow">
+              <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="rgba(0,0,0,0.55)" />
+            </filter>
           </defs>
 
-          <path
-            d="M70,60 C120,20 210,30 250,55 C290,80 320,65 360,70 C400,75 450,110 455,145
-               C460,180 420,215 360,225 C300,235 260,210 220,215 C180,220 150,235 115,215
-               C80,195 55,150 60,110 C65,80 55,75 70,60 Z"
-            fill="url(#sol)"
-            stroke="rgba(255,255,255,0.14)"
+          {/* Frame */}
+          <rect
+            x="8"
+            y="10"
+            width="344"
+            height="220"
+            rx="18"
+            fill="rgba(255,255,255,0.02)"
+            stroke="rgba(255,255,255,0.08)"
           />
 
-          {/* targeting lines */}
-          <line x1="0" y1="130" x2="520" y2="130" stroke="rgba(255,255,255,0.07)" />
-          <line x1="260" y1="0" x2="260" y2="260" stroke="rgba(255,255,255,0.07)" />
+          {/* Main “Côte d’Ivoire” stylized shape */}
+          <g filter="url(#softShadow)">
+            <path
+              d="
+                M115,48
+                C140,30 165,28 190,40
+                C205,48 220,50 235,55
+                C260,63 285,85 292,110
+                C300,140 286,168 262,186
+                C240,203 214,205 190,198
+                C175,194 160,196 145,203
+                C128,212 112,208 98,195
+                C78,176 68,150 70,125
+                C72,102 85,86 92,76
+                C100,64 101,57 115,48 Z"
+              fill="url(#ciSol)"
+              stroke="rgba(255,255,255,0.16)"
+            />
 
+            {/* “satellite shading” overlay */}
+            <path
+              d="
+                M115,48
+                C140,30 165,28 190,40
+                C205,48 220,50 235,55
+                C260,63 285,85 292,110
+                C300,140 286,168 262,186
+                C240,203 214,205 190,198
+                C175,194 160,196 145,203
+                C128,212 112,208 98,195
+                C78,176 68,150 70,125
+                C72,102 85,86 92,76
+                C100,64 101,57 115,48 Z"
+              fill="url(#satTint)"
+              opacity="0.55"
+            />
+
+            {/* Grain overlay clipped to shape */}
+            <clipPath id="ciClip">
+              <path
+                d="
+                  M115,48
+                  C140,30 165,28 190,40
+                  C205,48 220,50 235,55
+                  C260,63 285,85 292,110
+                  C300,140 286,168 262,186
+                  C240,203 214,205 190,198
+                  C175,194 160,196 145,203
+                  C128,212 112,208 98,195
+                  C78,176 68,150 70,125
+                  C72,102 85,86 92,76
+                  C100,64 101,57 115,48 Z"
+              />
+            </clipPath>
+            <g clipPath="url(#ciClip)" opacity="0.18" filter="url(#grain)">
+              <rect x="0" y="0" width="360" height="240" fill="#fff" />
+            </g>
+          </g>
+
+          {/* Targeting lines */}
+          <line x1="22" y1="120" x2="338" y2="120" stroke="rgba(255,255,255,0.07)" />
+          <line x1="180" y1="24" x2="180" y2="216" stroke="rgba(255,255,255,0.07)" />
+
+          {/* City pins */}
           {pins.map((p) => {
-            const active = (selectedTeam || '') === p.id;
+            const active = selected === p.id;
             const tone =
               p.tone === 'cyan'
-                ? 'rgba(56, 189, 248, 0.9)'
+                ? 'rgba(56,189,248,0.95)'
                 : p.tone === 'fuchsia'
-                ? 'rgba(232, 121, 249, 0.9)'
-                : 'rgba(52, 211, 153, 0.9)';
+                ? 'rgba(232,121,249,0.95)'
+                : 'rgba(52,211,153,0.95)';
 
             return (
               <g
@@ -313,34 +414,62 @@ function WestAfricaMap({
                 style={{ cursor: 'pointer' }}
                 filter="url(#glow)"
               >
-                <circle cx={p.x} cy={p.y} r={active ? 10 : 8} fill={tone} opacity="0.95" />
-                <circle cx={p.x} cy={p.y} r={active ? 22 : 18} fill={tone} opacity="0.12">
-                  <animate attributeName="r" values={`${active ? 22 : 18};${active ? 34 : 28};${active ? 22 : 18}`} dur="1.6s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.20;0.02;0.20" dur="1.6s" repeatCount="indefinite" />
+                {/* pulse ring */}
+                <circle cx={p.x} cy={p.y} r={active ? 24 : 20} fill={tone} opacity="0.12">
+                  <animate
+                    attributeName="r"
+                    values={`${active ? 24 : 20};${active ? 38 : 32};${active ? 24 : 20}`}
+                    dur="1.6s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.22;0.02;0.22"
+                    dur="1.6s"
+                    repeatCount="indefinite"
+                  />
                 </circle>
-                <text x={p.x + 14} y={p.y + 4} fontSize="12" fill="rgba(255,255,255,0.85)">
-                  {p.label}
-                </text>
+
+                {/* core dot */}
+                <circle cx={p.x} cy={p.y} r={active ? 10 : 8} fill={tone} opacity="0.98" />
+
+                {/* label plate */}
+                <g transform={`translate(${p.x + 14}, ${p.y - 14})`}>
+                  <rect
+                    x="0"
+                    y="0"
+                    rx="8"
+                    ry="8"
+                    width={p.label.length * 6.4 + 18}
+                    height="22"
+                    fill="rgba(0,0,0,0.35)"
+                    stroke="rgba(255,255,255,0.10)"
+                  />
+                  <text x="10" y="15" fontSize="11" fill="rgba(255,255,255,0.88)">
+                    {p.label}
+                  </text>
+                </g>
               </g>
             );
           })}
         </svg>
-      </div>
 
-      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-white/60">
-        <button
-          type="button"
-          onClick={() => onSelectTeam('')}
-          className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 hover:bg-white/10"
-        >
-          Clear filter
-        </button>
-        <span className="rounded-lg border border-white/10 bg-black/10 px-2 py-1">
-          Status: <span className="text-emerald-200">LIVE telemetry</span>
-        </span>
-        <span className="rounded-lg border border-white/10 bg-black/10 px-2 py-1">
-          Mode: <span className="text-white/80">Mainnet pipeline</span>
-        </span>
+        {/* Legend */}
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-white/60">
+          <button
+            type="button"
+            onClick={() => onSelectTeam('')}
+            className="rounded-lg border border-white/10 bg-black/20 px-2 py-1 hover:bg-white/10"
+          >
+            Clear filter
+          </button>
+          <span className="rounded-lg border border-white/10 bg-black/10 px-2 py-1">
+            Status: <span className="text-emerald-200">LIVE telemetry</span>
+          </span>
+          <span className="rounded-lg border border-white/10 bg-black/10 px-2 py-1">
+            Nodes: <span className="text-white/80">Abidjan · Bouaké · Soubré</span>
+          </span>
+        </div>
       </div>
     </div>
   );

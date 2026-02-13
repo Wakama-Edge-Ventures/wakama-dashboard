@@ -1,0 +1,88 @@
+{
+  "teamId": "team_mks",
+  "totalBaseUnits": "4053640852",
+  "totalUsdc": "4053.640852",
+  "depositsCount": 8,
+  "deposits": [
+    {
+      "amountUsdc": "1",
+      "amountBaseUnits": "1000000",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "65dtJG7QR7KD7jueMfKN4DHmC9JdoRaL5uuf1f5mMbWDLjTp2daf5NeZNNDW4WUSXrVX9soXJTgGwmVxE4QhCCMX",
+      "solscan": "https://solscan.io/tx/65dtJG7QR7KD7jueMfKN4DHmC9JdoRaL5uuf1f5mMbWDLjTp2daf5NeZNNDW4WUSXrVX9soXJTgGwmVxE4QhCCMX",
+      "slot": 398486709,
+      "blockTime": 1770398388,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-06T17-19-48-930Z-65dtJG7QR7KD7jueMfKN4DHmC9JdoRaL5uuf1f5mMbWDLjTp2daf5NeZNNDW4WUSXrVX9soXJTgGwmVxE4QhCCMX.json"
+    },
+    {
+      "amountUsdc": "190",
+      "amountBaseUnits": "190000000",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "4d5kW3WdSQvo3ZdNq4qm9qAhyaVgUft6vE31TEAPx88mjWuRVAjrFtJsXmiW2EmT2hD8hk5mAJmXzxrgL1UwpDw4",
+      "solscan": "https://solscan.io/tx/4d5kW3WdSQvo3ZdNq4qm9qAhyaVgUft6vE31TEAPx88mjWuRVAjrFtJsXmiW2EmT2hD8hk5mAJmXzxrgL1UwpDw4",
+      "slot": 398613964,
+      "blockTime": 1770448303,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-07T07-11-42-576Z-4d5kW3WdSQvo3ZdNq4qm9qAhyaVgUft6vE31TEAPx88mjWuRVAjrFtJsXmiW2EmT2hD8hk5mAJmXzxrgL1UwpDw4.json"
+    },
+    {
+      "amountUsdc": "671.640852",
+      "amountBaseUnits": "671640852",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "E2gdUaAKYqdj5UnbMm2geNb9uSrJgFxQNSy9uuGbFpSxs5SHvQAZr9KWfM7ZAMWWB5Ju66vHS1B3JSHJAGfCMgm",
+      "solscan": "https://solscan.io/tx/E2gdUaAKYqdj5UnbMm2geNb9uSrJgFxQNSy9uuGbFpSxs5SHvQAZr9KWfM7ZAMWWB5Ju66vHS1B3JSHJAGfCMgm",
+      "slot": 398726736,
+      "blockTime": 1770492522,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-07T19-28-44-372Z-E2gdUaAKYqdj5UnbMm2geNb9uSrJgFxQNSy9uuGbFpSxs5SHvQAZr9KWfM7ZAMWWB5Ju66vHS1B3JSHJAGfCMgm.json"
+    },
+    {
+      "amountUsdc": "1049",
+      "amountBaseUnits": "1049000000",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "2q7ai4Mwb3i3EieWH7yENpbTRFpGaANoy5GYFBfRtSf3tqawLAhhon4f5g2fxumSqK6A8gZxGQ61bjtuGYTGZcMV",
+      "solscan": "https://solscan.io/tx/2q7ai4Mwb3i3EieWH7yENpbTRFpGaANoy5GYFBfRtSf3tqawLAhhon4f5g2fxumSqK6A8gZxGQ61bjtuGYTGZcMV",
+      "slot": 399077924,
+      "blockTime": 1770630141,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-09T09-42-21-372Z-2q7ai4Mwb3i3EieWH7yENpbTRFpGaANoy5GYFBfRtSf3tqawLAhhon4f5g2fxumSqK6A8gZxGQ61bjtuGYTGZcMV.json"
+    },
+    {
+      "amountUsdc": "500",
+      "amountBaseUnits": "500000000",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "3Jn1WjN6RdmnZmvMFyCs79QmeeQPWeYSziVuA6QctScwTPZ4qGAtLjmk27D8BMyhAVyM5EpvaLt55vhnqvGXXgV9",
+      "solscan": "https://solscan.io/tx/3Jn1WjN6RdmnZmvMFyCs79QmeeQPWeYSziVuA6QctScwTPZ4qGAtLjmk27D8BMyhAVyM5EpvaLt55vhnqvGXXgV9",
+      "slot": 399168406,
+      "blockTime": 1770665717,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-09T19-35-18-359Z-3Jn1WjN6RdmnZmvMFyCs79QmeeQPWeYSziVuA6QctScwTPZ4qGAtLjmk27D8BMyhAVyM5EpvaLt55vhnqvGXXgV9.json"
+    },
+    {
+      "amountUsdc": "260",
+      "amountBaseUnits": "260000000",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "5hPADAUfrCqeBWaXh2zFJW5NSkioftoJT2gP5iTSvs8guoTJ3h2RvrcEV18GAQWqTju8kLFHWNUgFQMVEVZFkj5S",
+      "solscan": "https://solscan.io/tx/5hPADAUfrCqeBWaXh2zFJW5NSkioftoJT2gP5iTSvs8guoTJ3h2RvrcEV18GAQWqTju8kLFHWNUgFQMVEVZFkj5S",
+      "slot": 399169052,
+      "blockTime": 1770665975,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-09T19-39-36-535Z-5hPADAUfrCqeBWaXh2zFJW5NSkioftoJT2gP5iTSvs8guoTJ3h2RvrcEV18GAQWqTju8kLFHWNUgFQMVEVZFkj5S.json"
+    },
+    {
+      "amountUsdc": "360",
+      "amountBaseUnits": "360000000",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "2vScucjapPCVPuP2BAJ6oxRjv44sXpJWGYghJqom3ygkcf4uERd9Asw1VRvWbuDZzjCEh9nubBa75WR1ojmGTFmL",
+      "solscan": "https://solscan.io/tx/2vScucjapPCVPuP2BAJ6oxRjv44sXpJWGYghJqom3ygkcf4uERd9Asw1VRvWbuDZzjCEh9nubBa75WR1ojmGTFmL",
+      "slot": 399356716,
+      "blockTime": 1770739811,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-10T16-10-11-807Z-2vScucjapPCVPuP2BAJ6oxRjv44sXpJWGYghJqom3ygkcf4uERd9Asw1VRvWbuDZzjCEh9nubBa75WR1ojmGTFmL.json"
+    },
+    {
+      "amountUsdc": "1022",
+      "amountBaseUnits": "1022000000",
+      "investor": "311JpSVRih2ZYMU7rVf2snpUUqWUzF2LKFoZSBG7BrWk",
+      "tx": "5mVSYpXjY5QYxjbm2wTbnpmDxFhoA25j2U2Rs4h8CxcEtAJh3jiuqQyXeMchgYi5RMTDmAXMtqLzMRPcYTCi25yi",
+      "solscan": "https://solscan.io/tx/5mVSYpXjY5QYxjbm2wTbnpmDxFhoA25j2U2Rs4h8CxcEtAJh3jiuqQyXeMchgYi5RMTDmAXMtqLzMRPcYTCi25yi",
+      "slot": 399375475,
+      "blockTime": 1770747213,
+      "receiptPath": "receipts/mainnet/wakama-capital-pool/team_mks/2026-02-10T18-13-34-448Z-5mVSYpXjY5QYxjbm2wTbnpmDxFhoA25j2U2Rs4h8CxcEtAJh3jiuqQyXeMchgYi5RMTDmAXMtqLzMRPcYTCi25yi.json"
+    }
+  ]
+}
