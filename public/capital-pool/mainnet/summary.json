@@ -2,7 +2,7 @@
   "pool": "Wakama Capital Pool",
   "cluster": "mainnet-beta",
   "receiptsRoot": "receipts/mainnet/wakama-capital-pool",
-  "generatedAt": "2026-02-12T21:27:27.530Z",
+  "generatedAt": "2026-02-13T12:34:50.489Z",
   "global": {
     "totalBaseUnits": "11112640852",
     "totalUsdc": "11112.640852",
