@@ -7,7 +7,7 @@ import RefreshButton from '@/components/RefreshButton';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-const CIV3DSatMap = dynamic(() => import('./CIV3DSatMap'), { ssr: false });
+const CIV3DSatMap = dynamic(() => import('@/components/CIV3DSatMap'), { ssr: false });
 
 // ---- Types locaux (côté client) ----
 type Totals = { files: number; cids: number; onchainTx: number; lastTs: string };
@@ -507,12 +507,14 @@ export default function NowPlayingMainnetClient({
   cluster,
   ipfsGateway,
   year,
+  mapboxToken,
 }: {
   data: Now;
   explorerBase: string;
   cluster: string;
   ipfsGateway: string;
   year: number;
+  mapboxToken: string;
 }) {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
@@ -734,14 +736,13 @@ export default function NowPlayingMainnetClient({
 
       {/* Map + Charts */}
       <div className="mb-6 grid gap-4 md:grid-cols-[1.6fr,1fr]">
-        <WestAfricaMap
-          selectedTeam={teamFilter}
-          onSelectTeam={(id) => {
-            applyTeamFilter(id);
-            if (!id) setQuery('');
-            else setQuery(getTeamMeta(id).label);
-          }}
-        />
+        <CIV3DSatMap
+  mapboxToken={mapboxToken}
+  onSelectTeam={(id) => {
+    applyTeamFilter(id);
+    setQuery(id ? getTeamMeta(id).label : '');
+  }}
+/>
 
         <div className="space-y-4">
           <TinyBars title="Points by source" data={bySourceBars} />

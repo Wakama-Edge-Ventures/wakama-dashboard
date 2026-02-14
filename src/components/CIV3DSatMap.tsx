@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 
 type TeamPin = {
-  id: 'wakama' | 'etra' | 'mks';
+  id: 'Wakama_team' | 'team_etra' | 'team_mks';
   label: string;
   city: string;
   lng: number;
@@ -13,9 +13,13 @@ type TeamPin = {
 };
 
 export default function CIV3DSatMap({
+  mapboxToken,
   onSelectTeam,
+  selectedTeam,
 }: {
+  mapboxToken?: string;
   onSelectTeam?: (teamId: TeamPin['id']) => void;
+  selectedTeam?: string;
 }) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +27,7 @@ export default function CIV3DSatMap({
   const pins: TeamPin[] = useMemo(
     () => [
       {
-        id: 'wakama',
+        id: 'Wakama_team',
         label: 'Wakama',
         city: 'Abidjan',
         lng: -4.0082563,
@@ -31,7 +35,7 @@ export default function CIV3DSatMap({
         color: '#A855F7',
       },
       {
-        id: 'etra',
+        id: 'team_etra',
         label: 'ETRA',
         city: 'Bouaké',
         lng: -5.0314,
@@ -39,10 +43,10 @@ export default function CIV3DSatMap({
         color: '#22C55E',
       },
       {
-        id: 'mks',
+        id: 'team_mks',
         label: 'MKS',
         city: 'Soubré',
-        lng: -6.5920,
+        lng: -6.592,
         lat: 5.7861,
         color: '#38BDF8',
       },
@@ -51,21 +55,20 @@ export default function CIV3DSatMap({
   );
 
   useEffect(() => {
+    // reset si token change / hot reload
     if (mapRef.current) return;
     if (!containerRef.current) return;
 
-    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-    if (!token) {
-      // Pas de token => pas de map (on laisse le container vide, UI fallback côté page)
-      return;
-    }
+    const token = (mapboxToken || '').trim();
+    if (!token) return;
+
     mapboxgl.accessToken = token;
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
       style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [-5.55, 6.60], // Côte d’Ivoire centre approx
-      zoom: 5.6,
+      center: [-5.55, 6.6], // Côte d’Ivoire approx
+      zoom: 5.8,
       pitch: 62,
       bearing: -18,
       antialias: true,
@@ -75,32 +78,36 @@ export default function CIV3DSatMap({
 
     map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
 
-    map.on('style.load', async () => {
+    map.on('style.load', () => {
       // Terrain 3D (DEM)
-      map.addSource('mapbox-dem', {
-        type: 'raster-dem',
-        url: 'mapbox://mapbox.terrain-rgb',
-        tileSize: 512,
-        maxzoom: 14,
-      });
+      if (!map.getSource('mapbox-dem')) {
+        map.addSource('mapbox-dem', {
+          type: 'raster-dem',
+          url: 'mapbox://mapbox.terrain-rgb',
+          tileSize: 512,
+          maxzoom: 14,
+        });
+      }
       map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.35 });
 
-      // Sky layer (effet “3D futuriste”)
-      map.addLayer({
-        id: 'sky',
-        type: 'sky',
-        paint: {
-          'sky-type': 'atmosphere',
-          'sky-atmosphere-sun': [0.0, 0.0],
-          'sky-atmosphere-sun-intensity': 7,
-        },
-      });
+      // Sky layer
+      if (!map.getLayer('sky')) {
+        map.addLayer({
+          id: 'sky',
+          type: 'sky',
+          paint: {
+            'sky-type': 'atmosphere',
+            'sky-atmosphere-sun': [0.0, 0.0],
+            'sky-atmosphere-sun-intensity': 7,
+          },
+        });
+      }
 
-      // Markers (pulsing)
+      // Markers
       pins.forEach((p) => {
         const el = document.createElement('div');
-        el.style.width = '18px';
-        el.style.height = '18px';
+        el.style.width = selectedTeam === p.id ? '22px' : '18px';
+        el.style.height = selectedTeam === p.id ? '22px' : '18px';
         el.style.borderRadius = '999px';
         el.style.background = p.color;
         el.style.boxShadow = `0 0 0 0 ${p.color}`;
@@ -121,19 +128,20 @@ export default function CIV3DSatMap({
         ring.style.animation = 'wakamaPulse 1.6s ease-out infinite';
         el.appendChild(ring);
 
-        const m = new mapboxgl.Marker(el).setLngLat([p.lng, p.lat]).addTo(map);
+        const marker = new mapboxgl.Marker(el).setLngLat([p.lng, p.lat]).addTo(map);
 
-        const popup = new mapboxgl.Popup({ offset: 18, closeButton: false }).setHTML(
+        const popup = new mapboxgl.Popup({ offset: 18, closeButton: false, closeOnClick: false }).setHTML(
           `<div style="font-family: ui-sans-serif; font-size:12px;">
             <div style="font-weight:700; margin-bottom:2px;">${p.label}</div>
             <div style="opacity:.8">${p.city} · Côte d’Ivoire</div>
             <div style="margin-top:6px; font-size:11px; opacity:.8">Click to filter LIVE</div>
           </div>`,
         );
-        m.setPopup(popup);
 
-        el.addEventListener('mouseenter', () => m.togglePopup());
-        el.addEventListener('mouseleave', () => m.togglePopup());
+        marker.setPopup(popup);
+
+        el.addEventListener('mouseenter', () => marker.getPopup()?.addTo(map));
+        el.addEventListener('mouseleave', () => marker.getPopup()?.remove());
         el.addEventListener('click', () => onSelectTeam?.(p.id));
       });
     });
@@ -142,7 +150,9 @@ export default function CIV3DSatMap({
       map.remove();
       mapRef.current = null;
     };
-  }, [pins, onSelectTeam]);
+  }, [pins, mapboxToken, onSelectTeam, selectedTeam]);
+
+  const tokenOk = !!(mapboxToken || '').trim();
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
@@ -158,25 +168,20 @@ export default function CIV3DSatMap({
 
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold tracking-wider text-white/70">
-            CÔTE D’IVOIRE · SATELLITE 3D
-          </span>
-          <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-200">
-            Mainnet Verified
-          </span>
+          <span className="text-[11px] font-semibold tracking-wider text-white/70">CÔTE D’IVOIRE · SATELLITE 3D</span>
+          <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-200">Mainnet Verified</span>
         </div>
         <div className="text-[10px] text-white/50">Click a node to filter LIVE</div>
       </div>
 
       <div ref={containerRef} className="h-[420px] w-full" />
 
-      {!process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? (
+      {!tokenOk ? (
         <div className="absolute inset-0 grid place-items-center bg-black/40 backdrop-blur-sm">
           <div className="max-w-[520px] rounded-xl border border-white/10 bg-[#0A0B1A]/80 p-4 text-center">
             <div className="text-sm font-semibold text-white">Mapbox token missing</div>
             <div className="mt-1 text-[12px] text-white/60">
-              Set <code className="rounded bg-white/10 px-1">NEXT_PUBLIC_MAPBOX_TOKEN</code> in
-              .env.local (and Coolify env) to enable the 3D satellite map.
+              Pass <code className="rounded bg-white/10 px-1">mapboxToken</code> from the page (server) to enable the 3D map.
             </div>
           </div>
         </div>

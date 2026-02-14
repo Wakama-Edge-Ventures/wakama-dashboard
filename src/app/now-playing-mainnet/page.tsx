@@ -54,8 +54,7 @@ const EMPTY: Now = {
 
 // -------- Helpers (SSR-safe) --------
 const GW_RAW =
-  process.env.NEXT_PUBLIC_IPFS_GATEWAY?.replace(/\/+$/, '') ||
-  'https://gateway.pinata.cloud/ipfs';
+  process.env.NEXT_PUBLIC_IPFS_GATEWAY?.replace(/\/+$/, '') || 'https://gateway.pinata.cloud/ipfs';
 
 function safeHost(u: string) {
   try {
@@ -72,9 +71,11 @@ const GW = GW_HOST ? GW_RAW : 'https://gateway.pinata.cloud/ipfs';
 const EXPLORER = 'https://explorer.solana.com/tx';
 const CLUSTER = 'mainnet-beta';
 
+// ✅ inject Mapbox token from server to client component
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
+
 // -------- Fallback: read snapshot from disk --------
 async function readNowFromDisk(): Promise<Now> {
-  // try mainnet snapshot first, then fallback to now.json
   const candidates = [
     path.join(process.cwd(), 'public', 'now.mainnet.json'),
     path.join(process.cwd(), 'public', 'now.json'),
@@ -97,10 +98,7 @@ async function readNowFromDisk(): Promise<Now> {
 
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
-  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'https://rwa.wakama.farm').replace(
-    /\/+$/,
-    '',
-  );
+  const base = (process.env.NEXT_PUBLIC_BASE_URL || 'https://rwa.wakama.farm').replace(/\/+$/, '');
   const url = `${base}/api/now-mainnet`;
 
   try {
@@ -156,21 +154,16 @@ export default async function Page() {
         <div className="absolute inset-0 bg-[#070816]" />
         <div className="absolute -top-24 -left-40 h-80 w-[38rem] rotate-12 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-20" />
         <div className="absolute bottom-[-8rem] right-[-8rem] h-96 w-[42rem] -rotate-6 rounded-full bg-gradient-to-tr from-[#14F195] via-[#39D0D8] to-[#9945FF] blur-3xl opacity-15" />
-        {/* subtle “mil-tech” grid */}
         <div className="absolute inset-0 opacity-[0.10] [background-image:linear-gradient(to_right,rgba(255,255,255,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:64px_64px]" />
       </div>
 
       {/* Top bar */}
       <header className="mb-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors"
-          >
+          <Link href="/" className="text-lg font-semibold tracking-tight hover:text-[#14F195] transition-colors">
             · Wakama Oracle
           </Link>
 
-          {/* quick nav (keeps existing links intact elsewhere) */}
           <nav className="hidden md:flex items-center gap-2 text-xs text-white/70">
             <Link
               href="/now-playing"
@@ -209,7 +202,7 @@ export default async function Page() {
         </div>
       </header>
 
-      {/* ✅ Governance / Realms highlight (keep badge + links; rename to Mainnet) */}
+      {/* Governance / Realms highlight */}
       <section className="mb-6">
         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] p-5">
           <div className="pointer-events-none absolute -right-20 -top-16 h-56 w-56 rounded-full bg-gradient-to-tr from-[#9945FF] via-[#39D0D8] to-[#14F195] blur-3xl opacity-20" />
@@ -253,13 +246,13 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* ✅ Mainnet interactive dashboard (map + counters + charts live) */}
       <NowPlayingMainnetClient
         data={now}
         explorerBase={EXPLORER}
         cluster={CLUSTER}
         ipfsGateway={GW}
         year={year}
+        mapboxToken={MAPBOX_TOKEN}
       />
     </main>
   );
