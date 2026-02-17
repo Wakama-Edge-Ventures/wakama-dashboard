@@ -2,11 +2,11 @@
   "pool": "Wakama Capital Pool",
   "cluster": "mainnet-beta",
   "receiptsRoot": "receipts/mainnet/wakama-capital-pool",
-  "generatedAt": "2026-02-16T15:41:20.336Z",
+  "generatedAt": "2026-02-17T16:09:16.788Z",
   "global": {
-    "totalBaseUnits": "16916640852",
-    "totalUsdc": "16916.640852",
-    "depositsCount": 26,
+    "totalBaseUnits": "16926640852",
+    "totalUsdc": "16926.640852",
+    "depositsCount": 27,
     "teamsCount": 2
   },
   "teams": [
@@ -18,9 +18,9 @@
     },
     {
       "teamId": "team_mks",
-      "totalBaseUnits": "13063640852",
-      "totalUsdc": "13063.640852",
-      "depositsCount": 19
+      "totalBaseUnits": "13073640852",
+      "totalUsdc": "13073.640852",
+      "depositsCount": 20
     }
   ]
 }
