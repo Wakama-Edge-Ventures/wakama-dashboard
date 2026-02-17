@@ -1,7 +1,15 @@
 {
-  "generatedAt": "2026-02-17T16:14:56.777Z",
-  "count": 28,
+  "generatedAt": "2026-02-17T16:23:19.672Z",
+  "count": 29,
   "items": [
+    {
+      "file": "team_mks/2026-02-17T16-22-42-226Z-2eoESbFDzLu1DgP5bPstzdjfbRCDnriPEbXUyTAnpdm6SdWLWFZ8GoFmFT7PUpn7Juag6RHNcTJNKD5AJdwE7pVF.json",
+      "tx": "2eoESbFDzLu1DgP5bPstzdjfbRCDnriPEbXUyTAnpdm6SdWLWFZ8GoFmFT7PUpn7Juag6RHNcTJNKD5AJdwE7pVF",
+      "amountUsdc": 560,
+      "teamId": "team_mks",
+      "memo": null,
+      "ts": 1771345362225
+    },
     {
       "file": "team_mks/2026-02-17T16-14-03-959Z-3RPswqTfCzDJSGC5ehiTWxLmh9HnFcx7K8fqmy7iNPnCa2XgLdwx3e2R1RdWxYdDx1yyfwXuVEjubCvBMYzHx1K1.json",
       "tx": "3RPswqTfCzDJSGC5ehiTWxLmh9HnFcx7K8fqmy7iNPnCa2XgLdwx3e2R1RdWxYdDx1yyfwXuVEjubCvBMYzHx1K1",
