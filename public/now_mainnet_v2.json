@@ -1,11 +1,43 @@
 {
   "totals": {
-    "files": 19,
-    "cids": 19,
-    "onchainTx": 19,
-    "lastTs": "2026-02-20T14:58:48.202Z"
+    "files": 21,
+    "cids": 20,
+    "onchainTx": 21,
+    "lastTs": "2026-02-20T19:05:47.076Z"
   },
   "items": [
+    {
+      "cid": "QmcV7sfMoQZKGX1pp978z4a7ESrE5VPL5qPUr6ntNVhRYq",
+      "tx": "3eZxhTwM8Ukjuw2cyygRvAEwk3Z1WESj1fQTmBP96GSQWr864cuqhMdduL1ewbPB9jcqfVPiwT8GiiAkJDV2dW6d",
+      "file": "team_CNRA-batch-esp32-check.json",
+      "sha256": "5ad844f6088084433610529a2fb4a397ca400db0d822304675b8a7c372ca1318",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-20T19:05:47.076Z",
+      "ts_min": "2026-02-20T15:51:03.000Z",
+      "ts_max": "2026-02-20T18:45:09.000Z",
+      "count": 4494,
+      "points": 4494,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "team_CNRA"
+    },
+    {
+      "cid": "QmcV7sfMoQZKGX1pp978z4a7ESrE5VPL5qPUr6ntNVhRYq",
+      "tx": "2hDUuVZ4KqCfv34mjzDzLyWTf2jqAuaJkoqzzNxKB6M8jJEB9a98MdZpYgoDapueoW2uwWqZUunbaqnNBxLUrebb",
+      "file": "team_CNRA-batch-esp32-check.json",
+      "sha256": "5ad844f6088084433610529a2fb4a397ca400db0d822304675b8a7c372ca1318",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-20T18:55:59.187Z",
+      "ts_min": "2026-02-20T15:51:03.000Z",
+      "ts_max": "2026-02-20T18:45:09.000Z",
+      "count": 4494,
+      "points": 4494,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "team_CNRA"
+    },
     {
       "cid": "QmfVpypwrcgDXomYhRc8v9uHgbTsMB1F488JEQA7boLep4",
       "tx": "5EA7En9uajzZgBHcQMsRWzjWcTXr91UnYdxfdtsXNjDxRqqLd7WNypjNJuCKsbjoJ8sRUTzwr6QZkuaQKNxvw8jZ",
