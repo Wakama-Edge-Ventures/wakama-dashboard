@@ -1,11 +1,27 @@
 {
   "totals": {
-    "files": 22,
-    "cids": 21,
-    "onchainTx": 22,
-    "lastTs": "2026-02-20T22:39:27.746Z"
+    "files": 23,
+    "cids": 22,
+    "onchainTx": 23,
+    "lastTs": "2026-02-21T08:00:37.450Z"
   },
   "items": [
+    {
+      "cid": "QmapBaiJ95tGvW5GuhtEFG58zvmhg5BkHo9X2XQXhZjecU",
+      "tx": "3WeG7ZC1NVdrEsA2abSjs3JWibcQmeSdtSPSMjYZWzZqe2zsCk7vHcebLojWxTzu6DMcyyPjkf9wSrEHahpcYnHm",
+      "file": "team_CNRA-batch-next.json",
+      "sha256": "ae1e2eec1c765f45844ead9107f8c73d3b9c10988a41f793d1325c85bdced659",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-21T08:00:37.450Z",
+      "ts_min": "2026-02-20T22:38:42.000Z",
+      "ts_max": "2026-02-21T07:59:29.000Z",
+      "count": 14336,
+      "points": 14336,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "team_CNRA"
+    },
     {
       "cid": "QmXDvvbBwfhKEA9ZKR7gUmcNEJaykfnaSkqYeYw52t3MD1",
       "tx": "3UYg7P8Pko9cmxnUAzf1gBZd8ETaVdYdCQSJERn1FQAJxdUkEJJeUNTVCZjuuaYYroLkoShGXoawRU4Wxb8VV5E6",
