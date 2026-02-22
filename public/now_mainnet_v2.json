@@ -1,11 +1,27 @@
 {
   "totals": {
-    "files": 32,
-    "cids": 31,
-    "onchainTx": 32,
-    "lastTs": "2026-02-22T15:04:51.748Z"
+    "files": 33,
+    "cids": 32,
+    "onchainTx": 33,
+    "lastTs": "2026-02-22T16:20:16.368Z"
   },
   "items": [
+    {
+      "cid": "QmVPojAxZd9gFJ2Z7vhsWM2sbYQuewq2b79sGzPeTGJNbN",
+      "tx": "4fkS1dPkzyFqeqDMoZ2rh7dGF4wHaf6Ae8Piq1Em4D4YWZGoBWavKxJAuiQVCETjcJk1vLfM4pVBnpGrxchPBoFy",
+      "file": "team-capn-batch-next.json",
+      "sha256": "769007d2a2a16bbfcde41c49c2a636b6481b0577c51fa5af5aad4d16b54b81f6",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-22T16:20:16.368Z",
+      "ts_min": "2026-02-22T15:03:26.000Z",
+      "ts_max": "2026-02-22T16:18:32.000Z",
+      "count": 9324,
+      "points": 9324,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "team-capn"
+    },
     {
       "cid": "QmawHibyxhsKNBjDoGZRvvhMiPAvMwhDsRUbKodQjneTfs",
       "tx": "21hibs3dbbTpPxALC1mANR3N5wHSpaPewC4GpkuepELahThr56HxWu6wvAq5r7diwKskMRtZJQXfjDr29CSXwyGR",
