@@ -1,5 +1,4 @@
-import { getApps, initializeApp, cert } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { createClient } from "@supabase/supabase-js";
 
 type IngestBody = {
   team?: string;
@@ -20,18 +19,12 @@ function mustEnv(name: string): string {
   return v;
 }
 
-function getDb() {
-  if (!getApps().length) {
-    const projectId = mustEnv("FIREBASE_PROJECT_ID");
-    const clientEmail = mustEnv("FIREBASE_CLIENT_EMAIL");
-    const privateKeyRaw = mustEnv("FIREBASE_PRIVATE_KEY");
-    const privateKey = privateKeyRaw.replace(/\\n/g, "\n");
-
-    initializeApp({
-      credential: cert({ projectId, clientEmail, privateKey }),
-    });
-  }
-  return getFirestore();
+function getSupabase() {
+  const url = mustEnv("SUPABASE_URL");
+  const serviceKey = mustEnv("SUPABASE_SERVICE_KEY"); // service_role
+  return createClient(url, serviceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 
 function json(status: number, data: any) {
@@ -67,22 +60,28 @@ export async function POST(req: Request) {
       });
     }
 
-    const db = getDb();
+    const supabase = getSupabase();
 
-    const regRef = db.collection("iot_devices").doc(String(deviceId));
-    const regSnap = await regRef.get();
-    if (!regSnap.exists) return json(403, { ok: false, error: "device_not_registered" });
+    // Registry lookup (public.iot_devices)
+    const { data: reg, error: regErr } = await supabase
+      .from("iot_devices")
+      .select("device_id, device_key, enabled, team_id, site_id, subteam_id")
+      .eq("device_id", String(deviceId))
+      .maybeSingle();
 
-    const reg = regSnap.data() || {};
+    if (regErr) {
+      return json(500, { ok: false, error: "db_error", stage: "device_lookup", message: regErr.message });
+    }
+    if (!reg) return json(403, { ok: false, error: "device_not_registered" });
     if (reg.enabled !== true) return json(403, { ok: false, error: "device_disabled" });
 
-    if (String(reg.deviceKey || "") !== deviceKey) {
+    if (String(reg.device_key || "") !== deviceKey) {
       return json(403, { ok: false, error: "invalid_device_key" });
     }
 
-    const regTeam = String(reg.teamId || "");
-    const regSite = String(reg.siteId || "");
-    const regSub = String(reg.subteamId || "");
+    const regTeam = String(reg.team_id || "");
+    const regSite = String(reg.site_id || "");
+    const regSub = String(reg.subteam_id || "");
 
     if (regTeam && regTeam !== String(teamId)) return json(403, { ok: false, error: "team_mismatch" });
     if (regSite && regSite !== String(siteId)) return json(403, { ok: false, error: "site_mismatch" });
@@ -93,23 +92,33 @@ export async function POST(req: Request) {
       req.headers.get("x-real-ip") ||
       null;
 
-    const doc = {
-      teamId,
-      siteId,
-      subteamId,
-      deviceId,
-      ts,
-      ntpSynced: !!body.ntp_synced,
+    // Insert telemetry (public.iot_telemetry_raw)
+    const row = {
+      team_id: String(teamId),
+      site_id: String(siteId),
+      subteam_id: String(subteamId),
+      device_id: String(deviceId),
+      ts: Number(ts),
+      ntp_synced: !!body.ntp_synced,
       ok: !!body.ok,
       rssi: typeof body.rssi === "number" ? body.rssi : null,
       ip: body.ip || null,
-      clientIp,
+      client_ip: clientIp,
       sensors: body.sensors || {},
-      receivedAt: FieldValue.serverTimestamp(),
+      // received_at is default now() in DB
     };
 
-    const writeRef = await db.collection("iot_telemetry_raw").add(doc);
-    return json(200, { ok: true, id: writeRef.id });
+    const { data: inserted, error: insErr } = await supabase
+      .from("iot_telemetry_raw")
+      .insert(row)
+      .select("id")
+      .single();
+
+    if (insErr) {
+      return json(500, { ok: false, error: "db_error", stage: "telemetry_insert", message: insErr.message });
+    }
+
+    return json(200, { ok: true, id: inserted?.id });
   } catch (e: any) {
     return json(500, {
       ok: false,
