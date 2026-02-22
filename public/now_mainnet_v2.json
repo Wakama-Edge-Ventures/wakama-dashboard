@@ -1,11 +1,27 @@
 {
   "totals": {
-    "files": 36,
-    "cids": 35,
-    "onchainTx": 36,
-    "lastTs": "2026-02-22T20:35:18.790Z"
+    "files": 37,
+    "cids": 36,
+    "onchainTx": 37,
+    "lastTs": "2026-02-22T20:58:08.480Z"
   },
   "items": [
+    {
+      "cid": "QmV5jcs9SpX24KtuQy3UKUQVzNpBXpBJEobgChv23x9aUM",
+      "tx": "32jAJWoFjMNS6mUKPQoZtY8Kdf8m5thdMSb6Rg9QJv46taenNhQSPhvUah2CiP5jB4ai83c94b7Zb7HyyH9f8Lkb",
+      "file": "team-makm2-batch-next.json",
+      "sha256": "67cd1e80365566f2cd886b9c1b7e682a0984c83e0abe7b34482db560949e83b6",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-22T20:58:08.480Z",
+      "ts_min": "2026-02-22T20:40:46.000Z",
+      "ts_max": "2026-02-22T20:45:04.000Z",
+      "count": 546,
+      "points": 546,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "MAKM2 Partner"
+    },
     {
       "cid": "QmYCKwkKhLSo8S2t97mSF3iGtP4EWaypfheDXb3ZLt3c4G",
       "tx": "BhACDmEHL65SGw3FjTPEKg9bpzmyarJd6VvrCLWYbXCYeym9hquCby5DMfLKbCGMVvLRBye8fVJeH6pPQFyXWwA",
