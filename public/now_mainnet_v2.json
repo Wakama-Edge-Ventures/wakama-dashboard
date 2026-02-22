@@ -1,11 +1,43 @@
 {
   "totals": {
-    "files": 26,
-    "cids": 25,
-    "onchainTx": 26,
-    "lastTs": "2026-02-21T18:02:47.141Z"
+    "files": 28,
+    "cids": 27,
+    "onchainTx": 28,
+    "lastTs": "2026-02-21T21:21:23.592Z"
   },
   "items": [
+    {
+      "cid": "QmdjmezyWp8eMtUtRuwCtJp72EnxbkxEgUcVD9kws8yXuC",
+      "tx": "2wHPTooKVy2rvYKTeLjXrgKW9crTzjmB2h7BFTorhTh8gHCJGQ5FvtcXzEk2UJA8oLzh3qJVKXXys6wzprkgSgjQ",
+      "file": "team_mks-batch-after-cutoff-2.json",
+      "sha256": "4af4823b02a748594138a0fdc8dc3ab1baeed0a95e9dcb933cf20294aad7a49d",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-21T21:21:23.592Z",
+      "ts_min": "2026-02-21T20:52:34.000Z",
+      "ts_max": "2026-02-21T20:52:34.000Z",
+      "count": 14,
+      "points": 14,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "team_mks"
+    },
+    {
+      "cid": "QmeDefQZzWKuoNSdkLmpu9keQ3gtD8dhFsJag7eDT1zxgz",
+      "tx": "EyDQ3USNSLyxqZuj8diPf89cNjqkXc6XrgABrtVfEA2QP5oR2AWdgEWdje5HSnadjEgtFPgLnToeKiiPvmSL6PL",
+      "file": "team_mks-batch-after-cutoff-1.json",
+      "sha256": "37d6e3e6da2c39f7e096f2044d5c633f64293058c303569a2662138cf8f4a79f",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-21T21:21:10.315Z",
+      "ts_min": "2026-02-21T20:42:20.000Z",
+      "ts_max": "2026-02-21T20:52:01.000Z",
+      "count": 266,
+      "points": 266,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "team_mks"
+    },
     {
       "cid": "QmSsHjyuBChyrjLv1zzRGYU5kcokJneZRbpvjB1SupmPMn",
       "tx": "HHSQznmBRy4VDZ9s3sQWXcb3Yj7AwV8MRH4pVGWReGBKaun3DaraGr7zFut7xvSrx1wNu1ZQQYVCHPraPwx4JcL",
@@ -422,5 +454,13 @@
       "source": "simulated",
       "team": "Wakama_team"
     }
-  ]
+  ],
+  "pointsSummary": {
+    "totalPoints": 92750,
+    "byTeam": {
+      "Wakama_team": 960,
+      "team_CNRA": 50468,
+      "team_mks": 41322
+    }
+  }
 }
