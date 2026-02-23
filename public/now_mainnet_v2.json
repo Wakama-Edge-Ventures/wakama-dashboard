@@ -1,11 +1,27 @@
 {
   "totals": {
-    "files": 44,
-    "cids": 42,
-    "onchainTx": 44,
-    "lastTs": "2026-02-23T19:34:14.069Z"
+    "files": 45,
+    "cids": 43,
+    "onchainTx": 45,
+    "lastTs": "2026-02-23T21:52:42.405Z"
   },
   "items": [
+    {
+      "cid": "QmUJU37SRADPP89SLvAec3aF6u9c52ifmu788hkXZKkwye",
+      "tx": "3uTBNkcW9NUEmdAK3vANWLK69ahjMNPY7kJqc4Wx57TqRLJL44wwRxNzSPbnHjbSn9rvMFLT15F7FwaMcUKzHPwb",
+      "file": "team-scak-coop-FULL-1.json",
+      "sha256": "9472c8fc2e8832397792b27b5467412d3fec21533e46e430e3fec8145843029c",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-23T21:52:42.405Z",
+      "ts_min": "2026-02-23T10:31:50.000Z",
+      "ts_max": "2026-02-23T14:30:13.000Z",
+      "count": 28000,
+      "points": 28000,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "SCAK Cooperative"
+    },
     {
       "cid": "QmRvinRw8B8AoofGJMjqiRMSFbUjjjbbBwykYrFSPhhWeY",
       "tx": "3fEzdNeSWCQuTd93FQG7AvRW2JhxNVEKmwQ4Pky4tCF7gohjrijfimETz1JV3YoypynKLfAfF5ibFfXA9eNPeLDY",
