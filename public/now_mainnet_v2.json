@@ -1,11 +1,27 @@
 {
   "totals": {
-    "files": 46,
-    "cids": 44,
-    "onchainTx": 46,
-    "lastTs": "2026-02-23T22:47:19.197Z"
+    "files": 47,
+    "cids": 45,
+    "onchainTx": 47,
+    "lastTs": "2026-02-24T07:10:26.465Z"
   },
   "items": [
+    {
+      "cid": "QmXMYU13m98Nqyu8atKFRWgJA931t4tb3viJF4zFhNuKss",
+      "tx": "3wRRv6781vh4Q3z6dnqS23WH6y4pD29g6U4SEKQKe9CwVmZjxmxmyzZGweqeuHai1H5sWaWCRTF2SnhZFNVrU6L1",
+      "file": "team-techlab-cme-FULL.json",
+      "sha256": "6540bacc1726668bb4115c8bbe08968d6b04b443ae8146a1eadbfeba376a2c31",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-24T07:10:26.465Z",
+      "ts_min": "2026-02-23T21:40:30.000Z",
+      "ts_max": "2026-02-24T06:58:15.000Z",
+      "count": 64078,
+      "points": 64078,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "TechLab CME"
+    },
     {
       "cid": "Qma3hFww6EGRhLMSauYcvjVtpijcWddgcK2MSrPdJCMjdv",
       "tx": "5TgxKgsjy6J6DAiwPGt5rtAxEVMxj95DxyRhoPoQBUCWtUGVQ1bsht3E3nJnbJzJY5BR72H19p1irHcZ45tJb6t5",
