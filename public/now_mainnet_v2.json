@@ -1,11 +1,27 @@
 {
   "totals": {
-    "files": 47,
-    "cids": 45,
-    "onchainTx": 47,
-    "lastTs": "2026-02-24T07:10:26.465Z"
+    "files": 48,
+    "cids": 46,
+    "onchainTx": 48,
+    "lastTs": "2026-02-24T11:42:27.201Z"
   },
   "items": [
+    {
+      "cid": "QmQncZu3RTDQPJBthUUM4x2DCVRk1EEgWPpvPaabkbMdqQ",
+      "tx": "3viJUhRzaNoB3HcoCxzdeoPRo5Zh97b7GWtBAM9ysmv8UcshdM28iT4XEZAhtAgg7cnCBJcxh2in9KJuVqn4RXyD",
+      "file": "team-uJlog-FULL.json",
+      "sha256": "788326ee8969a4f9989ee79c18eca5f2b13b043a95dc7ba3eb21675b1381d6ea",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-24T11:42:27.201Z",
+      "ts_min": "2026-02-24T07:18:02.000Z",
+      "ts_max": "2026-02-24T11:26:01.000Z",
+      "count": 51842,
+      "points": 51842,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "team-uJlog"
+    },
     {
       "cid": "QmXMYU13m98Nqyu8atKFRWgJA931t4tb3viJF4zFhNuKss",
       "tx": "3wRRv6781vh4Q3z6dnqS23WH6y4pD29g6U4SEKQKe9CwVmZjxmxmyzZGweqeuHai1H5sWaWCRTF2SnhZFNVrU6L1",
