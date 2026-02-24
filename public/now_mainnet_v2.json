@@ -1,11 +1,27 @@
 {
   "totals": {
-    "files": 48,
-    "cids": 46,
-    "onchainTx": 48,
-    "lastTs": "2026-02-24T11:42:27.201Z"
+    "files": 49,
+    "cids": 47,
+    "onchainTx": 49,
+    "lastTs": "2026-02-24T20:34:37.919Z"
   },
   "items": [
+    {
+      "cid": "QmRHdV7Bm6aPh2wTNY8Pcya5sSKRVmpymYQtRsJ4exHG1j",
+      "tx": "34dE1BWV3KEFgxrtDS32fCn76axJxfgrb3Y86QmEVLgivWSp3QZujaRhkuu9DfYwnPxc1SmQwe6rL3shaYGBomQk",
+      "file": "Wakama_team-FULL.json",
+      "sha256": "611883fed0b62d2d550bfdc353af96a71772b93c53769d888c40366d0465111c",
+      "gw": "https://gateway.pinata.cloud/ipfs",
+      "ts": "2026-02-24T20:34:37.919Z",
+      "ts_min": "2026-02-24T11:26:27.000Z",
+      "ts_max": "2026-02-24T18:43:55.000Z",
+      "count": 82278,
+      "points": 82278,
+      "status": "submitted",
+      "slot": null,
+      "source": "iot_firestore_raw",
+      "team": "Wakama_team"
+    },
     {
       "cid": "QmQncZu3RTDQPJBthUUM4x2DCVRk1EEgWPpvPaabkbMdqQ",
       "tx": "3viJUhRzaNoB3HcoCxzdeoPRo5Zh97b7GWtBAM9ysmv8UcshdM28iT4XEZAhtAgg7cnCBJcxh2in9KJuVqn4RXyD",
