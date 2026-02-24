@@ -26,12 +26,40 @@ export type NowItem = {
   points?: number;
 };
 
+type Targets = {
+  requiredTotalPoints: number;
+  requiredInternalPct: number;
+  requiredExternalPct: number;
+  requiredExternalTeamMinPoints: number;
+};
+
+type TeamProgress = {
+  points: number;
+  requiredMinPoints: number;
+  progressPct: number;
+  met: boolean;
+};
+
 type PointsSummary = {
   totalPoints: number;
   externalPoints: number;
   externalPct: number;
   byTeam: Record<string, number>;
   bySource: Record<string, number>;
+
+  // Optional fields (backward compatible)
+  internalPoints?: number;
+  internalPct?: number;
+  targets?: Targets;
+  progress?: {
+    requiredTotalPoints: number;
+    totalProgressPct: number;
+    requiredInternalPoints: number;
+    internalProgressPct: number;
+    requiredExternalPoints: number;
+    externalProgressPct: number;
+  };
+  byTeamProgress?: Record<string, TeamProgress>;
 };
 
 export type Now = {

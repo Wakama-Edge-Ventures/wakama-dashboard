@@ -38,12 +38,40 @@ type NowItem = {
   points?: number;
 };
 
+type Targets = {
+  requiredTotalPoints: number;      // ex: 400000
+  requiredInternalPct: number;      // ex: 20
+  requiredExternalPct: number;      // ex: 80
+  requiredExternalTeamMinPoints: number; // ex: 50000
+};
+
+type TeamProgress = {
+  points: number;
+  requiredMinPoints: number;
+  progressPct: number; // 0..100
+  met: boolean;
+};
+
 type PointsSummary = {
   totalPoints: number;
   externalPoints: number;
   externalPct: number;
   byTeam: Record<string, number>;
   bySource: Record<string, number>;
+
+  // Optional (backward compatible) for UI/requirements
+  internalPoints?: number;
+  internalPct?: number;
+  targets?: Targets;
+  progress?: {
+    requiredTotalPoints: number;
+    totalProgressPct: number;
+    requiredInternalPoints: number;
+    internalProgressPct: number;
+    requiredExternalPoints: number;
+    externalProgressPct: number;
+  };
+  byTeamProgress?: Record<string, TeamProgress>;
 };
 
 type Now = { totals: Totals; items: NowItem[]; pointsSummary?: PointsSummary };
@@ -59,34 +87,6 @@ const EMPTY: Now = {
     bySource: {},
   },
 };
-
-/* =========================
-   MAINNET TEAM ALLOWLIST
-   => prevents “devnet” teams leaking into mainnet totals/UI.
-   Keep ONLY the teams you consider part of mainnet tracking.
-========================= */
-const MAINNET_TEAMS_ALLOWLIST = new Set<string>([
-  "team-capn",
-  "team_CNRA",
-  "team-makm2",
-  "team_mks",
-  "team-scak-coop",
-  "team-techlab-cme",
-  "Wakama_team",
-  "team-uJlog",
-]);
-
-function isAllowedMainnetTeam(team?: string) {
-  const t = (team || "").trim();
-  if (!t) return false;
-  if (/devnet/i.test(t)) return false; // extra safety
-  return MAINNET_TEAMS_ALLOWLIST.has(t);
-}
-
-function filterMainnetItems(items: NowItem[]) {
-  // Filter out anything not in allowlist
-  return (items || []).filter((it) => isAllowedMainnetTeam(it.team));
-}
 
 /* =========================
    LEGACY JSON (publisher snapshot)
@@ -115,7 +115,6 @@ async function loadLegacyNow(): Promise<Now> {
 
 /* =========================
    FIRESTORE (ESP32 -> ingest -> batches)
-   NOTE: We keep this for later merge; it can be switched on/off.
 ========================= */
 
 function toIsoFromSeconds(seconds?: number) {
@@ -142,10 +141,10 @@ async function loadFirestoreNow(): Promise<Now> {
         typeof data?.points === "number"
           ? data.points
           : typeof data?.pointsCount === "number"
-          ? data.pointsCount
-          : typeof data?.count === "number"
-          ? data.count
-          : 0;
+            ? data.pointsCount
+            : typeof data?.count === "number"
+              ? data.count
+              : 0;
 
       return {
         cid: data?.cid ?? "",
@@ -180,7 +179,7 @@ async function loadFirestoreNow(): Promise<Now> {
 }
 
 /* =========================
-   TEAM LABEL NORMALIZATION (prevents “unknown”/aliases)
+   TEAM LABEL NORMALIZATION
 ========================= */
 
 async function loadTeamsMap() {
@@ -209,10 +208,38 @@ function normalizeItemsTeams(items: NowItem[], teamNameById: Map<string, string>
 }
 
 /* =========================
+   MAINNET FILTER (remove unwanted team/devnet leak)
+========================= */
+
+// Le “CAPN devnet” que tu veux VIRER (25,000 pts) — on le retire des items & totals.
+const BLOCKED_TEAMS_EXACT = new Set<string>([
+  "capn_san_pedro",
+  "capn san pedro",
+]);
+
+function filterMainnetItems(items: NowItem[]) {
+  return (items || []).filter((it) => {
+    const t = (it.team || "").trim();
+    if (!t) return true;
+    return !BLOCKED_TEAMS_EXACT.has(t);
+  });
+}
+
+/* =========================
    POINTS SUMMARY
 ========================= */
 
-const INTERNAL_TEAM_LABELS = new Set<string>(["Wakama_team", "Wakama Team", "Wakama team"]);
+const INTERNAL_TEAM_LABELS = new Set<string>([
+  "Wakama_team",
+  "Wakama Team",
+  "Wakama team",
+]);
+
+// Targets business rules
+const REQUIRED_TOTAL_POINTS = 400_000;
+const REQUIRED_INTERNAL_PCT = 20;
+const REQUIRED_EXTERNAL_PCT = 80;
+const REQUIRED_EXTERNAL_TEAM_MIN_POINTS = 50_000;
 
 function safeNum(x: unknown) {
   return typeof x === "number" && Number.isFinite(x) ? x : 0;
@@ -235,19 +262,75 @@ function computePointsSummary(items: NowItem[]): PointsSummary {
   }
 
   let externalPoints = 0;
+  let internalPoints = 0;
+
   for (const [team, pts] of Object.entries(byTeam)) {
-    if (!INTERNAL_TEAM_LABELS.has(team)) externalPoints += pts;
+    if (INTERNAL_TEAM_LABELS.has(team)) internalPoints += pts;
+    else externalPoints += pts;
   }
 
   const externalPct = totalPoints > 0 ? (externalPoints / totalPoints) * 100 : 0;
+  const internalPct = totalPoints > 0 ? (internalPoints / totalPoints) * 100 : 0;
 
-  return { totalPoints, externalPoints, externalPct, byTeam, bySource };
+  // Progress vs requirements
+  const requiredInternalPoints = Math.round((REQUIRED_INTERNAL_PCT / 100) * REQUIRED_TOTAL_POINTS);
+  const requiredExternalPoints = REQUIRED_TOTAL_POINTS - requiredInternalPoints;
+
+  const totalProgressPct =
+    REQUIRED_TOTAL_POINTS > 0 ? (totalPoints / REQUIRED_TOTAL_POINTS) * 100 : 0;
+
+  const internalProgressPct =
+    requiredInternalPoints > 0 ? (internalPoints / requiredInternalPoints) * 100 : 0;
+
+  const externalProgressPct =
+    requiredExternalPoints > 0 ? (externalPoints / requiredExternalPoints) * 100 : 0;
+
+  // Per-team (external) progress toward 50k (Wakama excluded)
+  const byTeamProgress: Record<string, TeamProgress> = {};
+  for (const [team, pts] of Object.entries(byTeam)) {
+    if (INTERNAL_TEAM_LABELS.has(team)) continue;
+    const progressPct =
+      REQUIRED_EXTERNAL_TEAM_MIN_POINTS > 0
+        ? (pts / REQUIRED_EXTERNAL_TEAM_MIN_POINTS) * 100
+        : 0;
+
+    byTeamProgress[team] = {
+      points: pts,
+      requiredMinPoints: REQUIRED_EXTERNAL_TEAM_MIN_POINTS,
+      progressPct,
+      met: pts >= REQUIRED_EXTERNAL_TEAM_MIN_POINTS,
+    };
+  }
+
+  return {
+    totalPoints,
+    externalPoints,
+    externalPct,
+    byTeam,
+    bySource,
+
+    internalPoints,
+    internalPct,
+    targets: {
+      requiredTotalPoints: REQUIRED_TOTAL_POINTS,
+      requiredInternalPct: REQUIRED_INTERNAL_PCT,
+      requiredExternalPct: REQUIRED_EXTERNAL_PCT,
+      requiredExternalTeamMinPoints: REQUIRED_EXTERNAL_TEAM_MIN_POINTS,
+    },
+    progress: {
+      requiredTotalPoints: REQUIRED_TOTAL_POINTS,
+      totalProgressPct,
+      requiredInternalPoints,
+      internalProgressPct,
+      requiredExternalPoints,
+      externalProgressPct,
+    },
+    byTeamProgress,
+  };
 }
 
 /* =========================
    API HANDLER
-   Current mode (safe): V2 returns ONLY publisher snapshot.
-   Firestore is kept ready; flip MERGE_FIRESTORE=true when you want to include ESP32 batches.
 ========================= */
 
 const MERGE_FIRESTORE = process.env.NOW_MAINNET_V2_MERGE_FIRESTORE === "true";
@@ -264,35 +347,36 @@ export async function GET() {
       teamNameById = null;
     }
 
-    // 1) Start with legacy snapshot
-    const legacyBase: Now = {
+    const legacy: Now = {
       totals: legacyRaw.totals,
-      items: legacyRaw.items || [],
+      items: teamNameById
+        ? normalizeItemsTeams(legacyRaw.items || [], teamNameById)
+        : (legacyRaw.items || []),
     };
 
-    // 2) Enforce mainnet-only teams BEFORE any merge/summary
-    //    => removes devnet leftovers like capn_san_pedro.
-    let items: NowItem[] = filterMainnetItems(legacyBase.items);
+    // Default: publisher-only (stable, deterministic)
+    let items: NowItem[] = legacy.items;
 
-    // 3) Optional: merge Firestore (still filtered mainnet-only)
+    // Optional: merge Firestore later for ESP32 live feed
     if (MERGE_FIRESTORE) {
       const firestoreRaw = await loadFirestoreNow();
-      const firestoreItems = filterMainnetItems(firestoreRaw.items || []);
+      const firestoreItems = teamNameById
+        ? normalizeItemsTeams(firestoreRaw.items || [], teamNameById)
+        : (firestoreRaw.items || []);
+
       // Firestore first (fresh), then legacy snapshot
-      items = [...firestoreItems, ...items];
+      items = [...firestoreItems, ...legacy.items];
     }
 
-    // 4) Only now normalize labels for display
-    if (teamNameById) {
-      items = normalizeItemsTeams(items, teamNameById);
-    }
+    // ✅ HARD FILTER: remove devnet leak / blocked teams from ALL totals & UI
+    items = filterMainnetItems(items);
 
     // Totals computed from returned items (no surprises)
     const totals: Totals = {
       files: items.length,
       cids: items.filter((i) => !!i.cid).length,
       onchainTx: items.filter((i) => !!i.tx).length,
-      lastTs: items[0]?.ts || legacyRaw.totals?.lastTs || "—",
+      lastTs: items[0]?.ts || legacy.totals?.lastTs || "—",
     };
 
     const pointsSummary = computePointsSummary(items);
