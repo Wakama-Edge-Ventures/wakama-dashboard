@@ -99,7 +99,7 @@ async function readNowFromDisk(): Promise<Now> {
 // -------- Data fetch (Server) --------
 async function fetchNow(): Promise<Now> {
   const base = (process.env.NEXT_PUBLIC_BASE_URL || 'https://rwa.wakama.farm').replace(/\/+$/, '');
-  const url = `${base}/api/now-mainnet`;
+  const url = `${base}/api/now-mainnet-v2`;
 
   try {
     const res = await fetch(url, { cache: 'no-store' });

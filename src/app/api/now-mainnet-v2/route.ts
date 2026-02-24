@@ -61,6 +61,34 @@ const EMPTY: Now = {
 };
 
 /* =========================
+   MAINNET TEAM ALLOWLIST
+   => prevents “devnet” teams leaking into mainnet totals/UI.
+   Keep ONLY the teams you consider part of mainnet tracking.
+========================= */
+const MAINNET_TEAMS_ALLOWLIST = new Set<string>([
+  "team-capn",
+  "team_CNRA",
+  "team-makm2",
+  "team_mks",
+  "team-scak-coop",
+  "team-techlab-cme",
+  "Wakama_team",
+  "team-uJlog",
+]);
+
+function isAllowedMainnetTeam(team?: string) {
+  const t = (team || "").trim();
+  if (!t) return false;
+  if (/devnet/i.test(t)) return false; // extra safety
+  return MAINNET_TEAMS_ALLOWLIST.has(t);
+}
+
+function filterMainnetItems(items: NowItem[]) {
+  // Filter out anything not in allowlist
+  return (items || []).filter((it) => isAllowedMainnetTeam(it.team));
+}
+
+/* =========================
    LEGACY JSON (publisher snapshot)
 ========================= */
 
@@ -236,23 +264,27 @@ export async function GET() {
       teamNameById = null;
     }
 
-    const legacy: Now = {
+    // 1) Start with legacy snapshot
+    const legacyBase: Now = {
       totals: legacyRaw.totals,
-      items: teamNameById ? normalizeItemsTeams(legacyRaw.items || [], teamNameById) : (legacyRaw.items || []),
+      items: legacyRaw.items || [],
     };
 
-    // Default: publisher-only (stable, deterministic)
-    let items: NowItem[] = legacy.items;
+    // 2) Enforce mainnet-only teams BEFORE any merge/summary
+    //    => removes devnet leftovers like capn_san_pedro.
+    let items: NowItem[] = filterMainnetItems(legacyBase.items);
 
-    // Optional: merge Firestore later for ESP32 live feed
+    // 3) Optional: merge Firestore (still filtered mainnet-only)
     if (MERGE_FIRESTORE) {
       const firestoreRaw = await loadFirestoreNow();
-      const firestoreItems = teamNameById
-        ? normalizeItemsTeams(firestoreRaw.items || [], teamNameById)
-        : (firestoreRaw.items || []);
-
+      const firestoreItems = filterMainnetItems(firestoreRaw.items || []);
       // Firestore first (fresh), then legacy snapshot
-      items = [...firestoreItems, ...legacy.items];
+      items = [...firestoreItems, ...items];
+    }
+
+    // 4) Only now normalize labels for display
+    if (teamNameById) {
+      items = normalizeItemsTeams(items, teamNameById);
     }
 
     // Totals computed from returned items (no surprises)
@@ -260,7 +292,7 @@ export async function GET() {
       files: items.length,
       cids: items.filter((i) => !!i.cid).length,
       onchainTx: items.filter((i) => !!i.tx).length,
-      lastTs: items[0]?.ts || legacy.totals?.lastTs || "—",
+      lastTs: items[0]?.ts || legacyRaw.totals?.lastTs || "—",
     };
 
     const pointsSummary = computePointsSummary(items);
